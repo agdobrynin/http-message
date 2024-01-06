@@ -2,8 +2,6 @@
 
 ## Использование Docker образа с PHP 8.2
 
----
-
 Собрать контейнер
 ```shell
 docker-compose build
