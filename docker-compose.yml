@@ -1,0 +1,12 @@
+services:
+    php:
+        build:
+            dockerfile: Dockerfile
+            args:
+                UID: 1000
+                GID: 1000
+        environment:
+            UID: 1000
+            GID: 1000
+        volumes:
+            - '.:/var/www/html'
