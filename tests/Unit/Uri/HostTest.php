@@ -41,19 +41,19 @@ class HostTest extends TestCase
 
     public static function dataWithHost(): \Generator
     {
-        yield 'Scheme "no" change host' => [
+        yield 'Scheme empty change host' => [
             'uri' => new Uri('//www.yahoo.com'),
             'host' => 'www.NEWS.com',
             'expect' => 'www.news.com',
         ];
 
-        yield 'Scheme "https" change to IP4' => [
+        yield 'Scheme empty change to IP4' => [
             'uri' => new Uri('//www.yahoo.com'),
             'host' => '8.8.8.8',
             'expect' => '8.8.8.8',
         ];
 
-        yield 'Scheme "http" change to IP6' => [
+        yield 'Scheme empty change to IP6' => [
             'uri' => new Uri('//www.yahoo.com'),
             'host' => '[2001:0DB8:11A3:09D7:1F34:8A2E:07A0:765D]',
             'expect' => '[2001:0db8:11a3:09d7:1f34:8a2e:07a0:765d]',
