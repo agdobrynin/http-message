@@ -30,7 +30,7 @@ class Uri implements UriInterface
         }
 
         foreach ($params as $key => $param) {
-            $this->{$key} = match ($param) {
+            $this->{$key} = match ($key) {
                 'scheme', 'host' => \strtolower($param),
                 default => $param,
             };
