@@ -116,7 +116,7 @@ class Uri implements UriInterface
 
     public function withPort(?int $port): UriInterface
     {
-        if (null !== $port && (0 < $port || $port > 65535)) {
+        if (null !== $port && ($port < 0 || $port > 65535)) {
             throw new \InvalidArgumentException("Invalid port [{$port}]. Must be between 0 and 65535");
         }
 

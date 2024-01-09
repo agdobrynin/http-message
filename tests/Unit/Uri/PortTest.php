@@ -98,4 +98,132 @@ class PortTest extends TestCase
 
         new Uri($uri);
     }
+
+    public static function dataWithPort(): \Generator
+    {
+        yield 'scheme "http" port 80' => [
+            'uri' => new Uri('http://www.com'),
+            'port' => 80,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "http" port 0' => [
+            'uri' => new Uri('http://www.com'),
+            'port' => 0,
+            'expectPort' => 0,
+        ];
+
+        yield 'scheme "http" port null' => [
+            'uri' => new Uri('http://www.com'),
+            'port' => null,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "http" port 8080' => [
+            'uri' => new Uri('http://www.com:8080'),
+            'port' => 80,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "https" port 443' => [
+            'uri' => new Uri('https://www.com:444'),
+            'port' => 443,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "https" port null' => [
+            'uri' => new Uri('https://www.com:444'),
+            'port' => null,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "https" port 444' => [
+            'uri' => new Uri('https://www.com'),
+            'port' => 444,
+            'expectPort' => 444,
+        ];
+
+        yield 'no scheme port 443' => [
+            'uri' => new Uri('//www.com:444'),
+            'port' => 443,
+            'expectPort' => 443,
+        ];
+
+        yield 'scheme "http" IP4 port 80' => [
+            'uri' => new Uri('http://192.168.1.1:80'),
+            'port' => 80,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "https" IP4 port 443' => [
+            'uri' => new Uri('https://192.168.1.1'),
+            'port' => 443,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "https" IP4 port null' => [
+            'uri' => new Uri('https://192.168.1.1'),
+            'port' => null,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "https" IP4 port 444' => [
+            'uri' => new Uri('https://192.168.1.1'),
+            'port' => 444,
+            'expectPort' => 444,
+        ];
+
+        yield 'scheme "http" IP6 port 80' => [
+            'uri' => new Uri('http://[::1]:90'),
+            'port' => 80,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "https" IP6 port 443' => [
+            'uri' => new Uri('https://[::1]'),
+            'port' => 443,
+            'expectPort' => null,
+        ];
+
+        yield 'scheme "https" IP6 port 444' => [
+            'uri' => new Uri('https://[::1]'),
+            'port' => 444,
+            'expectPort' => 444,
+        ];
+
+        yield 'scheme "https" IP6 port 0' => [
+            'uri' => new Uri('https://[::1]'),
+            'port' => 0,
+            'expectPort' => 0,
+        ];
+    }
+
+    /**
+     * @dataProvider dataWithPort
+     */
+    public function testWithPort(Uri $uri, ?int $port, ?int $expectPort): void
+    {
+        $new = $uri->withPort($port);
+
+        $this->assertNotSame($uri, $new);
+        $this->assertEquals($expectPort, $new->getPort());
+    }
+
+    public static function dataWithPortException(): \Generator
+    {
+        yield 'scheme "http" port "-1"' => ['uri' => new Uri('http://www.com'), 'port' => -1];
+
+        yield 'scheme "https" port "65536"' => ['uri' => new Uri('http://www.com'), 'port' => 65536];
+    }
+
+    /**
+     * @dataProvider dataWithPortException
+     */
+    public function testWithPortException(Uri $uri, ?int $port): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid port [{$port}]");
+
+        $uri->withPort($port);
+    }
 }
