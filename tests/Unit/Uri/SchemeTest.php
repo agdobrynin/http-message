@@ -24,7 +24,7 @@ class SchemeTest extends TestCase
 
         yield 'scheme "https"' => ['uri' => 'HTTPS://MY.NET/', 'scheme' => 'https'];
 
-        yield 'scheme "http"' => ['uri' => 'HTTP://DOMAIN/', 'scheme' => 'http'];
+        yield 'scheme "http"' => ['uri' => 'HTTP://user@DOMAIN/', 'scheme' => 'http'];
 
         yield 'scheme "news"' => ['uri' => 'NEWS://RELCOME.NET/', 'scheme' => 'news'];
 
