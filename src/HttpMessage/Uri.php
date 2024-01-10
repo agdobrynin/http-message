@@ -12,11 +12,14 @@ class Uri implements UriInterface
      * Regexp - for special parts of URI.
      *
      * @see https://datatracker.ietf.org/doc/html/rfc3986#appendix-A
+     * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
+     * gen-delims = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+     * sub-delims = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
      */
-    protected const CHARS_UNRESERVED = 'a-zA-Z0-9_\-\.~';
-    protected const CHARS_PCT_ENCODED = '%(?![A-Fa-f0-9]{2})';
-    protected const CHARS_GEN_DELIMS = ':\/\?#\[\]@';
-    protected const CHARS_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+    protected const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
+    protected const CHAR_PCT_ENCODED = '%(?![A-Fa-f0-9]{2})';
+    protected const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+    protected const CHAR_BASE = self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS;
 
     protected const SCHEME_PORT = [
         'http' => 80,
@@ -39,7 +42,7 @@ class Uri implements UriInterface
             throw new \InvalidArgumentException("Invalid URI [{$uri}]");
         }
 
-        // TODO may be check the uri string is valid?
+        // TODO may be check the uri string is valid here?
 
         foreach ($values as $key => $value) {
             $this->{$key} = match ($key) {
@@ -128,8 +131,9 @@ class Uri implements UriInterface
     public function withPath(string $path): UriInterface
     {
         $new = clone $this;
-        // TODO escaping
-        $new->path = $path;
+        $new->path = '' !== $path
+            ? self::encode(EncodeEnum::path, $path)
+            : '';
 
         return $new;
     }
@@ -166,16 +170,23 @@ class Uri implements UriInterface
     public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
         $new = clone $this;
-        $new->user = $user ? self::encode(EncodeEnum::userinfo, $user) : '';
-        $new->pass = !empty($password) ? self::encode(EncodeEnum::userinfo, $password) : '';
+        $new->user = $user
+            ? self::encode(EncodeEnum::userinfo, $user)
+            : '';
+        $new->pass = !empty($password)
+            ? self::encode(EncodeEnum::userinfo, $password)
+            : '';
 
         return $new;
     }
 
-    protected static function encode(EncodeEnum $where, string $value): string
+    protected static function encode(EncodeEnum $encode, string $value): string
     {
-        $pattern = match ($where) {
-            EncodeEnum::userinfo => '/(?:[^%'.self::CHARS_UNRESERVED.self::CHARS_SUB_DELIMS.']+|'.self::CHARS_PCT_ENCODED.')/',
+        $pattern = match ($encode) {
+            EncodeEnum::userinfo => '/(?:[^'.self::CHAR_BASE.'%]++|'.self::CHAR_PCT_ENCODED.')/',
+            EncodeEnum::path => '/(?:[^'.self::CHAR_BASE.'%:@\/]++|'.self::CHAR_PCT_ENCODED.')/',
+            EncodeEnum::query,
+            EncodeEnum::fragment => '/(?:[^'.self::CHAR_BASE.'%:@\/\?]++|'.self::CHAR_PCT_ENCODED.')/',
         };
 
         return \preg_replace_callback($pattern, static fn (array $matches) => \rawurlencode($matches[0]), $value);
