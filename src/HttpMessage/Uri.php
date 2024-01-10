@@ -162,7 +162,7 @@ class Uri implements UriInterface
     {
         $new = clone $this;
         $new->user = $user ? self::encode(EncodeEnum::userinfo, $user) : '';
-        $new->pass = (string) $password ? self::encode(EncodeEnum::userinfo, $password) : '';
+        $new->pass = !empty($password) ? self::encode(EncodeEnum::userinfo, $password) : '';
 
         return $new;
     }
