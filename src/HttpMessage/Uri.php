@@ -8,6 +8,16 @@ use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface
 {
+    /**
+     * Regexp - for special parts of URI.
+     *
+     * @see https://datatracker.ietf.org/doc/html/rfc3986#appendix-A
+     */
+    protected const CHARS_UNRESERVED = 'a-zA-Z0-9_\-\.~';
+    protected const CHARS_PCT_ENCODED = '%(?![A-Fa-f0-9]{2})';
+    protected const CHARS_GEN_DELIMS = ':\/\?#\[\]@';
+    protected const CHARS_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+
     protected const SCHEME_PORT = [
         'http' => 80,
         'https' => 443,
@@ -23,16 +33,18 @@ class Uri implements UriInterface
 
     public function __construct(string $uri)
     {
-        $params = \parse_url($uri);
+        $values = \parse_url($uri);
 
-        if (false === $params) {
+        if (false === $values) {
             throw new \InvalidArgumentException("Invalid URI [{$uri}]");
         }
 
-        foreach ($params as $key => $param) {
+        // TODO may be check the uri string is valid?
+
+        foreach ($values as $key => $value) {
             $this->{$key} = match ($key) {
-                'scheme', 'host' => \strtolower($param),
-                default => $param,
+                'scheme', 'host' => \strtolower($value),
+                default => $value,
             };
         }
     }
@@ -84,8 +96,11 @@ class Uri implements UriInterface
 
     public function getUserInfo(): string
     {
-        // TODO: Implement getUserInfo() method.
-        return '';
+        if ('' === $this->user) {
+            return '';
+        }
+
+        return $this->user.($this->pass ? ':'.$this->pass : '');
     }
 
     public function withFragment(string $fragment): UriInterface
@@ -146,11 +161,18 @@ class Uri implements UriInterface
     public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
         $new = clone $this;
-        // TODO escaping
-        $this->user = $user;
-        // TODO escaping
-        $this->pass = (string) $password;
+        $new->user = $user ? self::encode(EncodeEnum::userinfo, $user) : '';
+        $new->pass = (string) $password ? self::encode(EncodeEnum::userinfo, $password) : '';
 
         return $new;
+    }
+
+    protected static function encode(EncodeEnum $where, string $value): string
+    {
+        $pattern = match ($where) {
+            EncodeEnum::userinfo => '/(?:[^%'.self::CHARS_UNRESERVED.self::CHARS_SUB_DELIMS.']+|'.self::CHARS_PCT_ENCODED.')/',
+        };
+
+        return \preg_replace_callback($pattern, static fn (array $matches) => \rawurlencode($matches[0]), $value);
     }
 }
