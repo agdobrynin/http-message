@@ -87,9 +87,9 @@ class UserInfoTest extends TestCase
 
         yield 'Init with user and password and set other user with password plain chars' => [
             'uri' => new Uri('//john:pass@www.com'),
-            'user' => 'mary',
+            'user' => 'domain\mary',
             'password' => 'password',
-            'expect' => 'mary:password',
+            'expect' => 'domain%5Cmary:password',
         ];
 
         yield 'Init with user and password and set other user with raw url encode chars' => [
