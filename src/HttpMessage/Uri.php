@@ -57,8 +57,13 @@ class Uri implements UriInterface
 
     public function getAuthority(): string
     {
-        // TODO: Implement getAuthority() method.
-        return '';
+        if ('' === $this->host) {
+            return '';
+        }
+
+        return (($userInfo = $this->getUserInfo()) ? $userInfo.'@' : '').
+            $this->host.
+            (($port = $this->getPort()) ? ':'.$port : '');
     }
 
     public function getFragment(): string
