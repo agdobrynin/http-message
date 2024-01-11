@@ -19,8 +19,6 @@ class Uri implements UriInterface
     protected const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
     protected const CHAR_PCT_ENCODED = '%(?![A-Fa-f0-9]{2})';
     protected const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
-    protected const CHAR_BASE = self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS;
-
     protected const SCHEME_PORT = [
         'http' => 80,
         'https' => 443,
@@ -183,10 +181,10 @@ class Uri implements UriInterface
     protected static function encode(EncodeEnum $encode, string $value): string
     {
         $pattern = match ($encode) {
-            EncodeEnum::userinfo => '/(?:[^'.self::CHAR_BASE.'%]++|'.self::CHAR_PCT_ENCODED.')/',
-            EncodeEnum::path => '/(?:[^'.self::CHAR_BASE.'%:@\/]++|'.self::CHAR_PCT_ENCODED.')/',
+            EncodeEnum::userinfo => '/(?:[^'.self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS.'%]++|'.self::CHAR_PCT_ENCODED.')/',
+            EncodeEnum::path => '/(?:[^'.self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS.'%:@\/]++|'.self::CHAR_PCT_ENCODED.')/',
             EncodeEnum::query,
-            EncodeEnum::fragment => '/(?:[^'.self::CHAR_BASE.'%:@\/\?]++|'.self::CHAR_PCT_ENCODED.')/',
+            EncodeEnum::fragment => '/(?:[^'.self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS.'%:@\/\?]++|'.self::CHAR_PCT_ENCODED.')/',
         };
 
         return \preg_replace_callback($pattern, static fn (array $matches) => \rawurlencode($matches[0]), $value);
