@@ -76,6 +76,12 @@ class HostTest extends TestCase
             'host' => 'XN--H1AHN.XN--P1AI',
             'expect' => 'xn--h1ahn.xn--p1ai',
         ];
+
+        yield 'host cyrillic utf-8 - non ASCII symbols not convert to lowercase' => [
+            'uri' => new Uri(''),
+            'host' => 'Мир.РФ',
+            'expect' => 'Мир.РФ',
+        ];
     }
 
     /**
