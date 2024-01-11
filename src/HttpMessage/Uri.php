@@ -185,8 +185,8 @@ class Uri implements UriInterface
         $pattern = match ($encode) {
             EncodeEnum::userinfo => '/(?:[^'.self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS.'%]++|'.self::CHAR_PCT_ENCODED.')/',
             EncodeEnum::path => '/(?:[^'.self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS.'%:@\/]++|'.self::CHAR_PCT_ENCODED.')/',
-            EncodeEnum::query,
-            EncodeEnum::fragment => '/(?:[^'.self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS.'%:@\/\?]++|'.self::CHAR_PCT_ENCODED.')/',
+            EncodeEnum::fragment,
+            EncodeEnum::query => '/(?:[^'.self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS.'%:@\/\?]++|'.self::CHAR_PCT_ENCODED.')/',
         };
 
         return \preg_replace_callback($pattern, static fn (array $matches) => \rawurlencode($matches[0]), $value);
