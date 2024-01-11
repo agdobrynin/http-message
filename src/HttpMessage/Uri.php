@@ -23,6 +23,7 @@ class Uri implements UriInterface
         'http' => 80,
         'https' => 443,
     ];
+
     protected string $scheme = '';
     protected string $host = '';
     protected ?int $port = null;
