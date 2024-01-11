@@ -113,7 +113,7 @@ class Uri implements UriInterface
     {
         $new = clone $this;
         $new->fragment = $fragment
-            ? self::encode(EncodeEnum::query, $fragment)
+            ? self::encode(EncodeEnum::fragment, $fragment)
             : '';
 
         return $new;
