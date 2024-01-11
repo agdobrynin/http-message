@@ -54,8 +54,39 @@ class Uri implements UriInterface
 
     public function __toString(): string
     {
-        // TODO: Implement __toString() method.
-        return '';
+        $uri = '';
+
+        if ($scheme = $this->getScheme()) {
+            $uri .= $scheme.':';
+        }
+
+        $authority = $this->getAuthority();
+
+        if ($authority) {
+            $uri .= '//'.$authority;
+        }
+
+        if ($path = $this->getPath()) {
+            $isAbsolutePath = \str_starts_with($path, '/');
+
+            if (!$isAbsolutePath && '' !== $authority) {
+                $path = '/'.$path;
+            } elseif ('' === $authority && \str_starts_with($path, '//')) {
+                $path = '/'.\ltrim($path, '/');
+            }
+
+            $uri .= $path;
+        }
+
+        if ($query = $this->getQuery()) {
+            $uri .= '?'.$query;
+        }
+
+        if ($fragment = $this->getFragment()) {
+            $uri .= '#'.$fragment;
+        }
+
+        return $uri;
     }
 
     public function getAuthority(): string
