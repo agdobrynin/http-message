@@ -1,13 +1,13 @@
-FROM php:8.2-alpine3.16
-ARG UID
-ARG GID
-ENV UID=${UID}
-ENV GID=${GID}
+ARG PHP_IMAGE
+FROM ${PHP_IMAGE}
+
+ENV UID=1000
+ENV GID=1000
 
 RUN apk update && \
     apk add --no-cache git g++ autoconf make pcre2-dev && \
-    pecl install pcov && \
-    docker-php-ext-enable pcov && \
+    pecl install pcov ast && \
+    docker-php-ext-enable pcov ast && \
     apk del --no-cache g++ autoconf make pcre2-dev && \
     curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer && \
     addgroup -g $GID -S dev &&  \
