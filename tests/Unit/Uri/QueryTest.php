@@ -23,7 +23,7 @@ class QueryTest extends TestCase
 
         yield 'has host and query' => [
             'uri' => 'localhost/?p1=10&x[]=10',
-            'query' => 'p1=10&x[]=10',
+            'query' => 'p1=10&x%5B%5D=10',
         ];
 
         yield 'no host but has query style string' => [
