@@ -65,10 +65,10 @@ class FragmentTest extends TestCase
             'expect' => '%E2%82%AC%20%5B%D0%B5%D0%B2%D1%80%D0%BE%5D',
         ];
 
-        yield 'uri and set fragment available symbols' => [
+        yield 'uri and set fragment reserved symbols and one encode with PCT ENCODED' => [
             'uri' => new Uri('https://www.com/document'),
-            'fragment' => 'azAF0~7.!-$_&\'(*)+,;=:@?/%E2%82%AC',
-            'expect' => 'azAF0~7.!-$_&\'(*)+,;=:@?/%E2%82%AC',
+            'fragment' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?%E2%82%AC',
+            'expect' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?%E2%82%AC',
         ];
     }
 

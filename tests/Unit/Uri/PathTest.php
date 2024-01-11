@@ -47,10 +47,10 @@ class PathTest extends TestCase
             'expect' => 'dir/%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE.html',
         ];
 
-        yield 'with available symbols only' => [
+        yield 'with reserved symbols only' => [
             'uri' => new Uri('http://www.com'),
-            'path' => '/a/fz/~._-/0129/!x/$6/&rt/\'(abc)/*+/Y,/;=/%123:/@RE/%d0%bf',
-            'expect' => '/a/fz/~._-/0129/!x/$6/&rt/\'(abc)/*+/Y,/;=/%123:/@RE/%d0%bf',
+            'path' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
+            'expect' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
         ];
     }
 

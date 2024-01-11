@@ -31,6 +31,11 @@ class QueryTest extends TestCase
             'query' => 'param=abc&host=10',
         ];
 
+        yield 'with reserved symbols only' => [
+            'uri' => 'http://www.com/?a-zA-Z0-9_-.~!$&\'()*+,;=:@/?',
+            'expect' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?',
+        ];
+
         yield 'has uri without query string' => [
             'uri' => 'HTTPS://domain.com/index.html',
             'query' => '',

@@ -94,9 +94,9 @@ class UserInfoTest extends TestCase
 
         yield 'Login and password contains only un encode symbols' => [
             'uri' => new Uri(''),
-            'user' => '+abZ_-.~19!$&\'(*),;=',
-            'password' => '!0-9_aZA.+!$&\'()*+,;=',
-            'expect' => '+abZ_-.~19!$&\'(*),;=:!0-9_aZA.+!$&\'()*+,;=',
+            'user' => 'a-zA-Z0-9_-.~!$&\'()*+,;=',
+            'password' => 'a-zA-Z0-9_-.~!$&\'()*+,;=',
+            'expect' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:a-zA-Z0-9_-.~!$&\'()*+,;=',
         ];
     }
 
