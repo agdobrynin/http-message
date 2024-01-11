@@ -40,11 +40,13 @@ class Uri implements UriInterface
             throw new \InvalidArgumentException("Invalid URI [{$uri}]");
         }
 
-        // TODO may be check the uri string is valid here?
-
         foreach ($values as $key => $value) {
             $this->{$key} = match ($key) {
                 'scheme', 'host' => \strtolower($value),
+                'path' => self::encode(EncodeEnum::path, $value),
+                'fragment' => self::encode(EncodeEnum::fragment, $value),
+                'query' => self::encode(EncodeEnum::query, $value),
+                'pass', 'user' => self::encode(EncodeEnum::userinfo, $value),
                 default => $value,
             };
         }
