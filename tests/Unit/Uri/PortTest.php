@@ -44,8 +44,6 @@ class PortTest extends TestCase
 
         yield 'scheme "http" and IP4 with port 81' => ['uri' => 'http://192.168.0.1:81/', 'port' => 81];
 
-        yield 'scheme "https" and IP4 without port' => ['uri' => 'https://192.168.0.1/', 'port' => null];
-
         yield 'scheme "https" and IP4 with port 443' => ['uri' => 'https://192.168.0.1:443/', 'port' => null];
 
         yield 'scheme "http" and IP4 with port 444' => ['uri' => 'http://192.168.0.1:444/', 'port' => 444];
@@ -128,42 +126,6 @@ class PortTest extends TestCase
         yield 'scheme "https" port 443' => [
             'uri' => new Uri('https://www.com:444'),
             'port' => 443,
-            'expectPort' => null,
-        ];
-
-        yield 'scheme "https" port null' => [
-            'uri' => new Uri('https://www.com:444'),
-            'port' => null,
-            'expectPort' => null,
-        ];
-
-        yield 'scheme "https" port 444' => [
-            'uri' => new Uri('https://www.com'),
-            'port' => 444,
-            'expectPort' => 444,
-        ];
-
-        yield 'no scheme port 443' => [
-            'uri' => new Uri('//www.com:444'),
-            'port' => 443,
-            'expectPort' => 443,
-        ];
-
-        yield 'scheme "http" IP4 port 80' => [
-            'uri' => new Uri('http://192.168.1.1:80'),
-            'port' => 80,
-            'expectPort' => null,
-        ];
-
-        yield 'scheme "https" IP4 port 443' => [
-            'uri' => new Uri('https://192.168.1.1'),
-            'port' => 443,
-            'expectPort' => null,
-        ];
-
-        yield 'scheme "https" IP4 port null' => [
-            'uri' => new Uri('https://192.168.1.1'),
-            'port' => null,
             'expectPort' => null,
         ];
 

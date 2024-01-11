@@ -37,26 +37,20 @@ class PathTest extends TestCase
 
     public static function dataWithPath(): \Generator
     {
-        yield 'set #1' => [
+        yield 'empty path' => [
             'uri' => new Uri(''), 'path' => '', 'expect' => '',
         ];
 
-        yield 'set #2' => [
+        yield 'with unavailable symbols - "urlencode" use' => [
             'uri' => new Uri('http://www.com/index.html'),
-            'path' => 'просто.html',
-            'expect' => '%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE.html',
+            'path' => 'dir/просто.html',
+            'expect' => 'dir/%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE.html',
         ];
 
-        yield 'set #3' => [
+        yield 'with available symbols only' => [
             'uri' => new Uri('http://www.com'),
-            'path' => 'пр:ост:о.html',
-            'expect' => '%D0%BF%D1%80:%D0%BE%D1%81%D1%82:%D0%BE.html',
-        ];
-
-        yield 'set #4' => [
-            'uri' => new Uri('http://www.com'),
-            'path' => 'пр:осто@.html/w',
-            'expect' => '%D0%BF%D1%80:%D0%BE%D1%81%D1%82%D0%BE@.html/w',
+            'path' => '/a/fz/~._-/0129/!x/$6/&rt/\'(abc)/*+/Y,/;=/%123:/@RE/%d0%bf',
+            'expect' => '/a/fz/~._-/0129/!x/$6/&rt/\'(abc)/*+/Y,/;=/%123:/@RE/%d0%bf',
         ];
     }
 

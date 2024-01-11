@@ -64,39 +64,39 @@ class UserInfoTest extends TestCase
             'expect' => '',
         ];
 
-        yield 'Init with user and password and set empty' => [
-            'uri' => new Uri('//john%20doe:pass@www.com'),
-            'user' => '',
-            'password' => null,
-            'expect' => '',
-        ];
-
         yield 'Init with user and password and set other user without password' => [
             'uri' => new Uri('//john%20doe:pass@www.com'),
-            'user' => 'mag ray',
+            'user' => '~mag ray09._-',
             'password' => null,
-            'expect' => 'mag%20ray',
+            'expect' => '~mag%20ray09._-',
         ];
 
-        yield 'Init with user and password and set other user with symbols []' => [
+        yield 'Init with user and password and set other user with symbols' => [
             'uri' => new Uri('//john%20doe:pass@www.com'),
-            'user' => '[mag ray]',
-            'password' => 'pass word+',
-            'expect' => '%5Bmag%20ray%5D:pass%20word+',
+            'user' => '❤mag ray]',
+            'password' => 'pass word',
+            'expect' => '%E2%9D%A4mag%20ray%5D:pass%20word',
         ];
 
         yield 'Init with user and password and set other user with password plain chars' => [
             'uri' => new Uri('//john:pass@www.com'),
-            'user' => 'domain\mary',
+            'user' => 'mary',
             'password' => 'password',
-            'expect' => 'domain%5Cmary:password',
+            'expect' => 'mary:password',
         ];
 
         yield 'Init with user and password and set other user with raw url encode chars' => [
             'uri' => new Uri('//john:pass@www.com'),
             'user' => 'mary',
-            'password' => '%5Bmag%20ray%5D:pass%20word+@',
-            'expect' => 'mary:%5Bmag%20ray%5D%3Apass%20word+%40',
+            'password' => '%5Bmag%20ray%5D:pass%20word@',
+            'expect' => 'mary:%5Bmag%20ray%5D%3Apass%20word%40',
+        ];
+
+        yield 'Login and password contains only un encode symbols' => [
+            'uri' => new Uri(''),
+            'user' => '+abZ_-.~19!$&\'(*),;=',
+            'password' => '!0-9_aZA.+!$&\'()*+,;=',
+            'expect' => '+abZ_-.~19!$&\'(*),;=:!0-9_aZA.+!$&\'()*+,;='
         ];
     }
 

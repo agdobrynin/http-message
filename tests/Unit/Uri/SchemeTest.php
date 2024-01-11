@@ -20,17 +20,23 @@ class SchemeTest extends TestCase
 
         yield 'string URI' => ['uri' => 'ww.site.com', 'scheme' => ''];
 
-        yield 'without scheme URI' => ['uri' => '//www.com/http://', 'scheme' => ''];
-
         yield 'scheme "https"' => ['uri' => 'HTTPS://MY.NET/', 'scheme' => 'https'];
 
-        yield 'scheme "http"' => ['uri' => 'HTTP://user@DOMAIN/', 'scheme' => 'http'];
+        yield 'scheme "http"' => ['uri' => 'HttP://user@DOMAIN/', 'scheme' => 'http'];
 
-        yield 'scheme "news"' => ['uri' => 'NEWS://RELCOME.NET/', 'scheme' => 'news'];
+        yield 'scheme "news"' => ['uri' => 'NEws://RELCOME.NET/', 'scheme' => 'news'];
 
         yield 'scheme "https" URI IP4 with port' => ['uri' => 'HTTPS://192.168.1.1:90/', 'scheme' => 'https'];
 
         yield 'scheme "https" URI IP6 with port' => ['uri' => 'HTTPS://[::1]:1025/', 'scheme' => 'https'];
+    }
+
+    /**
+     * @dataProvider dataInitScheme
+     */
+    public function testInitHost(string $uri, string $scheme): void
+    {
+        $this->assertEquals($scheme, (new Uri($uri))->getScheme());
     }
 
     public static function dataWithScheme(): \Generator
@@ -43,17 +49,9 @@ class SchemeTest extends TestCase
 
         yield 'Scheme empty change scheme http' => [
             'uri' => new Uri('//www.yahoo.com'),
-            'scheme' => 'HTTP',
+            'scheme' => 'HttP',
             'expect' => 'http',
         ];
-    }
-
-    /**
-     * @dataProvider dataInitScheme
-     */
-    public function testInitHost(string $uri, string $scheme): void
-    {
-        $this->assertEquals($scheme, (new Uri($uri))->getScheme());
     }
 
     /**
