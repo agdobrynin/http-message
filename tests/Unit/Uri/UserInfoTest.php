@@ -96,7 +96,7 @@ class UserInfoTest extends TestCase
             'uri' => new Uri(''),
             'user' => '+abZ_-.~19!$&\'(*),;=',
             'password' => '!0-9_aZA.+!$&\'()*+,;=',
-            'expect' => '+abZ_-.~19!$&\'(*),;=:!0-9_aZA.+!$&\'()*+,;='
+            'expect' => '+abZ_-.~19!$&\'(*),;=:!0-9_aZA.+!$&\'()*+,;=',
         ];
     }
 
