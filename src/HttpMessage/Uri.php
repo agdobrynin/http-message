@@ -112,8 +112,9 @@ class Uri implements UriInterface
     public function withFragment(string $fragment): UriInterface
     {
         $new = clone $this;
-        // TODO escaping
-        $new->fragment = $fragment;
+        $new->fragment = $fragment
+            ? self::encode(EncodeEnum::query, $fragment)
+            : '';
 
         return $new;
     }
@@ -129,7 +130,7 @@ class Uri implements UriInterface
     public function withPath(string $path): UriInterface
     {
         $new = clone $this;
-        $new->path = '' !== $path
+        $new->path = $path
             ? self::encode(EncodeEnum::path, $path)
             : '';
 
@@ -151,8 +152,9 @@ class Uri implements UriInterface
     public function withQuery(string $query): UriInterface
     {
         $new = clone $this;
-        // TODO escaping
-        $new->query = $query;
+        $new->query = $query
+            ? self::encode(EncodeEnum::query, $query)
+            : '';
 
         return $new;
     }
