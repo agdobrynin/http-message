@@ -200,7 +200,9 @@ class Stream implements StreamInterface
         $contents = @\stream_get_contents($this->resource);
 
         if (false === $contents) {
+            // @codeCoverageIgnoreStart
             $this->exceptionWithLastError('Cannot read stream contents');
+            // @codeCoverageIgnoreEnd
         }
 
         return $contents;

@@ -122,6 +122,18 @@ class StreamTest extends TestCase
         $stream->close();
     }
 
+    public function testSeekNegative(): void
+    {
+        $stream = new Stream('hello');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot search for position');
+
+        $stream->seek(-1);
+
+        $stream->close();
+    }
+
     public function testGetSize(): void
     {
         $size = \filesize(__FILE__);
@@ -221,7 +233,54 @@ class StreamTest extends TestCase
 
     public function testReadableDeny(): void
     {
-        $file = \tmpfile();
-        \var_dump(\fstat($file));
+        $r = \fopen(\tempnam('x', 'streamTest'), 'cb');
+        $stream = new Stream($r);
+        $stream->write('a');
+
+        $this->assertFalse($stream->isReadable());
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Stream is not readable');
+
+        $this->assertFalse($stream->read(1));
+
+        $stream->close();
+    }
+
+    public function testWritableDeny(): void
+    {
+        $r = \fopen(\tempnam('x', 'streamTest'), 'rb');
+        $stream = new Stream($r);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Stream is not writable');
+
+        $stream->write('a');
+
+        $stream->close();
+    }
+
+    public static function dataTellSeekWriteReadIsFalse(): \Generator
+    {
+        yield 'seek' => ['method' => 'seek', 'args' => [1]];
+
+        yield 'write' => ['method' => 'write', 'args' => ['a']];
+
+        yield 'read' => ['method' => 'read', 'args' => [1]];
+    }
+
+    /**
+     * @dataProvider dataTellSeekWriteReadIsFalse
+     */
+    public function testTellSeekWriteReadIsFalse(string $method, array $args = []): void
+    {
+        \stream_wrapper_register('kaspi', TestStream::class);
+        $resource = \fopen('kaspi://', 'wb+');
+
+        $stream = new Stream($resource);
+        $this->expectException(\RuntimeException::class);
+
+        $stream->{$method}(...$args);
+
+        \stream_wrapper_unregister('kaspi');
     }
 }
