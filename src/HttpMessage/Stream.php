@@ -8,83 +8,218 @@ use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface
 {
+    /**
+     * @var resource
+     */
+    protected $resource;
+    protected bool $writable;
+    protected bool $readable;
+    protected bool $seekable;
+
     public function __construct(mixed $body)
     {
-        // TODO: Implement constructor.
+        if (null === $body) {
+            $body = '';
+        }
+
+        if (\is_string($body)) {
+            $resource = \fopen('php://temp', 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
+            \fwrite($resource, $body);
+            \fseek($resource, 0);
+            $body = $resource;
+        }
+
+        if (!\is_resource($body)) {
+            throw new \InvalidArgumentException('Argument must be resource type');
+        }
+
+        $this->resource = $body;
+        $meta = \stream_get_meta_data($this->resource);
+        $this->seekable = ($meta['seekable'] ?? null)
+            && 0 === \fseek($this->resource, 0, \SEEK_CUR);
+        $mode = ($meta['mode'] ?? '');
+        $this->writable = \str_contains($mode, '+') || \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
+        $this->readable = \str_contains($mode, '+') || \str_contains($mode, 'r');
+    }
+
+    public function __destruct()
+    {
+        $this->close();
     }
 
     public function __toString(): string
     {
-        // TODO: Implement __toString() method.
+        if ($this->isSeekable()) {
+            $this->seek(0);
+        }
+
+        return $this->getContents();
     }
 
     public function close(): void
     {
-        // TODO: Implement close() method.
+        if (isset($this->resource)) {
+            if (\is_resource($this->resource)) {
+                \fclose($this->resource);
+            }
+
+            $this->detach();
+        }
     }
 
-    public function detach()
+    /**
+     * @return null|resource
+     */
+    public function detach(): mixed
     {
-        // TODO: Implement detach() method.
+        if (!isset($this->resource)) {
+            return null;
+        }
+
+        $resource = $this->resource;
+        unset($this->resource);
+        $this->writable = false;
+        $this->readable = false;
+        $this->seekable = false;
+
+        return $resource;
     }
 
     public function getSize(): ?int
     {
-        // TODO: Implement getSize() method.
+        if (!isset($this->resource)) {
+            return null;
+        }
+
+        // TODO maybe cache size?
+        if ($uri = $this->getMetadata('uri')) {
+            \clearstatcache(true, $uri);
+        }
+
+        return \fstat($this->resource)['size'] ?? null;
     }
 
     public function tell(): int
     {
-        // TODO: Implement tell() method.
+        if (isset($this->resource) && \is_resource($this->resource)) {
+            if (false !== ($pos = @\ftell($this->resource))) {
+                return $pos;
+            }
+
+            $this->exceptionWithLastError('Cant get pointer position of stream');
+        }
+
+        throw new \RuntimeException('Stream not defined');
     }
 
     public function eof(): bool
     {
-        // TODO: Implement eof() method.
+        return !isset($this->resource) || \feof($this->resource);
     }
 
     public function isSeekable(): bool
     {
-        // TODO: Implement isSeekable() method.
+        return $this->seekable;
     }
 
-    public function seek(int $offset, int $whence = SEEK_SET): void
+    public function seek(int $offset, int $whence = \SEEK_SET): void
     {
-        // TODO: Implement seek() method.
+        if (!isset($this->resource)) {
+            throw new \RuntimeException('Stream not defined');
+        }
+
+        if (!$this->seekable) {
+            throw new \RuntimeException('Stream is not seekable');
+        }
+
+        if (-1 === \fseek($this->resource, $offset, $whence)) {
+            $debugWhence = \var_export($whence, true);
+
+            throw new \RuntimeException("Cannot search for position [{$offset}] in stream with whence [{$debugWhence}]");
+        }
     }
 
     public function rewind(): void
     {
-        // TODO: Implement rewind() method.
+        $this->seek(0);
     }
 
     public function isWritable(): bool
     {
-        // TODO: Implement isWritable() method.
+        return $this->writable;
     }
 
     public function write(string $string): int
     {
-        // TODO: Implement write() method.
+        if (!isset($this->resource)) {
+            throw new \RuntimeException('Stream not defined');
+        }
+
+        if (!$this->writable) {
+            throw new \RuntimeException('Stream is not writable');
+        }
+
+        $bytes = @\fwrite($this->resource, $string);
+
+        if (false === $bytes) {
+            $this->exceptionWithLastError('Cannot write to stream');
+        }
+
+        return $bytes;
     }
 
     public function isReadable(): bool
     {
-        // TODO: Implement isReadable() method.
+        return $this->readable;
     }
 
     public function read(int $length): string
     {
-        // TODO: Implement read() method.
+        if (!isset($this->resource)) {
+            throw new \RuntimeException('Stream not defined');
+        }
+
+        if (!$this->readable) {
+            throw new \RuntimeException('Stream is not readable');
+        }
+
+        $content = @\fread($this->resource, $length);
+
+        if (false === $content) {
+            $this->exceptionWithLastError('Cannot read from stream');
+        }
+
+        return $content;
     }
 
     public function getContents(): string
     {
-        // TODO: Implement getContents() method.
+        if (!isset($this->resource)) {
+            throw new \RuntimeException('Stream not defined');
+        }
+
+        $contents = @\stream_get_contents($this->resource);
+
+        if (false === $contents) {
+            $this->exceptionWithLastError('Cannot read stream contents');
+        }
+
+        return $contents;
     }
 
     public function getMetadata(?string $key = null): mixed
     {
-        // TODO: Implement getMetadata() method.
+        if (isset($this->resource) && \is_resource($this->resource)) {
+            $meta = \stream_get_meta_data($this->resource);
+
+            return null === $key ? $meta : ($meta[$key] ?? null);
+        }
+
+        return null === $key ? [] : null;
+    }
+
+    protected function exceptionWithLastError(string $mainMessage): never
+    {
+        throw new \RuntimeException($mainMessage.': '.(\error_get_last()['message'] ?? ''));
     }
 }
