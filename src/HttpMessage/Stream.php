@@ -103,7 +103,9 @@ class Stream implements StreamInterface
                 return $pos;
             }
 
+            // @codeCoverageIgnoreStart
             $this->exceptionWithLastError('Cant get pointer position of stream');
+            // @codeCoverageIgnoreEnd
         }
 
         throw new \RuntimeException('Stream not defined');
