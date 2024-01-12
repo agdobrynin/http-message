@@ -73,7 +73,7 @@ class Stream implements StreamInterface
         }
 
         $resource = $this->resource;
-        /* @phan-suppress-next-line PhanTypeObjectUnsetDeclaredProperty */
+        // @phan-suppress-next-line PhanTypeObjectUnsetDeclaredProperty
         unset($this->resource);
         $this->writable = false;
         $this->readable = false;
