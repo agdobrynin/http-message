@@ -18,10 +18,6 @@ class Stream implements StreamInterface
 
     public function __construct(mixed $body)
     {
-        if (null === $body) {
-            $body = '';
-        }
-
         if (\is_string($body)) {
             $resource = \fopen('php://temp', 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
             \fwrite($resource, $body);
@@ -30,7 +26,7 @@ class Stream implements StreamInterface
         }
 
         if (!\is_resource($body)) {
-            throw new \InvalidArgumentException('Argument must be resource type');
+            throw new \InvalidArgumentException('Argument must be type "resource" or "string"');
         }
 
         $this->resource = $body;
