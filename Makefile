@@ -9,3 +9,5 @@ stat:
 fix:
 	@docker-compose -f docker-compose.yml run --rm php composer fix
 
+.PHONY: all
+all: fix stat test
