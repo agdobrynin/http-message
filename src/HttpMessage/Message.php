@@ -153,7 +153,14 @@ class Message implements MessageInterface
      *  quoted-string = DQUOTE *( qdtext / quoted-pair ) DQUOTE
      *  qdtext        = HTAB / SP /%x21 / %x23-5B / %x5D-7E / obs-text
      *  obs-text      = %x80-FF
-     *  quoted-pair   = "\" ( HTAB / SP / VCHAR / obs-text )
+     *  quoted-pair   = "\" ( HTAB / SP / VCHAR / obs-text
+     *
+     * Comments can be included in some HTTP header fields by surrounding
+     * the comment text with parentheses.  Comments are only allowed in
+     * fields containing "comment" as part of their field value definition.
+     *
+     * comment        = "(" *( ctext / quoted-pair / comment ) ")"
+     * ctext          = HTAB / SP / %x21-27 / %x2A-5B / %x5D-7E / obs-text
      *
      * @see https://datatracker.ietf.org/doc/html/rfc7230#section-3.2
      * @see https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.6
@@ -175,7 +182,7 @@ class Message implements MessageInterface
 
         foreach ($valuesRaw as $value) {
             if ((!\is_numeric($value) && !\is_string($value))
-                || 1 !== \preg_match('/^[ \t\x21\x23-\x5B\x5D-\x7E\x80-\xFF]*$/', (string) $value)) {
+                || 1 !== \preg_match('/^[ \t\x21-\x7E\x80-\xFF]*$/', (string) $value)) {
                 $val = \var_export($value, true);
 
                 throw new \InvalidArgumentException('Header value must be RFC 7230 compatible. Got: '.$val);

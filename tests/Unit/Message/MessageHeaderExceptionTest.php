@@ -46,15 +46,9 @@ class MessageHeaderExceptionTest extends TestCase
             'message' => 'Header name must be RFC 7230 compatible',
         ];
 
-        yield 'value non valid' => [
+        yield 'value non valid x00' => [
             'name' => 'h',
-            'value' => ['"'],
-            'message' => 'Header value must be RFC 7230 compatible. Got: \'"\'',
-        ];
-
-        yield 'value non valid backslash' => [
-            'name' => 'h',
-            'value' => ['\\'],
+            'value' => [\chr(0)],
             'message' => 'Header value must be RFC 7230 compatible',
         ];
 
