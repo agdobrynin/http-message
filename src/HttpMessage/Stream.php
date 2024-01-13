@@ -34,8 +34,13 @@ class Stream implements StreamInterface
         $this->seekable = ($meta['seekable'] ?? null)
             && 0 === \fseek($this->resource, 0, \SEEK_CUR);
         $mode = ($meta['mode'] ?? '');
-        $this->writable = \str_contains($mode, '+') || \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
-        $this->readable = \str_contains($mode, '+') || \str_contains($mode, 'r');
+
+        if (\str_contains($mode, '+')) {
+            $this->writable = $this->readable = true;
+        } else {
+            $this->writable = \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
+            $this->readable = \str_contains($mode, 'r');
+        }
     }
 
     public function __destruct()
