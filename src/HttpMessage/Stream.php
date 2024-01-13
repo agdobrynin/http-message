@@ -18,28 +18,28 @@ class Stream implements StreamInterface
 
     public function __construct(mixed $body)
     {
-        if (\is_string($body)) {
-            $resource = \fopen('php://temp', 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
-            \fwrite($resource, $body);
-            \fseek($resource, 0);
-            $body = $resource;
-        }
-
-        if (!\is_resource($body)) {
+        if (!\is_string($body) && !\is_resource($body)) {
             throw new \InvalidArgumentException('Argument must be type "resource" or "string"');
         }
 
-        $this->resource = $body;
-        $meta = \stream_get_meta_data($this->resource);
-        $this->seekable = ($meta['seekable'] ?? null)
-            && 0 === \fseek($this->resource, 0, \SEEK_CUR);
-        $mode = ($meta['mode'] ?? '');
-
-        if (\str_contains($mode, '+')) {
-            $this->writable = $this->readable = true;
+        if (\is_string($body)) {
+            $this->resource = \fopen('php://temp', 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
+            \fwrite($this->resource, $body);
+            \fseek($this->resource, 0);
+            $this->writable = $this->readable = $this->seekable = true;
         } else {
-            $this->writable = \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
-            $this->readable = \str_contains($mode, 'r');
+            $this->resource = $body;
+            $meta = \stream_get_meta_data($this->resource);
+            $this->seekable = ($meta['seekable'] ?? null)
+                && 0 === \fseek($this->resource, 0, \SEEK_CUR);
+            $mode = ($meta['mode'] ?? '');
+
+            if (\str_contains($mode, '+')) {
+                $this->writable = $this->readable = true;
+            } else {
+                $this->writable = \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
+                $this->readable = \str_contains($mode, 'r');
+            }
         }
     }
 
