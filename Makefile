@@ -6,3 +6,6 @@ test:
 stat:
 	@docker-compose -f docker-compose.yml run --rm php vendor/bin/phan
 
+fix:
+	@docker-compose -f docker-compose.yml run --rm php composer fix
+
