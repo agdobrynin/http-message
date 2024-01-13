@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  */
 #[CoversClass(Message::class)]
-class MessageTest extends TestCase
+class MessageHeaderExceptionTest extends TestCase
 {
     public static function dataWithHeaderException(): \Generator
     {
@@ -55,19 +55,19 @@ class MessageTest extends TestCase
         yield 'value non valid backslash' => [
             'name' => 'h',
             'value' => ['\\'],
-            'message' => "Header value must be RFC 7230 compatible",
+            'message' => 'Header value must be RFC 7230 compatible',
         ];
 
         yield 'value with ESC symbol' => [
             'name' => 'h',
             'value' => \chr(27),
-            'message' => 'Header value must be RFC 7230 compatible'
+            'message' => 'Header value must be RFC 7230 compatible',
         ];
 
         yield 'value with bell symbol' => [
             'name' => 'h',
             'value' => \chr(07),
-            'message' => 'Header value must be RFC 7230 compatible'
+            'message' => 'Header value must be RFC 7230 compatible',
         ];
     }
 
@@ -82,29 +82,5 @@ class MessageTest extends TestCase
         $this->expectExceptionMessage($message);
 
         $m->withHeader($name, $value);
-    }
-
-    public function testProtocolVersion(): void
-    {
-        $this->assertEquals('1.1', (new Message())->getProtocolVersion());
-    }
-
-    public function testWithProtocolVersion(): void
-    {
-        $m = new Message();
-        $n = $m->withProtocolVersion('1.2');
-
-        $this->assertEquals('1.2', $n->getProtocolVersion());
-        $this->assertEquals('1.1', $m->getProtocolVersion());
-        $this->assertNotSame($m, $n);
-    }
-
-    public function testWithProtocolVersionException(): void
-    {
-        $m = new Message();
-
-        $this->expectException(\InvalidArgumentException::class);
-
-        $m->withProtocolVersion('1');
     }
 }
