@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Message;
+namespace Tests\Kaspi\HttpMessage\Unit\Message;
 
 use Kaspi\HttpMessage\Message;
 use PHPUnit\Framework\Attributes\CoversClass;
