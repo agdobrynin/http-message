@@ -83,4 +83,28 @@ class MessageTest extends TestCase
 
         $m->withHeader($name, $value);
     }
+
+    public function testProtocolVersion(): void
+    {
+        $this->assertEquals('1.1', (new Message())->getProtocolVersion());
+    }
+
+    public function testWithProtocolVersion(): void
+    {
+        $m = new Message();
+        $n = $m->withProtocolVersion('1.2');
+
+        $this->assertEquals('1.2', $n->getProtocolVersion());
+        $this->assertEquals('1.1', $m->getProtocolVersion());
+        $this->assertNotSame($m, $n);
+    }
+
+    public function testWithProtocolVersionException(): void
+    {
+        $m = new Message();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $m->withProtocolVersion('1');
+    }
 }
