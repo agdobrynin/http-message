@@ -141,6 +141,8 @@ class StreamTest extends TestCase
 
         $stream = new Stream($handle);
         $this->assertEquals($size, $stream->getSize());
+        // read again size from cached value.
+        $this->assertEquals($size, $stream->getSize());
 
         $stream->close();
     }
