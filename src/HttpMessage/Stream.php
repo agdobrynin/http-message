@@ -97,7 +97,7 @@ class Stream implements StreamInterface
             return null;
         }
 
-        if ($this->size) {
+        if (null !== $this->size) {
             return $this->size;
         }
 
@@ -105,7 +105,7 @@ class Stream implements StreamInterface
             \clearstatcache(true, $this->uri);
         }
 
-        return \fstat($this->resource)['size'] ?? null;
+        return $this->size = (\fstat($this->resource)['size'] ?? null);
     }
 
     public function tell(): int
@@ -170,7 +170,7 @@ class Stream implements StreamInterface
             throw new \RuntimeException('Stream is not writable');
         }
 
-        $this->size = null; // unset size of stream.
+        $this->size = null; // Nullable for size of stream (calc it later)
         $bytes = @\fwrite($this->resource, $string);
 
         if (false === $bytes) {
