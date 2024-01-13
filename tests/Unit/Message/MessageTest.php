@@ -45,6 +45,30 @@ class MessageTest extends TestCase
             'value' => ['ok'],
             'message' => 'Header name must be RFC 7230 compatible',
         ];
+
+        yield 'value non valid' => [
+            'name' => 'h',
+            'value' => ['"'],
+            'message' => 'Header value must be RFC 7230 compatible. Got: \'"\'',
+        ];
+
+        yield 'value non valid backslash' => [
+            'name' => 'h',
+            'value' => ['\\'],
+            'message' => "Header value must be RFC 7230 compatible",
+        ];
+
+        yield 'value with ESC symbol' => [
+            'name' => 'h',
+            'value' => \chr(27),
+            'message' => 'Header value must be RFC 7230 compatible'
+        ];
+
+        yield 'value with bell symbol' => [
+            'name' => 'h',
+            'value' => \chr(07),
+            'message' => 'Header value must be RFC 7230 compatible'
+        ];
     }
 
     /**
