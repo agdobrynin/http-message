@@ -30,7 +30,7 @@ class TestStream
 
     public function stream_seek(int $offset, int $whence)
     {
-        return -1;
+        return false;
     }
 
     public function stream_set_option(): bool
@@ -57,7 +57,7 @@ class TestStream
 
     public function stream_truncate()
     {
-        return true;
+        return false;
     }
 
     public function stream_write(string $data)
