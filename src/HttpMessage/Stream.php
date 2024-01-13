@@ -15,6 +15,8 @@ class Stream implements StreamInterface
     protected bool $writable;
     protected bool $readable;
     protected bool $seekable;
+    protected ?int $size = null;
+    protected ?string $uri = null;
 
     public function __construct(mixed $body)
     {
@@ -23,13 +25,16 @@ class Stream implements StreamInterface
         }
 
         if (\is_string($body)) {
-            $this->resource = \fopen('php://temp', 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
+            $this->uri = 'php://temp';
+            $this->resource = \fopen($this->uri, 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
             \fwrite($this->resource, $body);
             \fseek($this->resource, 0);
+            $this->size = \strlen($body);
             $this->writable = $this->readable = $this->seekable = true;
         } else {
             $this->resource = $body;
             $meta = \stream_get_meta_data($this->resource);
+            $this->uri = $meta['uri'] ?? null;
             $this->seekable = ($meta['seekable'] ?? null)
                 && 0 === \fseek($this->resource, 0, \SEEK_CUR);
             $mode = ($meta['mode'] ?? '');
@@ -80,9 +85,8 @@ class Stream implements StreamInterface
         $resource = $this->resource;
         // @phan-suppress-next-line PhanTypeObjectUnsetDeclaredProperty
         unset($this->resource);
-        $this->writable = false;
-        $this->readable = false;
-        $this->seekable = false;
+        $this->writable = $this->readable = $this->seekable = false;
+        $this->uri = $this->size = null;
 
         return $resource;
     }
@@ -93,9 +97,12 @@ class Stream implements StreamInterface
             return null;
         }
 
-        // TODO maybe cache size?
-        if ($uri = $this->getMetadata('uri')) {
-            \clearstatcache(true, $uri);
+        if ($this->size) {
+            return $this->size;
+        }
+
+        if ($this->uri) {
+            \clearstatcache(true, $this->uri);
         }
 
         return \fstat($this->resource)['size'] ?? null;
@@ -163,6 +170,7 @@ class Stream implements StreamInterface
             throw new \RuntimeException('Stream is not writable');
         }
 
+        $this->size = null; // unset size of stream.
         $bytes = @\fwrite($this->resource, $string);
 
         if (false === $bytes) {
