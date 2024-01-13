@@ -68,11 +68,11 @@ class Message implements MessageInterface
     {
         $normalizedName = \strtolower($name);
         $hasHeader = $this->hasHeader($normalizedName);
-        $value = $this->validateRFC7230AndTrim($name, $value);
+        $value = $this->validateRFC7230AndTrim($normalizedName, $value);
         $new = clone $this;
 
         if ($hasHeader) {
-            unset($this->headers[$normalizedName]);
+            unset($new->headers[$normalizedName]);
         }
 
         $new->headers[$normalizedName] = $value;
@@ -87,7 +87,7 @@ class Message implements MessageInterface
     {
         $normalizedName = \strtolower($name);
         $hasHeader = $this->hasHeader($normalizedName);
-        $value = $this->validateRFC7230AndTrim($name, $value);
+        $value = $this->validateRFC7230AndTrim($normalizedName, $value);
 
         $new = clone $this;
 
