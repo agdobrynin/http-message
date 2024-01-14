@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Kaspi\HttpMessage\Unit\Stream;
+namespace Tests\Feature\Stream;
 
 class TestStream
 {
     public $context;
-
-    private $data;
 
     public function stream_eof()
     {
@@ -17,9 +15,6 @@ class TestStream
 
     public function stream_open()
     {
-        $this->data = \stream_context_get_options($this->context)['kaspi']['data'];
-        \stream_context_set_option($this->context, 'kaspi', 'data', null);
-
         return true;
     }
 

@@ -1,13 +1,13 @@
 # HTTP message PSR-7 implementation
 
 ## Тесты
-Прогнать тесты без подсчета покрытия кода
+Прогнать тесты без отчёта покрытия кода в html
 ```shell
 composer test
 ```
-Запуск тестов с проверкой покрытия кода тестами
+Запуск тестов с проверкой покрытия кода тестами отчётом в html формате
 ```shell
-./vendor/bin/phpunit
+./vendor/bin/pest
 ```
 
 ## Статический анализ кода
@@ -41,9 +41,9 @@ docker-compose build
 ```shell
 docker-compose run --rm php composer install
 ```
-Прогнать тесты с отчетом о покрытии кода
+Прогнать тесты с отчетом о покрытии кода и отчётом в html формате
 ```shell
-docker-compose run --rm php vendor/bin/phpunit
+docker-compose run --rm php vendor/bin/pest --compact
 ```
 ⛑ pезультаты будут в папке `.coverage-html`
 
@@ -56,4 +56,21 @@ docker-compose run --rm php vendor/bin/phan
 Можно работать в shell оболочке в docker контейнере:
 ```shell
 docker-compose run --rm php sh
+```
+###### Использование Makefile команд.
+Проверить и исправить code style:
+```shell
+make fix
+```
+Запустить статический анализатор кода:
+```shell
+make stat
+```
+Запустить тесты:
+```shell
+make test
+```
+Запустить все стадии проверок:
+```shell
+make all
 ```

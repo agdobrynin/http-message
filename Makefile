@@ -1,7 +1,7 @@
 SHELL := /bin/sh
 
 test:
-	@docker-compose -f docker-compose.yml run --rm php vendor/bin/phpunit
+	@docker-compose -f docker-compose.yml run --rm php vendor/bin/pest --compact
 
 stat:
 	@docker-compose -f docker-compose.yml run --rm php vendor/bin/phan
