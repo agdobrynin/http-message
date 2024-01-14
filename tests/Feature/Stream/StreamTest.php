@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Kaspi\HttpMessage\Stream;
 use Tests\Feature\Stream\TestStream;
 
-\describe('Stream class', function () {
+\describe('Tests for '.Stream::class, function () {
     \it('Destructor unset related resource', function () {
         $handle = \fopen('php://temp', 'r');
         $stream = (new Stream($handle));
@@ -202,44 +202,57 @@ use Tests\Feature\Stream\TestStream;
         ])
     ;
 
-    \it('Stream is non readable', function () {
-        $stream = new Stream(
-            \fopen(\tempnam('x', 'streamTest'), 'cb')
-        );
-        $stream->write('a');
+    \describe('Stream is non readable, non writable', function () {
+        \beforeEach(function () {
+            $this->tmpFile = \stream_get_meta_data(\tmpfile())['uri'];
+            \touch($this->tmpFile);
+        });
 
-        \expect($stream->isReadable())->toBeFalse();
-        $stream->read(1);
+        \afterEach(function () {
+            @\unlink($this->tmpFile);
+        });
 
-        $stream->close();
-    })->throws(RuntimeException::class, 'Stream is not readable');
+        \it('Stream is non readable', function () {
+            $stream = new Stream(
+                \fopen($this->tmpFile, 'cb')
+            );
+            $stream->write('a');
 
-    \it('Stream is nin writable', function () {
-        $stream = new Stream(
-            \fopen(\tempnam('x', 'streamTest'), 'rb')
-        );
-        $stream->write('a');
-        $stream->close();
-    })->throws(RuntimeException::class, 'Stream is not writable');
+            \expect($stream->isReadable())->toBeFalse();
+            $stream->read(1);
 
-    \it('Stream is non seekable, non writable, non readable', function (string $method, array $args = []) {
-        if (\in_array('kaspi', \stream_get_wrappers())) {
-            \stream_wrapper_unregister('kaspi');
-        }
+            $stream->close();
+        })->throws(RuntimeException::class, 'Stream is not readable');
 
-        \stream_wrapper_register('kaspi', TestStream::class);
-        $resource = \fopen('kaspi://', 'wb+');
+        \it('Stream is non writable', function () {
+            $stream = new Stream(
+                \fopen($this->tmpFile, 'rb')
+            );
+            $stream->write('a');
 
-        $stream = new Stream($resource);
-        $stream->{$method}(...$args);
-    })
-        ->throws(RuntimeException::class)
-        ->with([
-            'seek' => ['method' => 'seek', 'args' => [1]],
-            'write' => ['method' => 'write', 'args' => ['a']],
-            'read' => ['method' => 'read', 'args' => [1]],
-        ])
-    ;
+            $stream->close();
+        })->throws(RuntimeException::class, 'Stream is not writable');
+    });
+
+    \describe('Custom protocol for Stram', function () {
+        \beforeEach(fn () => \stream_wrapper_register('kaspi', TestStream::class));
+
+        \afterEach(fn () => \stream_wrapper_unregister('kaspi'));
+
+        \it('Stream kaspi://', function (string $method, array $args = []) {
+            $resource = \fopen('kaspi://', 'wb+');
+
+            $stream = new Stream($resource);
+            $stream->{$method}(...$args);
+        })
+            ->throws(RuntimeException::class)
+            ->with([
+                'non seekable' => ['method' => 'seek', 'args' => [1]],
+                'non writable' => ['method' => 'write', 'args' => ['a']],
+                'non readable' => ['method' => 'read', 'args' => [1]],
+            ])
+        ;
+    });
 })
     ->covers(Stream::class)
 ;
