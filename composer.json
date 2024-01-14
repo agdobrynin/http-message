@@ -16,7 +16,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\Kaspi\\HttpMessage\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "authors": [
@@ -41,7 +41,12 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.46",
-        "phpunit/phpunit": "^10.5",
-        "phan/phan": "^5.4"
+        "phan/phan": "^5.4",
+        "pestphp/pest": "^2.31"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
