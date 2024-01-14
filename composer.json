@@ -29,13 +29,13 @@
     "minimum-stability": "stable",
     "scripts": {
         "fixer" : "./vendor/bin/php-cs-fixer fix",
-        "test" : "./vendor/bin/pest --testdox --no-coverage",
+        "test" : "./vendor/bin/pest --compact --coverage",
         "phan" : "./vendor/bin/phan",
         "phan-poly" : "./vendor/bin/phan --allow-polyfill-parser"
     },
     "scripts-descriptions": {
         "fixer": "Run PHP Coding Standards Fixer",
-        "test" : "Run Pest without coverage",
+        "test" : "Run Pest",
         "phan" : "Run static analizer with AST extention",
         "phan-poly" : "Run static analizer with with polyfill parser (without AST extention)"
     },
