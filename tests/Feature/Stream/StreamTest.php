@@ -213,9 +213,7 @@ use Tests\Feature\Stream\TestStream;
         });
 
         \it('Stream is non readable', function () {
-            $stream = new Stream(
-                \fopen($this->tmpFile, 'cb')
-            );
+            $stream = new Stream(\fopen($this->tmpFile, 'cb'));
             $stream->write('a');
 
             \expect($stream->isReadable())->toBeFalse();
@@ -225,9 +223,7 @@ use Tests\Feature\Stream\TestStream;
         })->throws(RuntimeException::class, 'Stream is not readable');
 
         \it('Stream is non writable', function () {
-            $stream = new Stream(
-                \fopen($this->tmpFile, 'rb')
-            );
+            $stream = new Stream(\fopen($this->tmpFile, 'rb'));
             $stream->write('a');
 
             $stream->close();
