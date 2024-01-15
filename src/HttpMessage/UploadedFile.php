@@ -36,13 +36,13 @@ class UploadedFile implements UploadedFileInterface
     private bool $moved = false;
 
     /**
-     * @param StreamInterface|string $fileOrStream    file with path or StreamInterface of uploaded file
+     * @param StreamInterface|string $streamOrFile    file with path or StreamInterface of uploaded file
      * @param ?int                   $size            uploaded file size
      * @param null|string            $originFileName  the value stored in the "name" key of the file in the $_FILES array
      * @param null|string            $originMediaType the value stored in the "type" key of the file in the $_FILES array
      */
     public function __construct(
-        StreamInterface|string $fileOrStream,
+        StreamInterface|string $streamOrFile,
         private readonly int $error,
         private readonly ?int $size = null,
         private readonly ?string $originFileName = null,
@@ -52,11 +52,11 @@ class UploadedFile implements UploadedFileInterface
             throw new \InvalidArgumentException('Invalid upload file error. Got: '.$this->error);
         }
 
-        if (\UPLOAD_ERR_OK === $this->error) {
-            if ($fileOrStream instanceof StreamInterface) {
-                $this->stream = $fileOrStream;
-            } elseif ('' !== $fileOrStream) {
-                $this->file = $fileOrStream;
+        if ($this->isOk()) {
+            if ($streamOrFile instanceof StreamInterface) {
+                $this->stream = $streamOrFile;
+            } elseif ('' !== $streamOrFile) {
+                $this->file = $streamOrFile;
             } else {
                 throw new \InvalidArgumentException(
                     'Invalid parameter. "fileOrStream" must provide non-empty string or '.StreamInterface::class
@@ -73,15 +73,9 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        $resource = @\fopen($this->file, 'rb');
-
-        if (false === $resource) {
-            $error = \error_get_last()['message'] ?? '';
-
-            throw new \RuntimeException("Cannot open file {$this->file}  [{$error}]");
-        }
-
-        return new Stream($resource);
+        return ($r = @\fopen($this->file, 'rb'))
+            ? new Stream($r)
+            : throw new \RuntimeException("Cannot open file {$this->file} [".\error_get_last()['message'] ?? ']');
     }
 
     public function moveTo(string $targetPath): void
@@ -103,15 +97,9 @@ class UploadedFile implements UploadedFileInterface
                 throw new \RuntimeException("Cannot move uploaded file to {$targetPath} [{$error}]");
             }
         } else {
-            $resourceDest = @\fopen($targetPath, 'wb');
-
-            if (false === $resourceDest) {
-                $message = \error_get_last()['message'] ?? '';
-
-                throw new \RuntimeException("Cannot open target file {$targetPath} [{$message}]");
-            }
-
-            $dest = new Stream($resourceDest);
+            $dest = ($r = @\fopen($targetPath, 'wb'))
+                ? new Stream($r)
+                : throw new \RuntimeException("Cannot open target file {$targetPath} [".\error_get_last()['message'] ?? ']');
 
             $from = $this->getStream();
 
@@ -149,10 +137,15 @@ class UploadedFile implements UploadedFileInterface
         return $this->originMediaType;
     }
 
+    private function isOk(): bool
+    {
+        return \UPLOAD_ERR_OK === $this->error;
+    }
+
     private function isAvailable(): void
     {
-        if (\UPLOAD_ERR_OK !== $this->error) {
-            throw new \RuntimeException('Upload file has error code: '.$this->error);
+        if (!$this->isOk()) {
+            throw new \RuntimeException('Uploaded file has error code: '.$this->error);
         }
 
         if ($this->moved) {
