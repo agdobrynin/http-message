@@ -152,7 +152,7 @@ class UploadedFile implements UploadedFileInterface
     private function isAvailable(): void
     {
         if (\UPLOAD_ERR_OK !== $this->error) {
-            throw new \RuntimeException('Upload file has error :'.$this->error);
+            throw new \RuntimeException('Upload file has error: '.$this->error);
         }
 
         if ($this->moved) {
