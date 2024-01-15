@@ -111,13 +111,9 @@ class Stream implements StreamInterface
     public function tell(): int
     {
         if (isset($this->resource) && \is_resource($this->resource)) {
-            if (false !== ($pos = @\ftell($this->resource))) {
-                return $pos;
-            }
-
-            // @codeCoverageIgnoreStart
-            $this->exceptionWithLastError('Cant get pointer position of stream');
-            // @codeCoverageIgnoreEnd
+            return ($pos = @\ftell($this->resource)) !== false
+                ? $pos
+                : throw new \RuntimeException('Cant get pointer position of stream: '.(\error_get_last()['message'] ?? ''));
         }
 
         throw new \RuntimeException('Stream not defined');
@@ -171,13 +167,10 @@ class Stream implements StreamInterface
         }
 
         $this->size = null; // Nullable for size of stream (calc it later)
-        $bytes = @\fwrite($this->resource, $string);
 
-        if (false === $bytes) {
-            $this->exceptionWithLastError('Cannot write to stream');
-        }
-
-        return $bytes;
+        return ($bytes = @\fwrite($this->resource, $string)) !== false
+            ? $bytes
+            : throw new \RuntimeException('Cannot write to stream: '.(\error_get_last()['message'] ?? ''));
     }
 
     public function isReadable(): bool
@@ -195,13 +188,9 @@ class Stream implements StreamInterface
             throw new \RuntimeException('Stream is not readable');
         }
 
-        $content = @\fread($this->resource, $length);
-
-        if (false === $content) {
-            $this->exceptionWithLastError('Cannot read from stream');
-        }
-
-        return $content;
+        return ($content = @\fread($this->resource, $length)) !== false
+            ? $content
+            : throw new \RuntimeException('Cannot read from stream: '.(\error_get_last()['message'] ?? ''));
     }
 
     public function getContents(): string
@@ -210,15 +199,9 @@ class Stream implements StreamInterface
             throw new \RuntimeException('Stream not defined');
         }
 
-        $contents = @\stream_get_contents($this->resource);
-
-        if (false === $contents) {
-            // @codeCoverageIgnoreStart
-            $this->exceptionWithLastError('Cannot read stream contents');
-            // @codeCoverageIgnoreEnd
-        }
-
-        return $contents;
+        return ($contents = @\stream_get_contents($this->resource)) !== false
+            ? $contents
+            : throw new \RuntimeException('Cannot read stream contents: '.(\error_get_last()['message'] ?? ''));
     }
 
     public function getMetadata(?string $key = null): mixed
@@ -230,10 +213,5 @@ class Stream implements StreamInterface
         }
 
         return null === $key ? [] : null;
-    }
-
-    protected function exceptionWithLastError(string $mainMessage): never
-    {
-        throw new \RuntimeException($mainMessage.': '.(\error_get_last()['message'] ?? ''));
     }
 }
