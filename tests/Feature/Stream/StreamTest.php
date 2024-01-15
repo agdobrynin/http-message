@@ -110,7 +110,7 @@ use Tests\Feature\Stream\TestStream;
         $stream = new Stream('hello');
         $stream->seek(-1);
         $stream->close();
-    })->throws(\RuntimeException::class, 'Cannot search for position');
+    })->throws(RuntimeException::class, 'Cannot search for position');
 
     \it('Stream method getSize', function () {
         $size = \filesize(__FILE__);

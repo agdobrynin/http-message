@@ -10,25 +10,25 @@ use Psr\Http\Message\UploadedFileInterface;
 class UploadedFile implements UploadedFileInterface
 {
     private const UPLOAD_ERR = [
-        \UPLOAD_ERR_OK,
-        \UPLOAD_ERR_INI_SIZE,
-        \UPLOAD_ERR_FORM_SIZE,
-        \UPLOAD_ERR_PARTIAL,
-        \UPLOAD_ERR_NO_FILE,
-        \UPLOAD_ERR_NO_TMP_DIR,
-        \UPLOAD_ERR_CANT_WRITE,
-        \UPLOAD_ERR_EXTENSION,
+        \UPLOAD_ERR_OK => 1,
+        \UPLOAD_ERR_INI_SIZE => 1,
+        \UPLOAD_ERR_FORM_SIZE => 1,
+        \UPLOAD_ERR_PARTIAL => 1,
+        \UPLOAD_ERR_NO_FILE => 1,
+        \UPLOAD_ERR_NO_TMP_DIR => 1,
+        \UPLOAD_ERR_CANT_WRITE => 1,
+        \UPLOAD_ERR_EXTENSION => 1,
     ];
 
     /**
      * File with full path.
      */
-    private ?string $file;
+    private ?string $file = null;
 
     /**
      * Stream of file.
      */
-    private ?StreamInterface $stream;
+    private ?StreamInterface $stream = null;
 
     /**
      * True then the file was successfully moved using UploadedFile::moveTo.
@@ -73,7 +73,7 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        return ($r = @\fopen($this->file, 'rb'))
+        return ($r = @\fopen($this->file, 'rb')) !== false
             ? new Stream($r)
             : throw new \RuntimeException("Cannot open file {$this->file} [".\error_get_last()['message'] ?? ']');
     }
@@ -97,7 +97,7 @@ class UploadedFile implements UploadedFileInterface
                 throw new \RuntimeException("Cannot move uploaded file to {$targetPath} [{$error}]");
             }
         } else {
-            $dest = ($r = @\fopen($targetPath, 'wb'))
+            $dest = ($r = @\fopen($targetPath, 'wb')) !== false
                 ? new Stream($r)
                 : throw new \RuntimeException("Cannot open target file {$targetPath} [".\error_get_last()['message'] ?? ']');
 
