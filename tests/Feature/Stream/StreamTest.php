@@ -189,8 +189,6 @@ use Tests\Feature\Stream\TestStream;
 
         $this->expectException(RuntimeException::class);
         $stream->{$method}(...$args);
-
-        $stream->close();
     })
         ->throws(RuntimeException::class)
         ->with([
@@ -218,15 +216,11 @@ use Tests\Feature\Stream\TestStream;
 
             \expect($stream->isReadable())->toBeFalse();
             $stream->read(1);
-
-            $stream->close();
         })->throws(RuntimeException::class, 'Stream is not readable');
 
         \it('Stream is non writable', function () {
             $stream = new Stream(\fopen($this->tmpFile, 'rb'));
             $stream->write('a');
-
-            $stream->close();
         })->throws(RuntimeException::class, 'Stream is not writable');
     });
 
