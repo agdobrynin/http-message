@@ -108,14 +108,9 @@ use Tests\Feature\Stream\TestStream;
 
     \it('Seek as negative value', function () {
         $stream = new Stream('hello');
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot search for position');
-
         $stream->seek(-1);
-
         $stream->close();
-    });
+    })->throws(\RuntimeException::class, 'Cannot search for position');
 
     \it('Stream method getSize', function () {
         $size = \filesize(__FILE__);
@@ -186,8 +181,6 @@ use Tests\Feature\Stream\TestStream;
 
     \it('Stream undefined and has exception', function (Stream $stream, string $method, array $args = []) {
         $stream->close();
-
-        $this->expectException(RuntimeException::class);
         $stream->{$method}(...$args);
     })
         ->throws(RuntimeException::class)
