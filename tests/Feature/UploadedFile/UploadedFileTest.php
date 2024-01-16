@@ -240,7 +240,7 @@ use Psr\Http\Message\UploadedFileInterface;
                 ->moveTo($dir->url().'/file.txt')
             ;
         })
-            ->throws(RuntimeException::class)
+            ->throws(RuntimeException::class, 'Write 0 bytes to target stream')
         ;
     });
 })
