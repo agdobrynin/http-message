@@ -234,7 +234,7 @@ use Psr\Http\Message\UploadedFileInterface;
             $file = vfsStream::newFile('uploaded_file.tmp')
                 ->withContent(LargeFileContent::withKilobytes(2))->at($root)
             ;
-            vfsStream::setQuota(1000);
+            vfsStream::setQuota(4000);
 
             (new UploadedFile(new Stream(\fopen($file->url(), 'rb')), \UPLOAD_ERR_OK))
                 ->moveTo($dir->url().'/file.txt')
