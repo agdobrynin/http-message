@@ -60,9 +60,12 @@ use Psr\Http\Message\UploadedFileInterface;
         });
 
         \it('from non exist file', function () {
-            \set_error_handler(static fn () => null, \E_ERROR | \E_STRICT);
-            (new UploadedFile('/tmp/x.jpg', \UPLOAD_ERR_OK))->getStream();
-            \restore_error_handler();
+            $uploadedFile = new UploadedFile('/tmp/x.jpg', \UPLOAD_ERR_OK);
+            \Tests\skipErrorWithStr(
+                fn () => $uploadedFile->getStream(),
+                \E_WARNING,
+                'fopen'
+            );
         })
             ->throws(RuntimeException::class, 'Cannot open file /tmp/x.jpg')
         ;
@@ -119,4 +122,5 @@ use Psr\Http\Message\UploadedFileInterface;
         ;
     });
 })
-    ->covers(UploadedFile::class);
+    ->covers(UploadedFile::class)
+;
