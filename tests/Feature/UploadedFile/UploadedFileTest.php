@@ -136,14 +136,16 @@ use Psr\Http\Message\UploadedFileInterface;
         ;
 
         \it('target folder with permission deny', function () {
-            $root = vfsStream::setup();
-            $file = vfsStream::newFile('tmpAbc')->at($root);
-            $dir = vfsStream::newDirectory('store', 0400)->at($root);
+            $root = vfsStream::setup(structure: [
+                'tmpAbc' => 'aaaa',
+                'store' => [],
+            ]);
+            $root->getChild('store')->chmod(0400);
 
             \set_error_handler(static fn () => false);
 
-            (new UploadedFile($file->url(), \UPLOAD_ERR_OK))
-                ->moveTo($dir->url().'/file.txt')
+            (new UploadedFile($root->getChild('tmpAbc')->url(), \UPLOAD_ERR_OK))
+                ->moveTo($root->getChild('store')->url().'/file.txt')
             ;
         })
             ->throws(RuntimeException::class, 'Permission denied')
@@ -163,23 +165,21 @@ use Psr\Http\Message\UploadedFileInterface;
         ;
 
         \it('uploaded file moved success and try move file again', function () {
-            $root = vfsStream::setup();
-            $dir = vfsStream::newDirectory('store')->at($root);
-            $file = vfsStream::newFile('randname')->withContent('hello world')->at($root);
-
-            \expect($file->getContent())->toBe('hello world');
-
+            $root = vfsStream::setup(structure: [
+                'uploaded.file' => 'hello world',
+                'store' => [],
+            ]);
             \set_error_handler(static fn () => false);
 
-            $uploadedFiles = new UploadedFile($file->url(), \UPLOAD_ERR_OK);
-            $uploadedFiles->moveTo($dir->url().'/file.txt');
+            $uploadedFiles = new UploadedFile($root->getChild('uploaded.file')->url(), \UPLOAD_ERR_OK);
+            $uploadedFiles->moveTo($root->getChild('store')->url().'/file.txt');
 
             \expect($root->hasChild('store/file.txt'))->toBeTrue()
                 ->and($root->getChild('store/file.txt')?->getContent())->toBe('hello world')
             ;
 
             // ⛔ moved file try move again will be fire exception
-            $uploadedFiles->moveTo($dir->url().'/file.txt');
+            $uploadedFiles->moveTo($root->getChild('store')->url().'/file.txt');
         })
             ->throws(RuntimeException::class, 'The uploaded file has already been moved')
         ;
