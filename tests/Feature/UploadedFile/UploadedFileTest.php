@@ -61,11 +61,8 @@ use Psr\Http\Message\UploadedFileInterface;
 
         \it('from non exist file', function () {
             $uploadedFile = new UploadedFile('/tmp/x.jpg', \UPLOAD_ERR_OK);
-            \Tests\skipErrorWithStr(
-                fn () => $uploadedFile->getStream(),
-                \E_WARNING,
-                'fopen'
-            );
+            \set_error_handler(static fn () => false);
+            $uploadedFile->getStream();
         })
             ->throws(RuntimeException::class, 'Cannot open file /tmp/x.jpg')
         ;
