@@ -9,5 +9,8 @@ stat:
 fix:
 	@docker-compose -f docker-compose.yml run --rm php composer fix
 
+install:
+	@docker-compose -f docker-compose.yml run --rm php composer i
+
 .PHONY: all
 all: fix stat test
