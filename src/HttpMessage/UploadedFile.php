@@ -90,12 +90,14 @@ class UploadedFile implements UploadedFileInterface
         if ($this->file) {
             $this->moved = 'cli' === \PHP_SAPI
                 ? @\rename($this->file, $targetPath)
+            // @codeCoverageIgnoreStart
                 : @\move_uploaded_file($this->file, $targetPath);
+            // @codeCoverageIgnoreEnd
 
             if (!$this->moved) {
-                $error = \error_get_last()['message'] ?? '';
-
-                throw new \RuntimeException("Cannot move uploaded file to {$targetPath} [{$error}]");
+                throw new \RuntimeException(
+                    "Cannot move uploaded file {$this->file} to {$targetPath} [".(\error_get_last()['message'] ?? '').']'
+                );
             }
         } else {
             $dest = ($r = @\fopen($targetPath, 'wb')) !== false
@@ -109,9 +111,13 @@ class UploadedFile implements UploadedFileInterface
             }
 
             while (!$from->eof()) {
-                if (!$dest->write($from->read(1048576))) {
-                    break;
-                }
+                $dest->write($from->read(1048576));
+            }
+
+            if (($fromSize = $from->getSize()) !== ($destSize = $dest->getSize())) {
+                throw new \RuntimeException(
+                    "Write {$destSize} bytes to target stream {$dest->getMetadata('uri')} from stream {$from->getMetadata('uri')} with sizeof {$fromSize} beys"
+                );
             }
 
             $this->moved = true;
