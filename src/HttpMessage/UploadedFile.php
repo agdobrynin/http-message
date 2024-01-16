@@ -117,7 +117,7 @@ class UploadedFile implements UploadedFileInterface
 
             if (($fromSize = $from->getSize()) !== ($destSize = $dest->getSize())) {
                 throw new \RuntimeException(
-                    "Partially written {$destSize} bytes to stream {$dest->getMetadata('uri')} from stream /{$from->getMetadata('uri')} of {$fromSize} bytes in size"
+                    "Partially written {$destSize} bytes to stream {$dest->getMetadata('uri')} from stream {$from->getMetadata('uri')} of {$fromSize} bytes in size"
                 );
             }
 
