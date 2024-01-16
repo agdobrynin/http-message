@@ -110,7 +110,9 @@ class UploadedFile implements UploadedFileInterface
             }
 
             while (!$from->eof()) {
-                $dest->write($from->read(1048576));
+                if (!$dest->write($from->read(1048576))) {
+                    break;
+                }
             }
 
             if (($fromSize = $from->getSize()) !== ($destSize = $dest->getSize())) {
