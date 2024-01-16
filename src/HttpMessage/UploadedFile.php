@@ -9,7 +9,6 @@ use Psr\Http\Message\UploadedFileInterface;
 
 class UploadedFile implements UploadedFileInterface
 {
-    // TODO add error description
     private const UPLOAD_ERR = [
         \UPLOAD_ERR_OK => 1,
         \UPLOAD_ERR_INI_SIZE => 1,
@@ -152,7 +151,6 @@ class UploadedFile implements UploadedFileInterface
     private function isAvailable(): void
     {
         if (!$this->isOk()) {
-            // TODO use description from self::UPLOAD_ERR
             throw new \RuntimeException('Uploaded file has error code: '.$this->error);
         }
 
