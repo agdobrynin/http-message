@@ -122,8 +122,8 @@ class Message implements MessageInterface
     {
         foreach ($headers as $name => $value) {
             /*
-             * A key may be either an integer or a string.
-             * For string such as "1", "2" ... php casting array key as integer
+             * A array key may be either an integer or a string.
+             * For string such as "1", "2" (numeric) php casting array key as integer
              * @see https://www.php.net/manual/en/language.types.array.php
              */
             if (\is_int($name)) {
