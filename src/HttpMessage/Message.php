@@ -124,14 +124,14 @@ class Message implements MessageInterface
         return $new;
     }
 
-    private function getHeaderByName(string $name): null|int|string
+    private function getHeaderByName(string $name): ?string
     {
         if ('' === $name) {
             throw new \InvalidArgumentException('Header name is empty string');
         }
 
         return ($h = \preg_grep('/^'.\preg_quote($name, '').'$/i', \array_keys($this->headers)))
-            ? \current($h)
+            ? (string) \current($h)
             : null;
     }
 
