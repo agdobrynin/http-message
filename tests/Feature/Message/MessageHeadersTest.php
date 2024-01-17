@@ -60,7 +60,7 @@ use Kaspi\HttpMessage\Message;
 
     \it('method withAddedHeader', function () {
         $message = (new Message())->withHeader('Bar', 'Baz');
-        $newMessage = $message->withAddedHeader('Bar', 'Foo');
+        $newMessage = $message->withAddedHeader('bar', 'Foo');
 
         \expect($newMessage->getHeaders())->toBe(['Bar' => ['Baz', 'Foo']]);
 
