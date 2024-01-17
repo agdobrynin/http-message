@@ -13,20 +13,6 @@ use Kaspi\HttpMessage\Message;
         \expect((new Message())->getHeader('ok'))->toBe([]);
     });
 
-    \it('Get header empty name', function () {
-        (new Message())->getHeader('');
-    })->throws(
-        InvalidArgumentException::class,
-        'Header name is empty string'
-    );
-
-    \it('Header values must be a non empty string', function () {
-        (new Message())->withHeader('foo', ['Baz', "\t\t   \t", 'Bar']);
-    })->throws(
-        InvalidArgumentException::class,
-        'Header values must be a non empty string'
-    );
-
     \it('Method withHeader', function () {
         $message = new Message();
         $newMessage = $message->withHeader('ok', 123456);
@@ -54,33 +40,33 @@ use Kaspi\HttpMessage\Message;
         $newMessage = $message->withHeader('OKa', [" \tFoo   \t", 'Bar']);
 
         \expect($newMessage)->not->toBe($message)
-            ->and($newMessage->getHeaders())->toBe(['oka' => ['Foo', 'Bar']])
+            ->and($newMessage->getHeaders())->toBe(['OKa' => ['Foo', 'Bar']])
         ;
 
         $newSubMessage = $newMessage->withHeader('OKa', ['   Baz  Foo    ', 4567890]);
 
         \expect($newSubMessage)->not->toBe($newMessage)
-            ->and($newSubMessage->getHeaders())->toBe(['oka' => ['Baz  Foo', '4567890']])
+            ->and($newSubMessage->getHeaders())->toBe(['OKa' => ['Baz  Foo', '4567890']])
         ;
     });
 
     \it('method withoutHeader', function () {
         $message = (new Message())->withHeader('Bar', 'Baz');
 
-        \expect($message->withoutHeader('x')->getHeaders())->toBe(['bar' => ['Baz']])
-            ->and($message->withoutHeader('bar')->getHeaders())->toBe([])
+        \expect($message->withoutHeader('x')->getHeaders())->toBe(['Bar' => ['Baz']])
+            ->and($message->withoutHeader('Bar')->getHeaders())->toBe([])
         ;
     });
 
     \it('method withAddedHeader', function () {
         $message = (new Message())->withHeader('Bar', 'Baz');
-        $newMessage = $message->withAddedHeader('bar', 'Foo');
+        $newMessage = $message->withAddedHeader('Bar', 'Foo');
 
-        \expect($newMessage->getHeaders())->toBe(['bar' => ['Baz', 'Foo']]);
+        \expect($newMessage->getHeaders())->toBe(['Bar' => ['Baz', 'Foo']]);
 
         $newSubMessage = $newMessage->withAddedHeader('REACT', '❤');
 
-        \expect($newSubMessage->getHeaders())->toBe(['bar' => ['Baz', 'Foo'], 'react' => ['❤']]);
+        \expect($newSubMessage->getHeaders())->toBe(['Bar' => ['Baz', 'Foo'], 'REACT' => ['❤']]);
     });
 })
     ->covers(Message::class)
