@@ -77,15 +77,8 @@ class Message implements MessageInterface
      */
     public function withAddedHeader(string $name, mixed $value): static
     {
-        $value = $this->validateRFC7230AndTrim($name, $value);
-
         $new = clone $this;
-
-        if (($h = $this->getHeaderByName($name)) !== null) {
-            $new->headers[$h] = \array_merge($this->headers[$h], $value);
-        } else {
-            $new->headers[$name] = $value;
-        }
+        $new->addHeaders([$name => $value]);
 
         return $new;
     }
@@ -123,6 +116,28 @@ class Message implements MessageInterface
         $new->body = $body;
 
         return $new;
+    }
+
+    protected function addHeaders(array $headers): void
+    {
+        foreach ($headers as $name => $value) {
+            /*
+             * A key may be either an integer or a string.
+             * For string such as "1", "2" ... php casting array key as integer
+             * @see https://www.php.net/manual/en/language.types.array.php
+             */
+            if (\is_int($name)) {
+                $name = (string) $name;
+            }
+
+            $value = $this->validateRFC7230AndTrim($name, $value);
+
+            if (($h = $this->getHeaderByName($name)) !== null) {
+                $this->headers[$h] = \array_merge($this->headers[$h], $value);
+            } else {
+                $this->headers[$name] = $value;
+            }
+        }
     }
 
     protected function updateHostFromUri(UriInterface $uri): void
