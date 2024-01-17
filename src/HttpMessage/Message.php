@@ -40,12 +40,12 @@ class Message implements MessageInterface
 
     public function hasHeader(string $name): bool
     {
-        return (bool) $this->getHeaderByName($name);
+        return null !== $this->getHeaderByName($name);
     }
 
     public function getHeader(string $name): array
     {
-        return $this->getHeaderByName($name)
+        return null !== $this->getHeaderByName($name)
             ? $this->headers[$name]
             : [];
     }
@@ -62,7 +62,7 @@ class Message implements MessageInterface
     {
         $new = clone $this;
 
-        if ($h = $this->getHeaderByName($name)) {
+        if (($h = $this->getHeaderByName($name)) !== null) {
             unset($new->headers[$h]);
         }
 
@@ -80,7 +80,7 @@ class Message implements MessageInterface
 
         $new = clone $this;
 
-        if ($h = $this->getHeaderByName($name)) {
+        if (($h = $this->getHeaderByName($name)) !== null) {
             $new->headers[$h] = \array_merge($this->headers[$h], $value);
         } else {
             $new->headers[$name] = $value;
@@ -94,7 +94,7 @@ class Message implements MessageInterface
      */
     public function withoutHeader(string $name): static
     {
-        if ($h = $this->getHeaderByName($name)) {
+        if (($h = $this->getHeaderByName($name)) !== null) {
             $new = clone $this;
             unset($new->headers[$h]);
 
@@ -124,14 +124,14 @@ class Message implements MessageInterface
         return $new;
     }
 
-    private function getHeaderByName(string $name): ?string
+    private function getHeaderByName(string $name): null|int|string
     {
         if ('' === $name) {
             throw new \InvalidArgumentException('Header name is empty string');
         }
 
         return ($h = \preg_grep('/^'.\preg_quote($name, '').'$/i', \array_keys($this->headers)))
-            ? $h[0]
+            ? \current($h)
             : null;
     }
 

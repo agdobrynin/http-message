@@ -68,6 +68,39 @@ use Kaspi\HttpMessage\Message;
 
         \expect($newSubMessage->getHeaders())->toBe(['Bar' => ['Baz', 'Foo'], 'REACT' => ['❤']]);
     });
+
+    \it('method hasHeader, getHeader with header name "0"', function () {
+        $message = (new Message())->withHeader('0', 'Baz');
+
+        \expect($message->hasHeader('0'))->toBeTrue()
+            ->and($message->hasHeader('false'))->toBeFalse()
+            ->and($message->getHeader('0'))->toBe(['Baz'])
+        ;
+
+        $newMessage = $message->withAddedHeader('0', 'Foo');
+
+        \expect($newMessage->hasHeader('0'))->toBeTrue()
+            ->and($newMessage->getHeader('0'))->toBe(['Baz', 'Foo'])
+        ;
+
+        $subNewMessage = $newMessage->withHeader('1.2', 'Fiz');
+
+        \expect($subNewMessage->hasHeader('1.2'))->toBeTrue()
+            ->and($subNewMessage->getHeader('1.2'))->toBe(['Fiz'])
+        ;
+
+        $subSubNewMessage = $subNewMessage->withHeader('12', 'Viz');
+
+        \expect($subSubNewMessage->hasHeader('12'))->toBeTrue()
+            ->and($subSubNewMessage->getHeader('12'))->toBe(['Viz'])
+            ->and($subSubNewMessage->getHeaders())
+            ->toBe([
+                '0' => ['Baz', 'Foo'],
+                '1.2' => ['Fiz'],
+                '12' => ['Viz'],
+            ])
+        ;
+    });
 })
     ->covers(Message::class)
 ;
