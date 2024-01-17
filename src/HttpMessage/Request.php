@@ -18,9 +18,7 @@ class Request extends Message implements RequestInterface
         $this->method = $method;
         $this->uri = \is_string($uri) ? new Uri($uri) : $uri;
 
-        if ($this->uri->getHost()) {
-            $this->updateHostFromUri($this->uri);
-        }
+        $this->updateHostFromUri($this->uri);
     }
 
     public function getRequestTarget(): string
