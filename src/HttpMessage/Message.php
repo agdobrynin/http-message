@@ -40,20 +40,14 @@ class Message implements MessageInterface
 
     public function hasHeader(string $name): bool
     {
-        if ('' === $name) {
-            throw new \InvalidArgumentException('Header name is empty string');
-        }
-
-        return \array_key_exists(\strtolower($name), $this->headers);
+        return null !== $this->getHeaderByName($name);
     }
 
     public function getHeader(string $name): array
     {
-        if (!$this->hasHeader($name)) {
-            return [];
-        }
-
-        return $this->headers[\strtolower($name)];
+        return null !== $this->getHeaderByName($name)
+            ? $this->headers[$name]
+            : [];
     }
 
     public function getHeaderLine(string $name): string
@@ -66,16 +60,13 @@ class Message implements MessageInterface
      */
     public function withHeader(string $name, mixed $value): static
     {
-        $normalizedName = \strtolower($name);
-        $hasHeader = $this->hasHeader($normalizedName);
-        $value = $this->validateRFC7230AndTrim($normalizedName, $value);
         $new = clone $this;
 
-        if ($hasHeader) {
-            unset($new->headers[$normalizedName]);
+        if (($h = $this->getHeaderByName($name)) !== null) {
+            unset($new->headers[$h]);
         }
 
-        $new->headers[$normalizedName] = $value;
+        $new->headers[$name] = $this->validateRFC7230AndTrim($name, $value);
 
         return $new;
     }
@@ -85,16 +76,14 @@ class Message implements MessageInterface
      */
     public function withAddedHeader(string $name, mixed $value): static
     {
-        $normalizedName = \strtolower($name);
-        $hasHeader = $this->hasHeader($normalizedName);
-        $value = $this->validateRFC7230AndTrim($normalizedName, $value);
+        $value = $this->validateRFC7230AndTrim($name, $value);
 
         $new = clone $this;
 
-        if ($hasHeader) {
-            $new->headers[$normalizedName] = \array_merge($this->headers[$normalizedName], $value);
+        if (($h = $this->getHeaderByName($name)) !== null) {
+            $new->headers[$h] = \array_merge($this->headers[$h], $value);
         } else {
-            $new->headers[$normalizedName] = $value;
+            $new->headers[$name] = $value;
         }
 
         return $new;
@@ -105,16 +94,14 @@ class Message implements MessageInterface
      */
     public function withoutHeader(string $name): static
     {
-        $normalizedName = \strtolower($name);
+        if (($h = $this->getHeaderByName($name)) !== null) {
+            $new = clone $this;
+            unset($new->headers[$h]);
 
-        if (!$this->hasHeader($normalizedName)) {
-            return $this;
+            return $new;
         }
 
-        $new = clone $this;
-        unset($new->headers[$normalizedName]);
-
-        return $new;
+        return $this;
     }
 
     public function getBody(): StreamInterface
@@ -135,6 +122,21 @@ class Message implements MessageInterface
         $new->body = $body;
 
         return $new;
+    }
+
+    /**
+     * Return value of header name may be as integer or string.
+     * For example header name '0' always store in array key as integer value.
+     */
+    private function getHeaderByName(string $name): null|int|string
+    {
+        if ('' === $name) {
+            throw new \InvalidArgumentException('Header name is empty string');
+        }
+
+        return ($h = \preg_grep('/^'.\preg_quote($name, '').'$/i', \array_keys($this->headers)))
+            ? \current($h)
+            : null;
     }
 
     /**
