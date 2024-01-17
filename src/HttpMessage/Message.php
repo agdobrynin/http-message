@@ -6,6 +6,7 @@ namespace Kaspi\HttpMessage;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 class Message implements MessageInterface
 {
@@ -45,8 +46,8 @@ class Message implements MessageInterface
 
     public function getHeader(string $name): array
     {
-        return null !== $this->getHeaderByName($name)
-            ? $this->headers[$name]
+        return null !== ($h = $this->getHeaderByName($name))
+            ? $this->headers[$h]
             : [];
     }
 
@@ -122,6 +123,22 @@ class Message implements MessageInterface
         $new->body = $body;
 
         return $new;
+    }
+
+    protected function updateHostFromUri(UriInterface $uri): void
+    {
+        if ($host = $uri->getHost()) {
+            if (null !== ($h = $this->getHeaderByName('host'))) {
+                unset($this->headers[$h]);
+            }
+
+            // The header "Host" SHOULD first item in headers.
+            // @see https://datatracker.ietf.org/doc/html/rfc7230#section-5.4
+            $this->headers = \array_merge(
+                ['Host' => [$host.(($port = $uri->getPort()) ? ':'.$port : '')]],
+                $this->headers
+            );
+        }
     }
 
     /**
