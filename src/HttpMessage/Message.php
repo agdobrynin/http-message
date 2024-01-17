@@ -124,14 +124,18 @@ class Message implements MessageInterface
         return $new;
     }
 
-    private function getHeaderByName(string $name): ?string
+    /**
+     * Return value of header name may be as integer or string.
+     * For example header name '0' always store in array key as integer value.
+     */
+    private function getHeaderByName(string $name): null|int|string
     {
         if ('' === $name) {
             throw new \InvalidArgumentException('Header name is empty string');
         }
 
         return ($h = \preg_grep('/^'.\preg_quote($name, '').'$/i', \array_keys($this->headers)))
-            ? (string) \current($h)
+            ? \current($h)
             : null;
     }
 
