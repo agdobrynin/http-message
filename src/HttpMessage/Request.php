@@ -67,6 +67,15 @@ class Request extends Message implements RequestInterface
 
     public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
-        // TODO Implement later.
+        $new = clone $this;
+        $new->uri = $uri;
+
+        if (!$preserveHost && $uri->getHost()) {
+            $new->withHeader('Host', $uri->getHost().(($port = $uri->getPort()) ? ':'.$port : ''));
+        } elseif ($uri->getHost() && [] !== $this->getHeader('Host')) {
+            $new->withHeader('Host', $uri->getHost().(($port = $uri->getPort()) ? ':'.$port : ''));
+        }
+
+        return $new;
     }
 }
