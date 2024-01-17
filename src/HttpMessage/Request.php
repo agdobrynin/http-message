@@ -69,11 +69,10 @@ class Request extends Message implements RequestInterface
     {
         $new = clone $this;
         $new->uri = $uri;
-
         if (!$preserveHost && $uri->getHost()) {
-            $new->withHeader('Host', $uri->getHost().(($port = $uri->getPort()) ? ':'.$port : ''));
-        } elseif ($uri->getHost() && [] !== $this->getHeader('Host')) {
-            $new->withHeader('Host', $uri->getHost().(($port = $uri->getPort()) ? ':'.$port : ''));
+            $new = $new->withHeader('Host', $uri->getHost().(($port = $uri->getPort()) ? ':'.$port : ''));
+        } elseif ($uri->getHost() && [] === $this->getHeader('Host')) {
+            $new = $new->withHeader('Host', $uri->getHost().(($port = $uri->getPort()) ? ':'.$port : ''));
         }
 
         return $new;
