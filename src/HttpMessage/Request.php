@@ -73,9 +73,8 @@ class Request extends Message implements RequestInterface
     {
         $new = clone $this;
         $new->uri = $uri;
-        if (!$preserveHost && $uri->getHost()) {
-            $new->updateHostFromUri($uri);
-        } elseif ($uri->getHost() && [] === $this->getHeader('Host')) {
+
+        if (!$preserveHost || !$this->hasHeader('Host')) {
             $new->updateHostFromUri($uri);
         }
 
