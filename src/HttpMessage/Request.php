@@ -17,6 +17,10 @@ class Request extends Message implements RequestInterface
     {
         $this->method = $method;
         $this->uri = \is_string($uri) ? new Uri($uri) : $uri;
+
+        if ($this->uri->getHost()) {
+            $this->updateHostFromUri($this->uri);
+        }
     }
 
     public function getRequestTarget(): string
@@ -70,9 +74,9 @@ class Request extends Message implements RequestInterface
         $new = clone $this;
         $new->uri = $uri;
         if (!$preserveHost && $uri->getHost()) {
-            $new = $new->withHeader('Host', $uri->getHost().(($port = $uri->getPort()) ? ':'.$port : ''));
+            $new->updateHostFromUri($uri);
         } elseif ($uri->getHost() && [] === $this->getHeader('Host')) {
-            $new = $new->withHeader('Host', $uri->getHost().(($port = $uri->getPort()) ? ':'.$port : ''));
+            $new->updateHostFromUri($uri);
         }
 
         return $new;
