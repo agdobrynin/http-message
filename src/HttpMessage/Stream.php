@@ -11,12 +11,12 @@ class Stream implements StreamInterface
     /**
      * @var resource
      */
-    protected $resource;
-    protected bool $writable;
-    protected bool $readable;
-    protected bool $seekable;
-    protected ?int $size = null;
-    protected ?string $uri = null;
+    private $resource;
+    private bool $writable;
+    private bool $readable;
+    private bool $seekable;
+    private ?int $size = null;
+    private ?string $uri = null;
 
     public function __construct(mixed $body)
     {
