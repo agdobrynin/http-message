@@ -72,6 +72,20 @@ use Psr\Http\Message\StreamInterface;
             'resource' => ['parsedBody' => \fopen(vfsStream::newFile('f')->at(vfsStream::setup())->url(), 'rb')],
         ])
     ;
+
+    \it('getAttributes, getAttribute, withAttribute, withoutAttribute', function () {
+        $sr = new ServerRequest();
+        $name = 'hello';
+        $value = ['world', 'php'];
+
+        \expect($sr->getAttributes())->toBe([])
+            ->and($sr->getAttribute('no-attr', 100))->toBe(100)
+            ->and($sr2 = $sr->withAttribute($name, $value))->not->toBe($sr)
+            ->and($sr2->getAttribute($name))->toBe($value)
+            ->and($sr3 = $sr2->withoutAttribute($name))->not->toBe($sr2)
+            ->and($sr3->getAttributes())->toBe([])
+        ;
+    });
 })
     ->covers(ServerRequest::class, Message::class, Request::class, Stream::class, Uri::class, UploadedFile::class)
 ;
