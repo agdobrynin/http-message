@@ -1,4 +1,12 @@
-# HTTP message PSR-7 implementation
+# 🕸 HTTP message PSR-7 implementation.
+
+Kaspi/http-message это легковесная реализация PSR-7 для >= PHP 8.1
+
+## Установка
+
+```shell
+composer require kaspi/http-message
+```
 
 ## Тесты
 Прогнать тесты без отчёта покрытия кода в html
@@ -7,8 +15,9 @@ composer test
 ```
 Запуск тестов с проверкой покрытия кода тестами отчётом в html формате
 ```shell
-./vendor/bin/pest
+./vendor/bin/pest --compact
 ```
+_⛑ pезультаты будут в папке `.coverage-html`_
 
 ## Статический анализ кода
 
@@ -57,7 +66,7 @@ docker-compose run --rm php vendor/bin/phan
 ```shell
 docker-compose run --rm php sh
 ```
-###### Использование Makefile команд.
+##### Использование Makefile команд.
 Проверить и исправить code style:
 ```shell
 make fix
