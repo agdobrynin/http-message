@@ -9,9 +9,9 @@ use Psr\Http\Message\UriInterface;
 
 class Request extends Message implements RequestInterface
 {
-    protected string $method;
-    protected UriInterface $uri;
     protected ?string $requestTarget = null;
+    private string $method;
+    private UriInterface $uri;
 
     public function __construct(
         string $method = 'GET',
