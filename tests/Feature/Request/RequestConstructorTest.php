@@ -61,4 +61,5 @@ use org\bovigo\vfs\vfsStream;
         ->with('uri_success')
     ;
 })
-    ->covers(Request::class, Stream::class, Message::class, Uri::class);
+    ->covers(Request::class, Stream::class, Message::class, Uri::class)
+;
