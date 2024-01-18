@@ -44,3 +44,32 @@ declare(strict_types=1);
         'exceptionMessage' => 'Header value must be RFC 7230 compatible',
     ],
 ]);
+
+\dataset('headers_with_uri', [
+    'set #1 has URI and Host header move to first position' => [
+        'uri' => 'https://php.org/index.php?q=abc',
+        'headers' => [
+            'expire' => 'today',
+            'cache-control' => ['public', 'max-age=14400'],
+            'Host' => 'www.demos.su',
+        ],
+        'expectHeaders' => [
+            'Host' => ['php.org'],
+            'expire' => ['today'],
+            'cache-control' => ['public', 'max-age=14400'],
+        ],
+    ],
+    'set #2 with empty URI Host header not modified' => [
+        'uri' => '',
+        'headers' => [
+            'expire' => 'today',
+            'cache-control' => ['public', 'max-age=14400'],
+            'Host' => 'www.demos.su',
+        ],
+        'expectHeaders' => [
+            'expire' => ['today'],
+            'cache-control' => ['public', 'max-age=14400'],
+            'Host' => ['www.demos.su'],
+        ],
+    ],
+]);

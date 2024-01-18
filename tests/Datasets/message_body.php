@@ -6,7 +6,10 @@ use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Stream;
 
 \dataset('message_body_success', [
-    'from string' => ['hello', 'hello'],
+    'from string' => [
+        'body' => 'hello',
+        'contents' => 'hello',
+    ],
     'from StreamInterface' => [new Stream('welcome to class'), 'welcome to class'],
 ]);
 

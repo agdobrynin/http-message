@@ -164,42 +164,15 @@ use Psr\Http\Message\UriInterface;
         ;
     });
 
-    \it('header Host should first item in present in URI', function () {
+    \it('header Host should first item in present in URI', function ($uri, $headers, $expectHeaders) {
         $request = new Request(
             method: 'POST',
-            uri: 'https://php.org/index.php?q=abc',
-            headers: [
-                'expire' => 'today',
-                'cache-control' => ['public', 'max-age=14400'],
-                'Host' => 'www.demos.su',
-            ]
+            uri: $uri,
+            headers: $headers
         );
 
-        \expect($request->getHeaders())
-            ->toBe([
-                'Host' => ['php.org'],
-                'expire' => ['today'],
-                'cache-control' => ['public', 'max-age=14400'],
-            ])
-        ;
-    });
-
-    \it('header Host not first because URI is empty', function () {
-        $request = new Request(
-            method: 'POST',
-            headers: [
-                'expire' => 'today',
-                'cache-control' => ['public', 'max-age=14400'],
-                'Host' => 'www.demos.su',
-            ]
-        );
-
-        \expect($request->getHeaders())
-            ->toBe([
-                'expire' => ['today'],
-                'cache-control' => ['public', 'max-age=14400'],
-                'Host' => ['www.demos.su'],
-            ])
-        ;
-    });
+        \expect($request->getHeaders())->toBe($expectHeaders);
+    })
+        ->with('headers_with_uri')
+    ;
 })->covers(Request::class, Uri::class, Message::class, Stream::class);
