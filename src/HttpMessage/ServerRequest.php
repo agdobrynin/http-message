@@ -71,8 +71,7 @@ class ServerRequest extends Request implements ServerRequestInterface
             $uploadedFiles,
             static function ($item) {
                 return $item instanceof UploadedFileInterface
-                    ? true
-                    : throw new \InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class);
+                    ?: throw new \InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class);
             }
         );
     }
