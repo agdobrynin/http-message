@@ -69,10 +69,8 @@ class ServerRequest extends Request implements ServerRequestInterface
     {
         $this->uploadedFiles = \array_filter(
             $uploadedFiles,
-            static function ($item) {
-                return $item instanceof UploadedFileInterface
-                    ?: throw new \InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class);
-            }
+            static fn ($item) => $item instanceof UploadedFileInterface
+                    ?: throw new \InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class)
         );
     }
 
