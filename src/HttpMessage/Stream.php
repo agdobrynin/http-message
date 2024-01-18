@@ -21,7 +21,9 @@ class Stream implements StreamInterface
     public function __construct(mixed $body)
     {
         if (!\is_string($body) && !\is_resource($body)) {
-            throw new \InvalidArgumentException('Argument must be type "resource" or "string"');
+            $got = \var_export($body, true);
+
+            throw new \InvalidArgumentException('Argument must be type "resource" or "string". Got: '.$got);
         }
 
         if (\is_string($body)) {

@@ -13,10 +13,13 @@ class Request extends Message implements RequestInterface
     private string $method;
     private UriInterface $uri;
 
+    /**
+     * @param \Psr\Http\Message\StreamInterface|resource|string $body
+     */
     public function __construct(
         string $method = 'GET',
         string|UriInterface $uri = '',
-        mixed $body = '',
+        $body = '',
         array $headers = [],
         string $protocolVersion = '1.1'
     ) {
