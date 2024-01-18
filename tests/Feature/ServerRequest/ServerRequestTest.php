@@ -43,5 +43,35 @@ use Psr\Http\Message\StreamInterface;
             ->and((string) \current($sr2->getUploadedFiles())->getStream())->toBe('Hello World!')
         ;
     });
+
+    \it('success call getParsedBody, withParsedBody', function ($parsedBody) {
+        \expect(($sr = new ServerRequest())->getParsedBody())->toBeNull()
+            ->and(
+                $sr2 = $sr->withParsedBody($parsedBody)
+            )->not->toBe($sr)
+            ->and($sr2->getParsedBody())->toBe($parsedBody)
+        ;
+    })
+        ->with([
+            'null' => ['parsedBody' => null],
+            'array' => ['parsedBody' => ['hello' => 'world']],
+            'object' => ['parsedBody' => (object) ['hello' => 'world']],
+            'object as class' => ['parsedBody' => new Stream('')],
+        ])
+    ;
+
+    \it('fail call withParsedBody', function ($parsedBody) {
+        (new ServerRequest())->withParsedBody($parsedBody);
+    })
+        ->throws(InvalidArgumentException::class)
+        ->with([
+            'int' => ['parsedBody' => 10],
+            'string' => ['parsedBody' => 'Hi!'],
+            'float' => ['parsedBody' => 3.14],
+            'boolean' => ['parsedBody' => false],
+            'resource' => ['parsedBody' => \fopen(vfsStream::newFile('f')->at(vfsStream::setup())->url(), 'rb')],
+        ])
+    ;
 })
-    ->covers(ServerRequest::class, Message::class, Request::class, Stream::class, Uri::class, UploadedFile::class);
+    ->covers(ServerRequest::class, Message::class, Request::class, Stream::class, Uri::class, UploadedFile::class)
+;
