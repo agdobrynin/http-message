@@ -79,10 +79,9 @@ class Response extends Message implements ResponseInterface
         $this->checkStatusCode($code);
         $new = clone $this;
         $new->code = $code;
-
-        $this->reasonPhrase = '' !== $reasonPhrase
+        $new->reasonPhrase = '' !== $reasonPhrase
             ? $reasonPhrase
-            : (self::PHRASE[$this->code] ?? '');
+            : (self::PHRASE[$code] ?? '');
 
         return $new;
     }
