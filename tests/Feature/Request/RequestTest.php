@@ -163,4 +163,16 @@ use Psr\Http\Message\UriInterface;
             ->and($r->getUri()->getFragment())->toBe('section%201.2')
         ;
     });
+
+    \it('header Host should first item in present in URI', function ($uri, $headers, $expectHeaders) {
+        $request = new Request(
+            method: 'POST',
+            uri: $uri,
+            headers: $headers
+        );
+
+        \expect($request->getHeaders())->toBe($expectHeaders);
+    })
+        ->with('headers_with_uri')
+    ;
 })->covers(Request::class, Uri::class, Message::class, Stream::class);
