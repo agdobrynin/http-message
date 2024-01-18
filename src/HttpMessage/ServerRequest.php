@@ -17,6 +17,8 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @var UploadedFileInterface[]
      */
     private array $uploadedFiles = [];
+    private null|array|object $parsedBody = null;
+    private array $attributes = [];
 
     public function __construct(
         string $method = 'GET',
@@ -67,40 +69,58 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
-        $this->uploadedFiles = \array_filter(
+        $new = clone $this;
+        $new->uploadedFiles = \array_filter(
             $uploadedFiles,
             static fn ($item) => $item instanceof UploadedFileInterface
                     ?: throw new \InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class)
         );
+
+        return $new;
     }
 
-    public function getParsedBody()
+    public function getParsedBody(): null|array|object
     {
-        // TODO: Implement getParsedBody() method.
+        return $this->parsedBody;
     }
 
     public function withParsedBody($data): ServerRequestInterface
     {
-        // TODO: Implement withParsedBody() method.
+        if (null !== $data && !\is_array($data) && !\is_object($data)) {
+            throw new \InvalidArgumentException('Invalid body data. Data must null, array or object');
+        }
+
+        $new = clone $this;
+        $new->parsedBody = $data;
+
+        return $new;
     }
 
     public function getAttributes(): array
     {
-        // TODO: Implement getAttributes() method.
+        return $this->attributes;
     }
 
     public function getAttribute(string $name, $default = null)
     {
-        // TODO: Implement getAttribute() method.
+        return \array_key_exists($name, $this->attributes)
+            ? $this->attributes[$name]
+            : $default;
     }
 
     public function withAttribute(string $name, $value): ServerRequestInterface
     {
-        // TODO: Implement withAttribute() method.
+        $new = clone $this;
+        $new->attributes[$name] = $value;
+
+        return $new;
     }
 
     public function withoutAttribute(string $name): ServerRequestInterface
     {
-        // TODO: Implement withoutAttribute() method.
+        $new = clone $this;
+        unset($new->attributes[$name]);
+
+        return $new;
     }
 }
