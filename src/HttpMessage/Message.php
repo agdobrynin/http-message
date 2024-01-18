@@ -14,6 +14,10 @@ class Message implements MessageInterface
     private array $headers = [];
     private StreamInterface $body;
 
+    public function __construct(string|UriInterface $uri, array $headers, string $protocolVersion)
+    {
+    }
+
     public function getProtocolVersion(): string
     {
         return $this->version;
