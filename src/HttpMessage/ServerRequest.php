@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 
 class ServerRequest extends Request implements ServerRequestInterface
 {
+    public function __construct(string $method, string|UriInterface $uri, protected array $serverParams = [])
+    {
+        parent::__construct($method, $uri);
+    }
+
     public function getServerParams(): array
     {
-        // TODO: Implement getServerParams() method.
+        return $this->serverParams;
     }
 
     public function getCookieParams(): array
