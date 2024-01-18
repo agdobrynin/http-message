@@ -44,6 +44,15 @@ use Psr\Http\Message\StreamInterface;
         ;
     });
 
+    \it('fail withUploadedFiles', function () {
+        $file = vfsStream::newFile('note.txt')->withContent('Hello World!')->at(vfsStream::setup());
+        $uploadedFile = new UploadedFile($file->url(), \UPLOAD_ERR_OK);
+
+        (new ServerRequest())->withUploadedFiles([$uploadedFile, '/tmp/my_file.jpg']);
+    })
+        ->throws(InvalidArgumentException::class, 'Items must be instance')
+    ;
+
     \it('success call getParsedBody, withParsedBody', function ($parsedBody) {
         \expect(($sr = new ServerRequest())->getParsedBody())->toBeNull()
             ->and(
