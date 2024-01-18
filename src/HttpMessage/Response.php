@@ -61,8 +61,8 @@ class Response extends Message implements ResponseInterface
     ];
 
     public function __construct(
-        protected int $code = 200,
-        protected ?string $reasonPhrase = null,
+        private int $code = 200,
+        private ?string $reasonPhrase = null,
         mixed $body = '',
         array $headers = [],
         string $protocolVersion = '1.1'
