@@ -48,6 +48,10 @@ use Kaspi\HttpMessage\Uri;
         ->with('headers_with_uri')
     ;
 
+    \it('Default protocol', function () {
+        \expect((new ServerRequest())->getProtocolVersion())->toBe('1.1');
+    });
+
     \it('Success protocol', function ($protocolVersion) {
         \expect((new ServerRequest(protocolVersion: $protocolVersion))->getProtocolVersion())->toBe($protocolVersion);
     })
@@ -70,4 +74,5 @@ use Kaspi\HttpMessage\Uri;
         ])
     ;
 })
-    ->covers(ServerRequest::class, Message::class, Request::class, Stream::class, Uri::class);
+    ->covers(ServerRequest::class, Message::class, Request::class, Stream::class, Uri::class)
+;

@@ -57,7 +57,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     public function withQueryParams(array $query): ServerRequestInterface
     {
         $new = clone $this;
-        $new->cookies = $query;
+        $new->query = $query;
 
         return $new;
     }
