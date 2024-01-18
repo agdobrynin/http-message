@@ -14,7 +14,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     private array $query = [];
 
     /**
-     * @var \Psr\Http\Message\UploadedFileInterface[]
+     * @var UploadedFileInterface[]
      */
     private array $uploadedFiles = [];
 
