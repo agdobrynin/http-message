@@ -16,22 +16,22 @@ class Uri implements UriInterface
      * gen-delims = ":" / "/" / "?" / "#" / "[" / "]" / "@"
      * sub-delims = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
      */
-    protected const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
-    protected const CHAR_PCT_ENCODED = '%(?![A-Fa-f0-9]{2})';
-    protected const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
-    protected const SCHEME_PORT = [
+    private const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
+    private const CHAR_PCT_ENCODED = '%(?![A-Fa-f0-9]{2})';
+    private const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+    private const SCHEME_PORT = [
         'http' => 80,
         'https' => 443,
     ];
 
-    protected string $scheme = '';
-    protected string $host = '';
-    protected ?int $port = null;
-    protected string $user = '';
-    protected string $pass = '';
-    protected string $query = '';
-    protected string $path = '';
-    protected string $fragment = '';
+    private string $scheme = '';
+    private string $host = '';
+    private ?int $port = null;
+    private string $user = '';
+    private string $pass = '';
+    private string $query = '';
+    private string $path = '';
+    private string $fragment = '';
 
     public function __construct(string $uri)
     {

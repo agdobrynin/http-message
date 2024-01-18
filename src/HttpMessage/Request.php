@@ -9,16 +9,25 @@ use Psr\Http\Message\UriInterface;
 
 class Request extends Message implements RequestInterface
 {
-    protected string $method;
-    protected UriInterface $uri;
     protected ?string $requestTarget = null;
+    private string $method;
+    private UriInterface $uri;
 
-    public function __construct(string $method, string|UriInterface $uri)
-    {
+    /**
+     * @param \Psr\Http\Message\StreamInterface|resource|string $body
+     */
+    public function __construct(
+        string $method = 'GET',
+        string|UriInterface $uri = '',
+        $body = '',
+        array $headers = [],
+        string $protocolVersion = '1.1'
+    ) {
+        parent::__construct($body, $headers, $protocolVersion);
         $this->method = $method;
         $this->uri = \is_string($uri) ? new Uri($uri) : $uri;
 
-        $this->updateHostFromUri($this->uri);
+        parent::updateHostFromUri($this->uri);
     }
 
     public function getRequestTarget(): string
