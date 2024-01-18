@@ -46,6 +46,7 @@ class Request extends Message implements RequestInterface
         return $pathNormalize.$queryNormalize;
     }
 
+    // @phan-suppress-next-line PhanParamSignatureMismatch
     public function withRequestTarget(string $requestTarget): RequestInterface
     {
         if (\str_contains($requestTarget, ' ')) {
@@ -63,6 +64,7 @@ class Request extends Message implements RequestInterface
         return $this->method;
     }
 
+    // @phan-suppress-next-line PhanParamSignatureMismatch
     public function withMethod(string $method): RequestInterface
     {
         $new = clone $this;
@@ -76,6 +78,7 @@ class Request extends Message implements RequestInterface
         return $this->uri;
     }
 
+    // @phan-suppress-next-line PhanParamSignatureMismatch
     public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
         $new = clone $this;
