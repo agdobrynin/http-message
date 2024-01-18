@@ -163,4 +163,24 @@ use Psr\Http\Message\UriInterface;
             ->and($r->getUri()->getFragment())->toBe('section%201.2')
         ;
     });
+
+    \it('header Host should first item', function () {
+        $request = new Request(
+            method: 'POST',
+            uri: 'https://php.org/index.php?q=abc',
+            headers: [
+                'expire' => 'today',
+                'cache-control' => ['public', 'max-age=14400'],
+                'Host' => 'php.org/',
+            ]
+        );
+
+        \expect($request->getHeaders())
+            ->toBe([
+                'Host' => ['php.org'],
+                'expire' => ['today'],
+                'cache-control' => ['public', 'max-age=14400'],
+            ])
+        ;
+    });
 })->covers(Request::class, Uri::class, Message::class, Stream::class);
