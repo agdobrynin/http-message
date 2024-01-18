@@ -13,12 +13,18 @@ class Request extends Message implements RequestInterface
     protected UriInterface $uri;
     protected ?string $requestTarget = null;
 
-    public function __construct(string $method, string|UriInterface $uri)
-    {
+    public function __construct(
+        string $method = 'GET',
+        string|UriInterface $uri = '',
+        mixed $body = '',
+        array $headers = [],
+        string $protocolVersion = '1.1'
+    ) {
+        parent::__construct($body, $headers, $protocolVersion);
         $this->method = $method;
         $this->uri = \is_string($uri) ? new Uri($uri) : $uri;
 
-        $this->updateHostFromUri($this->uri);
+        parent::updateHostFromUri($this->uri);
     }
 
     public function getRequestTarget(): string

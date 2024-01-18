@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Kaspi\HttpMessage\Message;
+use Kaspi\HttpMessage\Stream;
 
 \describe('Methods getHeaders, getHeader, getHeaderLine, withHeader, withAddedHeader, withoutHeader', function () {
     \it('empty headers', function () {
@@ -102,5 +103,5 @@ use Kaspi\HttpMessage\Message;
         ;
     });
 })
-    ->covers(Message::class)
+    ->covers(Message::class, Stream::class)
 ;

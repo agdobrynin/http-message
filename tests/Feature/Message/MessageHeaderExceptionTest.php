@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Kaspi\HttpMessage\Message;
+use Kaspi\HttpMessage\Stream;
 
 \describe('Exception for headers methods', function () {
     \it('Header name must be RFC 7230 compatible', function (string $name, mixed $value) {
@@ -52,4 +53,4 @@ use Kaspi\HttpMessage\Message;
         InvalidArgumentException::class,
         'Header name is empty string'
     );
-})->covers(Message::class);
+})->covers(Message::class, Stream::class);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Request;
+use Kaspi\HttpMessage\Stream;
 use Kaspi\HttpMessage\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -162,4 +163,4 @@ use Psr\Http\Message\UriInterface;
             ->and($r->getUri()->getFragment())->toBe('section%201.2')
         ;
     });
-})->covers(Request::class, Uri::class, Message::class);
+})->covers(Request::class, Uri::class, Message::class, Stream::class);

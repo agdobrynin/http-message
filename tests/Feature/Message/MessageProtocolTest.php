@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Kaspi\HttpMessage\Message;
+use Kaspi\HttpMessage\Stream;
 
 \describe('Methods getProtocolVersion, withProtocolVersion for '.Message::class, function () {
     \it('default version', function () {
@@ -30,5 +31,5 @@ use Kaspi\HttpMessage\Message;
         (new Message())->withProtocolVersion('1');
     })->throws(InvalidArgumentException::class);
 })
-    ->covers(Message::class)
+    ->covers(Message::class, Stream::class)
 ;

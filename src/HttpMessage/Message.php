@@ -10,12 +10,21 @@ use Psr\Http\Message\UriInterface;
 
 class Message implements MessageInterface
 {
-    private string $version = '1.1';
+    private string $version;
     private array $headers = [];
     private StreamInterface $body;
 
-    public function __construct(string|UriInterface $uri, array $headers, string $protocolVersion)
+    /**
+     * @param resource|StreamInterface|string $body
+     */
+    public function __construct($body = '', array $headers = [], string $protocolVersion = '1.1')
     {
+        $this->body = $body instanceof StreamInterface
+            ? $body
+            : new Stream($body);
+        $this->addHeaders($headers);
+        $this->checkProtocolVersion($protocolVersion);
+        $this->version = $protocolVersion;
     }
 
     public function getProtocolVersion(): string
@@ -28,14 +37,11 @@ class Message implements MessageInterface
      */
     public function withProtocolVersion(string $version): static
     {
-        if (\preg_match('/^\d+\.\d+$/', $version)) {
-            $new = clone $this;
-            $new->version = $version;
+        $this->checkProtocolVersion($version);
+        $new = clone $this;
+        $new->version = $version;
 
-            return $new;
-        }
-
-        throw new \InvalidArgumentException('Protocol must be implement "<major>.<minor>" numbering scheme');
+        return $new;
     }
 
     public function getHeaders(): array
@@ -104,10 +110,6 @@ class Message implements MessageInterface
 
     public function getBody(): StreamInterface
     {
-        if (!isset($this->body)) {
-            $this->body = new Stream('');
-        }
-
         return $this->body;
     }
 
@@ -122,7 +124,23 @@ class Message implements MessageInterface
         return $new;
     }
 
-    protected function addHeaders(array $headers): void
+    protected function updateHostFromUri(UriInterface $uri): void
+    {
+        if ($host = $uri->getHost()) {
+            if (null !== ($h = $this->getHeaderByName('host'))) {
+                unset($this->headers[$h]);
+            }
+
+            // The header "Host" SHOULD first item in headers.
+            // @see https://datatracker.ietf.org/doc/html/rfc7230#section-5.4
+            $this->headers = \array_merge(
+                ['Host' => [$host.(($port = $uri->getPort()) ? ':'.$port : '')]],
+                $this->headers
+            );
+        }
+    }
+
+    private function addHeaders(array $headers): void
     {
         foreach ($headers as $name => $value) {
             /*
@@ -144,19 +162,10 @@ class Message implements MessageInterface
         }
     }
 
-    protected function updateHostFromUri(UriInterface $uri): void
+    private function checkProtocolVersion(string $version): void
     {
-        if ($host = $uri->getHost()) {
-            if (null !== ($h = $this->getHeaderByName('host'))) {
-                unset($this->headers[$h]);
-            }
-
-            // The header "Host" SHOULD first item in headers.
-            // @see https://datatracker.ietf.org/doc/html/rfc7230#section-5.4
-            $this->headers = \array_merge(
-                ['Host' => [$host.(($port = $uri->getPort()) ? ':'.$port : '')]],
-                $this->headers
-            );
+        if (1 !== \preg_match('/^\d+\.\d+$/', $version)) {
+            throw new \InvalidArgumentException('Protocol must be implement "<major>.<minor>" numbering scheme');
         }
     }
 

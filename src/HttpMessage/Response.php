@@ -60,8 +60,14 @@ class Response extends Message implements ResponseInterface
         511 => 'Network Authentication Required',
     ];
 
-    public function __construct(protected int $code = 200, protected ?string $reasonPhrase = null)
-    {
+    public function __construct(
+        protected int $code = 200,
+        protected ?string $reasonPhrase = null,
+        mixed $body = '',
+        array $headers = [],
+        string $protocolVersion = '1.1'
+    ) {
+        parent::__construct($body, $headers, $protocolVersion);
         $this->checkStatusCode($this->code);
 
         if (null === $this->reasonPhrase) {
