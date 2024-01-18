@@ -5,13 +5,28 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
 class ServerRequest extends Request implements ServerRequestInterface
 {
-    public function __construct(string $method, string|UriInterface $uri, protected array $serverParams = [])
-    {
-        parent::__construct($method, $uri);
+    private array $cookies = [];
+    private array $query = [];
+
+    /**
+     * @var \Psr\Http\Message\UploadedFileInterface[]
+     */
+    private array $uploadedFiles = [];
+
+    public function __construct(
+        string $method = 'GET',
+        string|UriInterface $uri = '',
+        $body = '',
+        array $headers = [],
+        string $protocolVersion = '1.1',
+        private readonly array $serverParams = [],
+    ) {
+        parent::__construct($method, $uri, $body, $headers, $protocolVersion);
     }
 
     public function getServerParams(): array
@@ -21,32 +36,45 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     public function getCookieParams(): array
     {
-        // TODO: Implement getCookieParams() method.
+        return $this->cookies;
     }
 
     public function withCookieParams(array $cookies): ServerRequestInterface
     {
-        // TODO: Implement withCookieParams() method.
+        $new = clone $this;
+        $new->cookies = $cookies;
+
+        return $new;
     }
 
     public function getQueryParams(): array
     {
-        // TODO: Implement getQueryParams() method.
+        return $this->query;
     }
 
     public function withQueryParams(array $query): ServerRequestInterface
     {
-        // TODO: Implement withQueryParams() method.
+        $new = clone $this;
+        $new->cookies = $query;
+
+        return $new;
     }
 
     public function getUploadedFiles(): array
     {
-        // TODO: Implement getUploadedFiles() method.
+        return $this->uploadedFiles;
     }
 
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
-        // TODO: Implement withUploadedFiles() method.
+        $this->uploadedFiles = \array_filter(
+            $uploadedFiles,
+            static function ($item) {
+                return $item instanceof UploadedFileInterface
+                    ? true
+                    : throw new \InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class);
+            }
+        );
     }
 
     public function getParsedBody()
