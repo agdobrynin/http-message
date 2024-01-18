@@ -54,5 +54,11 @@ use org\bovigo\vfs\vfsStream;
         ->throws(InvalidArgumentException::class)
         ->with('headers_wrong')
     ;
+
+    \it('Success parameters Uri', function ($uri, $uriExpect) {
+        \expect((string) (new Request(uri: $uri))->getUri())->toBe($uriExpect);
+    })
+        ->with('uri_success')
+    ;
 })
     ->covers(Request::class, Stream::class, Message::class, Uri::class);
