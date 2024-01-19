@@ -21,12 +21,14 @@ use Kaspi\HttpMessage\Stream;
         ])
     ;
 
-    \it('Header name empty value', function () {
-        (new Message())->withHeader('', ['ok']);
-    })->throws(
-        InvalidArgumentException::class,
-        'Header name is empty string'
-    );
+    \it('Header name or values is empty value', function ($name, $values) {
+        (new Message())->withHeader($name, $values);
+    })->throws(InvalidArgumentException::class)
+        ->with([
+            'empty header name' => ['', ['ok']],
+            'empty array in values' => ['ok', []],
+        ])
+    ;
 
     \it('Get header empty name', function () {
         (new Message())->getHeader('');
