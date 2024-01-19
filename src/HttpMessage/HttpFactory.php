@@ -29,8 +29,7 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
-        // TODO detect $reasonPhrase not set by user.
-        return new Response(code: $code, reasonPhrase: $reasonPhrase);
+        return new Response(code: $code, reasonPhrase: \func_num_args() >= 2 ? $reasonPhrase : null);
     }
 
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface

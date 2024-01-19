@@ -5,30 +5,68 @@ declare(strict_types=1);
 use Kaspi\HttpMessage\HttpFactory;
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Request;
+use Kaspi\HttpMessage\Response;
 use Kaspi\HttpMessage\Stream;
 use Kaspi\HttpMessage\Uri;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 \describe('Test for '.HttpFactory::class, function () {
-    \it('createRequest', function ($method, $uri) {
-        \expect($r = (new HttpFactory())->createRequest($method, $uri))
-            ->toBeInstanceOf(RequestInterface::class)
-            ->and($r->getMethod())->toBe($method)
-            ->and((string) $r->getUri())->toBe($uri)
+    \describe('createRequest', function () {
+        \it('method and URI', function ($method, $uri, $expectUri) {
+            \expect($r = (new HttpFactory())->createRequest($method, $uri))
+                ->toBeInstanceOf(RequestInterface::class)
+                ->and($r->getMethod())->toBe($method)
+                ->and((string) $r->getUri())->toBe($expectUri)
+            ;
+        })
+            ->with([
+                'set #1' => [
+                    'method' => 'POST',
+                    'uri' => '',
+                    'expectUri' => '',
+                ],
+                'set #' => [
+                    'method' => 'GET',
+                    'uri' => new Uri('https://php.org:443/index.php'),
+                    'expectUri' => 'https://php.org/index.php',
+                ],
+            ])
         ;
-    })
-        ->with([
-            'set #1' => [
-                'method' => 'POST',
-                'uri' => '',
+    })->covers(HttpFactory::class, Message::class, Request::class, Stream::class, Uri::class);
+
+    \describe('createResponse', function () {
+        \it('http status code and response phrase', function (array $args, $expectCode, $expectPhrase) {
+            \expect($r = (new HttpFactory())->createResponse(...$args))->toBeInstanceOf(ResponseInterface::class)
+                ->and($r->getStatusCode())->toBe($expectCode)
+                ->and($r->getReasonPhrase())->toBe($expectPhrase)
+            ;
+        })->with([
+            'all default' => [
+                'args' => [],
+                'expectCode' => 200,
+                'expectPhrase' => 'OK',
             ],
-        ])
-    ;
-})
-    ->covers(
-        HttpFactory::class,
-        Message::class,
-        Request::class,
-        Stream::class,
-        Uri::class,
-    );
+            'standard http status 404' => [
+                'args' => [404],
+                'expectCode' => 404,
+                'expectPhrase' => 'Not Found',
+            ],
+            'standard http status 599' => [
+                'args' => [599],
+                'expectCode' => 599,
+                'expectPhrase' => '',
+            ],
+            'standard http status 511' => [
+                'args' => [511],
+                'expectCode' => 511,
+                'expectPhrase' => 'Network Authentication Required',
+            ],
+            'standard http status and custom response phrase' => [
+                'args' => [201, 'Account created success. You can login now.'],
+                'expectCode' => 201,
+                'expectPhrase' => 'Account created success. You can login now.',
+            ],
+        ]);
+    })->covers(Response::class);
+});
