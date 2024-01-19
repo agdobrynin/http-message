@@ -4,7 +4,7 @@
     "keywords": ["http-message", "psr-7", "psr-17"],
     "type": "library",
     "require": {
-        "php": ">=8.2",
+        "php": "^8.1 || ^8.2 || ^8.3",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0"
     },
@@ -16,7 +16,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\Kaspi\\HttpMessage\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "authors": [
@@ -29,14 +29,25 @@
     "minimum-stability": "stable",
     "scripts": {
         "fixer" : "./vendor/bin/php-cs-fixer fix",
-        "test" : "./vendor/bin/phpunit --testdox --no-coverage"
+        "test" : "./vendor/bin/pest --compact --no-coverage",
+        "phan" : "./vendor/bin/phan",
+        "phan-poly" : "./vendor/bin/phan --allow-polyfill-parser"
     },
     "scripts-descriptions": {
         "fixer": "Run PHP Coding Standards Fixer",
-        "test" : "Run Phpunit test without coverage"
+        "test" : "Run Pest",
+        "phan" : "Run static analizer with AST extention",
+        "phan-poly" : "Run static analizer with with polyfill parser (without AST extention)"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.46",
-        "phpunit/phpunit": "^10.5"
+        "phan/phan": "^5.4",
+        "pestphp/pest": "^2.31",
+        "mikey179/vfsstream": "^1.6"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
