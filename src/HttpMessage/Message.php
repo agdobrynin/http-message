@@ -219,9 +219,9 @@ class Message implements MessageInterface
             throw new \InvalidArgumentException('Header name must be RFC 7230 compatible');
         }
 
-        $valuesRaw = \array_filter(!\is_array($values) ? [$values] : $values);
+        $valuesRaw = !\is_array($values) ? [$values] : $values;
 
-        if ([] === $valuesRaw) {
+        if (empty($valuesRaw)) {
             throw new \InvalidArgumentException('Header values must be non empty string');
         }
 
@@ -235,9 +235,7 @@ class Message implements MessageInterface
                 throw new \InvalidArgumentException('Header value must be RFC 7230 compatible. Got: '.$val);
             }
 
-            $result[] = ($v = \trim((string) $value, " \t"))
-                ? $v
-                : throw new \InvalidArgumentException('Header values must be a non empty string');
+            $result[] = \trim((string) $value, " \t");
         }
 
         return $result;
