@@ -8,6 +8,7 @@ use Kaspi\HttpMessage\Request;
 use Kaspi\HttpMessage\Response;
 use Kaspi\HttpMessage\ServerRequest;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\UploadedFile;
 use Kaspi\HttpMessage\Uri;
 use org\bovigo\vfs\vfsStream;
 use Psr\Http\Message\RequestInterface;
@@ -27,7 +28,9 @@ use Psr\Http\Message\UriInterface;
         })
             ->with('http_factory_request')
         ;
-    })->covers(HttpFactory::class, Message::class, Request::class, Stream::class, Uri::class);
+    })
+        ->covers(HttpFactory::class, Message::class, Request::class, Stream::class, Uri::class)
+    ;
 
     \describe('createResponse', function () {
         \it('http status code and response phrase', function (array $args, $expectCode, $expectPhrase) {
@@ -62,7 +65,9 @@ use Psr\Http\Message\UriInterface;
                 'expectPhrase' => 'Account created success. You can login now.',
             ],
         ]);
-    })->covers(Response::class);
+    })
+        ->covers(Response::class)
+    ;
 
     \describe('createServerRequest', function () {
         \it('with', function ($method, $uri, $srvParams, $expectUri) {
@@ -72,7 +77,9 @@ use Psr\Http\Message\UriInterface;
                 ->and($s->getServerParams())->toBe($srvParams)
             ;
         })->with('http_factory_server_request');
-    })->covers(ServerRequest::class);
+    })
+        ->covers(ServerRequest::class)
+    ;
 
     \it('createStream', function () {
         \expect($s = (new HttpFactory())->createStream('hello world'))->toBeInstanceOf(StreamInterface::class)
@@ -92,7 +99,9 @@ use Psr\Http\Message\UriInterface;
         \expect($u = (new HttpFactory())->createUri($uri))->toBeInstanceOf(UriInterface::class)
             ->and((string) $u)->toBe($expectUri)
         ;
-    })->with('uri_as_string');
+    })
+        ->with('uri_as_string')
+    ;
 
     \describe('createStreamFromFile', function () {
         \it('success', function () {
@@ -149,5 +158,26 @@ use Psr\Http\Message\UriInterface;
                 ])
             ;
         });
-    })->covers(Stream::class);
+    })
+        ->covers(Stream::class)
+    ;
+
+    \it('createUploadedFile without size file', function ($stream, $size, $expectSize) {
+        $uf = (new HttpFactory())->createUploadedFile(stream: $stream, size: $size);
+
+        \expect($uf->getSize())->toBe($expectSize);
+    })
+        ->with([
+            'null init size' => [
+                'stream' => new Stream('file'),
+                'size' => null,
+                'expectSize' => 4,
+            ],
+            'init size' => [
+                'stream' => new Stream('file'),
+                'size' => 10,
+                'expectSize' => 10,
+            ],
+        ])
+        ->covers(UploadedFile::class);
 });
