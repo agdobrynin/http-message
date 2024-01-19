@@ -6,10 +6,15 @@ use Kaspi\HttpMessage\HttpFactory;
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Request;
 use Kaspi\HttpMessage\Response;
+use Kaspi\HttpMessage\ServerRequest;
 use Kaspi\HttpMessage\Stream;
 use Kaspi\HttpMessage\Uri;
+use org\bovigo\vfs\vfsStream;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 \describe('Test for '.HttpFactory::class, function () {
     \describe('createRequest', function () {
@@ -20,18 +25,7 @@ use Psr\Http\Message\ResponseInterface;
                 ->and((string) $r->getUri())->toBe($expectUri)
             ;
         })
-            ->with([
-                'set #1' => [
-                    'method' => 'POST',
-                    'uri' => '',
-                    'expectUri' => '',
-                ],
-                'set #' => [
-                    'method' => 'GET',
-                    'uri' => new Uri('https://php.org:443/index.php'),
-                    'expectUri' => 'https://php.org/index.php',
-                ],
-            ])
+            ->with('http_factory_request')
         ;
     })->covers(HttpFactory::class, Message::class, Request::class, Stream::class, Uri::class);
 
@@ -69,4 +63,33 @@ use Psr\Http\Message\ResponseInterface;
             ],
         ]);
     })->covers(Response::class);
+
+    \describe('createServerRequest', function () {
+        \it('with', function ($method, $uri, $srvParams, $expectUri) {
+            \expect($s = (new HttpFactory())->createServerRequest($method, $uri, $srvParams))->toBeInstanceOf(ServerRequestInterface::class)
+                ->and((string) $s->getUri())->toBe($expectUri)
+                ->and($s->getMethod())->toBe($method)
+                ->and($s->getServerParams())->toBe($srvParams)
+            ;
+        })->with('http_factory_server_request');
+    })->covers(ServerRequest::class);
+
+    \it('createStream', function () {
+        \expect($s = (new HttpFactory())->createStream('hello world'))->toBeInstanceOf(StreamInterface::class)
+            ->and($s->getContents())->toBe('hello world')
+        ;
+    });
+
+    \it('createStreamFromResource', function () {
+        $f = vfsStream::newFile('i')->withContent('hello world')->at(vfsStream::setup());
+        \expect($s = (new HttpFactory())->createStreamFromResource(\fopen($f->url(), 'rb')))->toBeInstanceOf(StreamInterface::class)
+            ->and($s->getContents())->toBe('hello world')
+        ;
+    });
+
+    \it('createUri', function ($uri, $expectUri) {
+        \expect($u = (new HttpFactory())->createUri($uri))->toBeInstanceOf(UriInterface::class)
+            ->and((string) $u)->toBe($expectUri)
+        ;
+    })->with('uri_as_string');
 });
