@@ -49,7 +49,7 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
                 ? new Stream($r)
                 : throw new \RuntimeException(\error_get_last()['message'] ?? '');
         } catch (\Throwable $error) {
-            throw new \RuntimeException("Cannot open target file {$filename} [{$error}]");
+            throw new \RuntimeException("Cannot stream from {$filename} [{$error}]");
         }
     }
 
