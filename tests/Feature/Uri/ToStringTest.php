@@ -81,6 +81,11 @@ use Kaspi\HttpMessage\Uri;
             'uri' => new Uri($unreservedForPath),
             'expect' => $unreservedForPath,
         ],
+
+        'with many star slash in path' => [
+            'uri' => new Uri('http://example.org//valid///path'),
+            'expect' => 'http://example.org/valid///path',
+        ],
     ]);
 })
     ->covers(Uri::class)

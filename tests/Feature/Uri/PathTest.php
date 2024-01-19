@@ -17,6 +17,7 @@ use Kaspi\HttpMessage\Uri;
         'set #3' => ['uri' => '//example/a:x', 'path' => '/a:x'],
         'set #4' => ['uri' => '//example/../../etc/passwd', 'path' => '/../../etc/passwd'],
         'set #5' => ['uri' => '//example//etc//passwd/', 'path' => '/etc//passwd/'],
+        'set #6' => ['uri' => 'http://example.org//valid///path', 'path' => '/valid///path'],
     ]);
 
     \it('Method withPath', function (Uri $uri, string $path, string $expect) {
