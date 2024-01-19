@@ -114,10 +114,12 @@ use Kaspi\HttpMessage\Stream;
         ])
     ;
 
-    \it('Header values must be a non empty string', function () {
-        \expect((new Message())->withHeader('foo', ['Baz', "\t\t   \t", 'Bar'])->getHeader('foo'))
-            ->toBe(['Baz', '', 'Bar'])
-        ;
+    \it('Header values maybe empty string', function () {
+        \expect(
+            (new Message())
+                ->withHeader('foo', ['Baz', "\t\t   \t", 'Bar'])
+                ->getHeader('foo')
+        )->toBe(['Baz', '', 'Bar']);
     });
 })
     ->covers(Message::class, Stream::class)

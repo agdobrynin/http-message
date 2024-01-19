@@ -176,9 +176,11 @@ use Psr\Http\Message\UriInterface;
         ->with('headers_with_uri')
     ;
 
-    \it('test x', function () {
-        $r = new Request('GET', 'https://example.com/');
-        $r = $r->withHeader('Foo', '');
-        $this->assertEquals([''], $r->getHeader('Foo'));
+    \it('Header in request with empty value', function () {
+        \expect(
+            (new Request('GET', 'http://php.org/'))
+                ->withHeader('fix', '')
+                ->getHeader('fix')
+        )->toBe(['']);
     });
 })->covers(Request::class, Uri::class, Message::class, Stream::class);
