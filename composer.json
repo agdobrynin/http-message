@@ -29,7 +29,7 @@
     "minimum-stability": "stable",
     "scripts": {
         "fixer" : "./vendor/bin/php-cs-fixer fix",
-        "test" : "./vendor/bin/pest --compact --coverage",
+        "test" : "./vendor/bin/pest --compact --no-coverage",
         "phan" : "./vendor/bin/phan",
         "phan-poly" : "./vendor/bin/phan --allow-polyfill-parser"
     },
