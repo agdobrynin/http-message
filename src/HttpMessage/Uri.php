@@ -113,6 +113,16 @@ class Uri implements UriInterface
 
     public function getPath(): string
     {
+        if ($this->path && $this->host) {
+            if (!\str_starts_with($this->path, '/')) {
+                return '/'.$this->path;
+            }
+
+            if (\str_starts_with($this->path, '//')) {
+                return '/'.\ltrim($this->path, '/');
+            }
+        }
+
         return $this->path;
     }
 
