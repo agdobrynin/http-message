@@ -82,6 +82,7 @@ use Psr\Http\Message\UriInterface;
 
     \it('createStreamFromResource', function () {
         $f = vfsStream::newFile('i')->withContent('hello world')->at(vfsStream::setup());
+
         \expect($s = (new HttpFactory())->createStreamFromResource(\fopen($f->url(), 'rb')))->toBeInstanceOf(StreamInterface::class)
             ->and($s->getContents())->toBe('hello world')
         ;
@@ -92,4 +93,61 @@ use Psr\Http\Message\UriInterface;
             ->and((string) $u)->toBe($expectUri)
         ;
     })->with('uri_as_string');
+
+    \describe('createStreamFromFile', function () {
+        \it('success', function () {
+            $f = vfsStream::newFile('i')->withContent('hello world')->at(vfsStream::setup());
+
+            \expect($s = (new HttpFactory())->createStreamFromFile($f->url()))->toBeInstanceOf(StreamInterface::class)
+                ->and((string) $s)->toBe('hello world')
+            ;
+        });
+
+        \describe('fails', function () {
+            \beforeEach(function () {
+                $this->root = vfsStream::setup();
+            });
+
+            \afterEach(function () {
+                \restore_error_handler();
+            });
+
+            \it('fail for read', function (string $file, string $mode, string $message) {
+                \set_error_handler(static fn () => false);
+
+                $this->expectExceptionMessage($message);
+
+                (new HttpFactory())->createStreamFromFile($file, $mode);
+            })
+                ->throws(RuntimeException::class)
+                ->with([
+                    'empty name' => [
+                        'file' => fn () => '',
+                        'mode' => 'r',
+                        'message' => 'Path cannot be empty',
+                    ],
+                    'file not found' => [
+                        'file' => fn () => __DIR__.DIRECTORY_SEPARATOR.\uniqid('test'),
+                        'mode' => 'rb',
+                        'message' => 'No such file or directory',
+                    ],
+                    'fail mode' => [
+                        'file' => fn () => vfsStream::newFile('my.txt')->at($this->root)->url(),
+                        'mode' => 'uyuyuyuyu',
+                        'message' => 'Failed to open stream',
+                    ],
+                    'mode cannot read stream' => [
+                        'file' => fn () => vfsStream::newFile('my.txt', 0222)->at($this->root)->url(),
+                        'mode' => 'rb',
+                        'message' => 'Failed to open stream',
+                    ],
+                    'mode write' => [
+                        'file' => fn () => vfsStream::newFile('my.txt', 0444)->at($this->root)->url(),
+                        'mode' => 'wb',
+                        'message' => 'Failed to open stream',
+                    ],
+                ])
+            ;
+        });
+    })->covers(Stream::class);
 });

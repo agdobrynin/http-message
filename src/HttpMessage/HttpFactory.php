@@ -44,9 +44,13 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createStreamFromFile(string $filename, string $mode = 'rb'): StreamInterface
     {
-        return ($r = @\fopen($filename, $mode)) !== false
-            ? new Stream($r)
-            : throw new \RuntimeException("Cannot open target file {$filename} [".\error_get_last()['message'] ?? ']');
+        try {
+            return ($r = @\fopen($filename, $mode)) !== false
+                ? new Stream($r)
+                : throw new \RuntimeException(\error_get_last()['message'] ?? '');
+        } catch (\Throwable $error) {
+            throw new \RuntimeException("Cannot open target file {$filename} [{$error}]");
+        }
     }
 
     public function createStreamFromResource($resource): StreamInterface
