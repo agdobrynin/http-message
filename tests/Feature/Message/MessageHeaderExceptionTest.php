@@ -28,25 +28,6 @@ use Kaspi\HttpMessage\Stream;
         'Header name is empty string'
     );
 
-    \it('Values in header empty value', function (string $name, mixed $value) {
-        (new Message())->withHeader($name, $value);
-    })->throws(
-        InvalidArgumentException::class,
-        'Header values must be non empty string'
-    )
-        ->with([
-            'empty value' => ['name' => 'h', 'value' => ''],
-            'empty array' => ['name' => 'h', 'value' => ['', '', '']],
-        ])
-    ;
-
-    \it('Header values must be a non empty string', function () {
-        (new Message())->withHeader('foo', ['Baz', "\t\t   \t", 'Bar']);
-    })->throws(
-        InvalidArgumentException::class,
-        'Header values must be a non empty string'
-    );
-
     \it('Get header empty name', function () {
         (new Message())->getHeader('');
     })->throws(

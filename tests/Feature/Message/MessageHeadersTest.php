@@ -102,6 +102,23 @@ use Kaspi\HttpMessage\Stream;
             ])
         ;
     });
+
+    \it('Values in header empty value', function (string $name, mixed $value, array $expect) {
+        $m = (new Message())->withHeader($name, $value);
+
+        \expect($m->getHeader($name))->toBe($expect);
+    })
+        ->with([
+            'empty value' => ['name' => 'h', 'value' => '', 'expect' => ['']],
+            'empty array' => ['name' => 'h', 'value' => ['', '', ''], 'expect' => ['', '', '']],
+        ])
+    ;
+
+    \it('Header values must be a non empty string', function () {
+        \expect((new Message())->withHeader('foo', ['Baz', "\t\t   \t", 'Bar'])->getHeader('foo'))
+            ->toBe(['Baz', '', 'Bar'])
+        ;
+    });
 })
     ->covers(Message::class, Stream::class)
 ;
