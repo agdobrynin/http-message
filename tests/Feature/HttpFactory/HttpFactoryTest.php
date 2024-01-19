@@ -179,5 +179,6 @@ use Psr\Http\Message\UriInterface;
                 'expectSize' => 10,
             ],
         ])
-        ->covers(UploadedFile::class);
+        ->covers(UploadedFile::class)
+    ;
 });

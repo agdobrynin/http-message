@@ -16,6 +16,7 @@ use Kaspi\HttpMessage\Uri;
         'set #2' => ['uri' => '//example.org?q#h', 'path' => ''],
         'set #3' => ['uri' => '//example/a:x', 'path' => '/a:x'],
         'set #4' => ['uri' => '//example/../../etc/passwd', 'path' => '/../../etc/passwd'],
+        'set #5' => ['uri' => '//example//etc//passwd/', 'path' => '/etc//passwd/'],
     ]);
 
     \it('Method withPath', function (Uri $uri, string $path, string $expect) {
@@ -32,13 +33,13 @@ use Kaspi\HttpMessage\Uri;
         'with unavailable symbols - "urlencode" use' => [
             'uri' => new Uri('http://www.com/index.html'),
             'path' => 'dir/просто.html',
-            'expect' => 'dir/%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE.html',
+            'expect' => '/dir/%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE.html',
         ],
 
         'with reserved symbols only' => [
             'uri' => new Uri('http://www.com'),
             'path' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
-            'expect' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
+            'expect' => '/a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
         ],
     ]);
 })

@@ -65,6 +65,12 @@ use Kaspi\HttpMessage\Uri;
             'password' => 'password',
             'expect' => 'mary:password',
         ],
+        'Init without user and password and set other user with password' => [
+            'uri' => new Uri('//www.com'),
+            'user' => 'mary@jain',
+            'password' => 'password',
+            'expect' => 'mary%40jain:password',
+        ],
         'Init with user and password and set other user with raw url encode chars' => [
             'uri' => new Uri('//john:pass@www.com'),
             'user' => 'mary',
