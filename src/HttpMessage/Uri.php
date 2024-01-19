@@ -67,7 +67,7 @@ class Uri implements UriInterface
             $uri .= '//'.$authority;
         }
 
-        if ($path = $this->getPath()) {
+        if ($path = $this->path) {
             $isAbsolutePath = \str_starts_with($path, '/');
 
             if (!$isAbsolutePath && '' !== $authority) {

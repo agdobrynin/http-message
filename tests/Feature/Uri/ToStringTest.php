@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Kaspi\HttpMessage\Uri;
+use Psr\Http\Message\UriInterface;
 
 \describe('Method __toString for '.Uri::class, function () {
     $unreservedForQueryAndFragment = 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?';
@@ -83,10 +84,20 @@ use Kaspi\HttpMessage\Uri;
         ],
 
         'with many star slash in path' => [
-            'uri' => new Uri('http://example.org//valid///path'),
-            'expect' => 'http://example.org/valid///path',
+            'uri' => new Uri('https://php.net:443//function///path'),
+            'expect' => 'https://php.net//function///path',
         ],
     ]);
+
+    \it('make full path with slashes', function () {
+        $expected = 'http://php.org//make///path';
+        $uri = new Uri($expected);
+
+        $this->assertInstanceOf(UriInterface::class, $uri);
+        $this->assertSame('/make///path', $uri->getPath());
+
+        $this->assertSame($expected, (string) $uri);
+    });
 })
     ->covers(Uri::class)
 ;
