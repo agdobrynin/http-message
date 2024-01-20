@@ -12,11 +12,9 @@ class Message implements MessageInterface
 {
     private string $version;
     private array $headers = [];
-    private StreamInterface $body;
 
-    public function __construct(StreamInterface $body, array $headers = [], string $protocolVersion = '1.1')
+    public function __construct(private StreamInterface $body, array $headers = [], string $protocolVersion = '1.1')
     {
-        $this->body = $body;
         $this->addHeaders($headers);
         $this->checkProtocolVersion($protocolVersion);
         $this->version = $protocolVersion;
