@@ -18,35 +18,29 @@ class Stream implements StreamInterface
     private ?int $size = null;
     private ?string $uri = null;
 
-    public function __construct(mixed $body)
+    /**
+     * @param resource $resource
+     */
+    public function __construct($resource)
     {
-        if (!\is_string($body) && !\is_resource($body)) {
-            $got = \var_export($body, true);
+        if (!\is_resource($resource)) {
+            $got = \var_export($resource, true);
 
             throw new \InvalidArgumentException('Argument must be type "resource" or "string". Got: '.$got);
         }
 
-        if (\is_string($body)) {
-            $this->uri = 'php://temp';
-            $this->resource = \fopen($this->uri, 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
-            \fwrite($this->resource, $body);
-            \fseek($this->resource, 0);
-            $this->size = \strlen($body);
-            $this->writable = $this->readable = $this->seekable = true;
-        } else {
-            $this->resource = $body;
-            $meta = \stream_get_meta_data($this->resource);
-            $this->uri = $meta['uri'] ?? null;
-            $this->seekable = ($meta['seekable'] ?? null)
-                && 0 === \fseek($this->resource, 0, \SEEK_CUR);
-            $mode = ($meta['mode'] ?? '');
+        $this->resource = $resource;
+        $meta = \stream_get_meta_data($this->resource);
+        $this->uri = $meta['uri'] ?? null;
+        $this->seekable = ($meta['seekable'] ?? null)
+            && 0 === \fseek($this->resource, 0, \SEEK_CUR);
+        $mode = ($meta['mode'] ?? '');
 
-            if (\str_contains($mode, '+')) {
-                $this->writable = $this->readable = true;
-            } else {
-                $this->writable = \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
-                $this->readable = \str_contains($mode, 'r');
-            }
+        if (\str_contains($mode, '+')) {
+            $this->writable = $this->readable = true;
+        } else {
+            $this->writable = \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
+            $this->readable = \str_contains($mode, 'r');
         }
     }
 
@@ -112,7 +106,7 @@ class Stream implements StreamInterface
 
     public function tell(): int
     {
-        if ($this->isValidStream()) {
+        if (isset($this->resource) && $this->isValidStream()) {
             return ($pos = @\ftell($this->resource)) !== false
                 ? $pos
                 : throw new \RuntimeException('Cant get pointer position of stream: '.(\error_get_last()['message'] ?? ''));
@@ -160,7 +154,7 @@ class Stream implements StreamInterface
 
     public function write(string $string): int
     {
-        if (!$this->isValidStream()) {
+        if (!isset($this->resource) || !$this->isValidStream()) {
             throw new \RuntimeException('Stream not defined');
         }
 
@@ -197,7 +191,7 @@ class Stream implements StreamInterface
 
     public function getContents(): string
     {
-        if (!$this->isValidStream()) {
+        if (!isset($this->resource) || !$this->isValidStream()) {
             throw new \RuntimeException('Stream not defined');
         }
 
@@ -208,7 +202,7 @@ class Stream implements StreamInterface
 
     public function getMetadata(?string $key = null): mixed
     {
-        if ($this->isValidStream()) {
+        if (isset($this->resource) && $this->isValidStream()) {
             $meta = \stream_get_meta_data($this->resource);
 
             return null === $key ? $meta : ($meta[$key] ?? null);
@@ -219,8 +213,7 @@ class Stream implements StreamInterface
 
     private function isValidStream(): bool
     {
-        return isset($this->resource)
-            && \is_resource($this->resource)
+        return \is_resource($this->resource)
             && 'Unknown' !== \get_resource_type($this->resource);
     }
 }

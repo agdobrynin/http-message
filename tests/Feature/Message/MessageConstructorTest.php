@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
+use Kaspi\HttpMessage\CreateResourceFromStringTrait;
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Stream;
 use org\bovigo\vfs\vfsStream;
 use Psr\Http\Message\StreamInterface;
+use Tests\Kaspi\HttpMessage\StreamAdapter;
 
 \describe('Message constructor of '.Message::class, function () {
     \it('Empty constructor', function () {
-        \expect($m = new Message())
+        \expect($m = new Message(StreamAdapter::make()))
             ->and($m->getBody())->toBeInstanceOf(StreamInterface::class)
             ->and($m->getBody()->getSize())->toBe(0)
             ->and((string) $m->getBody())->toBe('')
@@ -24,7 +26,7 @@ use Psr\Http\Message\StreamInterface;
         ->with('message_body_success')
         ->with([
             'from resource' => [
-                'body' => \fopen(vfsStream::newFile('f')->setContent('Virtual file!')->at(vfsStream::setup())->url(), 'rb'),
+                'body' => new Stream(\fopen(vfsStream::newFile('f')->setContent('Virtual file!')->at(vfsStream::setup())->url(), 'rb')),
                 'contents' => 'Virtual file!',
             ],
         ])
@@ -33,34 +35,34 @@ use Psr\Http\Message\StreamInterface;
     \it('Body wrong type', function ($body) {
         new Message(body: $body);
     })
-        ->throws(InvalidArgumentException::class, 'Argument must be type "resource" or "string"')
+        ->throws(TypeError::class)
         ->with('message_body_wrong')
     ;
 
     \it('Protocol version', function ($version) {
-        \expect((new Message(protocolVersion: $version))->getProtocolVersion())->toBe($version);
+        \expect((new Message(StreamAdapter::make(), protocolVersion: $version))->getProtocolVersion())->toBe($version);
     })
         ->with('protocol_success')
     ;
 
     \it('Protocol version wrong', function ($version) {
-        new Message(protocolVersion: $version);
+        new Message(StreamAdapter::make(), protocolVersion: $version);
     })
         ->throws(InvalidArgumentException::class, 'Protocol must be implement')
         ->with('protocol_wrong')
     ;
 
     \it('Headers success', function ($headers, $expectHeaders) {
-        \expect((new Message(headers: $headers))->getHeaders())->toBe($expectHeaders);
+        \expect((new Message(StreamAdapter::make(), headers: $headers))->getHeaders())->toBe($expectHeaders);
     })
         ->with('headers_success')
     ;
 
     \it('Headers wrong', function ($headers, $exceptionMessage) {
         $this->expectExceptionMessage($exceptionMessage);
-        new Message(headers: $headers);
+        new Message(StreamAdapter::make(), headers: $headers);
     })
         ->throws(InvalidArgumentException::class)
         ->with('headers_wrong')
     ;
-})->covers(Message::class, Stream::class);
+})->covers(Message::class, Stream::class, CreateResourceFromStringTrait::class);

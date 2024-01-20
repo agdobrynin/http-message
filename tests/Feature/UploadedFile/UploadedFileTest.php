@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
+use Kaspi\HttpMessage\CreateResourceFromStringTrait;
 use Kaspi\HttpMessage\Stream;
 use Kaspi\HttpMessage\UploadedFile;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Tests\Kaspi\HttpMessage\StreamAdapter;
 
 \describe('Tests for '.UploadedFile::class, function () {
     \describe('Constructor', function () {
@@ -35,7 +37,7 @@ use Psr\Http\Message\UploadedFileInterface;
         ;
 
         \it('available StreamInterface', function () {
-            \expect(new UploadedFile(new Stream(''), 0))
+            \expect(new UploadedFile(StreamAdapter::make(''), 0))
                 ->toBeInstanceOf(UploadedFileInterface::class)
             ;
         })
@@ -85,7 +87,7 @@ use Psr\Http\Message\UploadedFileInterface;
         ;
 
         \it('from stream', function () {
-            $stream = new Stream('');
+            $stream = StreamAdapter::make('');
             $uploadedFile = (new UploadedFile($stream, \UPLOAD_ERR_OK));
             \expect($uploadedFile->getStream())
                 ->toBeInstanceOf(StreamInterface::class)
@@ -98,7 +100,9 @@ use Psr\Http\Message\UploadedFileInterface;
         })
             ->throws(RuntimeException::class, 'Uploaded file has error code: '.\UPLOAD_ERR_FORM_SIZE)
         ;
-    });
+    })
+        ->covers(CreateResourceFromStringTrait::class)
+    ;
 
     \describe('simple methods', function () {
         \it('method with null value', function () {

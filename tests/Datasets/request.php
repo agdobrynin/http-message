@@ -12,7 +12,7 @@ use Kaspi\HttpMessage\Uri;
             'uri' => '',
             'expectUri' => '',
         ],
-        'set #' => [
+        'set #2' => [
             'method' => 'GET',
             'uri' => new Uri('https://php.org:443/index.php'),
             'expectUri' => 'https://php.org/index.php',
@@ -29,7 +29,7 @@ use Kaspi\HttpMessage\Uri;
             'srvParams' => [],
             'expectUri' => '',
         ],
-        'set #' => [
+        'set #2' => [
             'method' => 'GET',
             'uri' => new Uri('https://php.org:443/index.php'),
             'srvParams' => ['test1', 'test2' => ['list', 'info']],

@@ -65,7 +65,7 @@ use Psr\Http\Message\StreamInterface;
             'null' => ['parsedBody' => null],
             'array' => ['parsedBody' => ['hello' => 'world']],
             'object' => ['parsedBody' => (object) ['hello' => 'world']],
-            'object as class' => ['parsedBody' => new Stream('')],
+            'object as class' => ['parsedBody' => new stdClass()],
         ])
     ;
 

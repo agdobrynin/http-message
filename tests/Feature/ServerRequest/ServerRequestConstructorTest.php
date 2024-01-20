@@ -24,7 +24,7 @@ use Kaspi\HttpMessage\Uri;
     \it('fail body', function ($body) {
         new ServerRequest(body: $body);
     })
-        ->throws(InvalidArgumentException::class, 'Argument must be type "resource" or "string"')
+        ->throws(TypeError::class)
         ->with('message_body_wrong')
     ;
 
