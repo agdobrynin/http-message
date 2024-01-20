@@ -8,8 +8,6 @@ use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface
 {
-    use CreateResourceFromStringTrait;
-
     /**
      * @var resource
      */
@@ -20,17 +18,18 @@ class Stream implements StreamInterface
     private ?int $size = null;
     private ?string $uri = null;
 
-    public function __construct(mixed $body)
+    /**
+     * @param resource $resource
+     */
+    public function __construct($resource)
     {
-        if (!\is_string($body) && !\is_resource($body)) {
-            $got = \var_export($body, true);
+        if (!\is_resource($resource)) {
+            $got = \var_export($resource, true);
 
             throw new \InvalidArgumentException('Argument must be type "resource" or "string". Got: '.$got);
         }
 
-        $this->resource = \is_string($body)
-            ? $this->resourceFromString($body)
-            : $body;
+        $this->resource = $resource;
 
         $meta = \stream_get_meta_data($this->resource);
         $this->uri = $meta['uri'] ?? null;
