@@ -8,6 +8,8 @@ use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface
 {
+    use CreateResourceFromStringTrait;
+
     /**
      * @var resource
      */
@@ -26,27 +28,21 @@ class Stream implements StreamInterface
             throw new \InvalidArgumentException('Argument must be type "resource" or "string". Got: '.$got);
         }
 
-        if (\is_string($body)) {
-            $this->uri = 'php://temp';
-            $this->resource = \fopen($this->uri, 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
-            \fwrite($this->resource, $body);
-            \fseek($this->resource, 0);
-            $this->size = \strlen($body);
-            $this->writable = $this->readable = $this->seekable = true;
-        } else {
-            $this->resource = $body;
-            $meta = \stream_get_meta_data($this->resource);
-            $this->uri = $meta['uri'] ?? null;
-            $this->seekable = ($meta['seekable'] ?? null)
-                && 0 === \fseek($this->resource, 0, \SEEK_CUR);
-            $mode = ($meta['mode'] ?? '');
+        $this->resource = \is_string($body)
+            ? $this->resourceFromString($body)
+            : $body;
 
-            if (\str_contains($mode, '+')) {
-                $this->writable = $this->readable = true;
-            } else {
-                $this->writable = \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
-                $this->readable = \str_contains($mode, 'r');
-            }
+        $meta = \stream_get_meta_data($this->resource);
+        $this->uri = $meta['uri'] ?? null;
+        $this->seekable = ($meta['seekable'] ?? null)
+            && 0 === \fseek($this->resource, 0, \SEEK_CUR);
+        $mode = ($meta['mode'] ?? '');
+
+        if (\str_contains($mode, '+')) {
+            $this->writable = $this->readable = true;
+        } else {
+            $this->writable = \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
+            $this->readable = \str_contains($mode, 'r');
         }
     }
 
