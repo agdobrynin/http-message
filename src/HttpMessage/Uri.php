@@ -68,9 +68,7 @@ class Uri implements UriInterface
         }
 
         if ($path = $this->path) {
-            $isAbsolutePath = \str_starts_with($path, '/');
-
-            if (!$isAbsolutePath && '' !== $authority) {
+            if ('' !== $authority && !\str_starts_with($path, '/')) {
                 $path = '/'.$path;
             } elseif ('' === $authority && \str_starts_with($path, '//')) {
                 $path = '/'.\ltrim($path, '/');
