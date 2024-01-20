@@ -35,6 +35,12 @@ use Kaspi\HttpMessage\Uri;
             'scheme' => 'HttP',
             'expect' => 'http',
         ],
+
+        'Scheme http change to empty' => [
+            'uri' => new Uri('http://www.yahoo.com'),
+            'scheme' => '',
+            'expect' => '',
+        ],
     ]);
 })
     ->covers(Uri::class)
