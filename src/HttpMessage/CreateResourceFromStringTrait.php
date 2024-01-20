@@ -8,7 +8,8 @@ trait CreateResourceFromStringTrait
 {
     private static function resourceFromString(string $body, string $fileName = 'php://temp', string $mode = 'r+b')
     {
-        $resource = \fopen($fileName, $mode) ?: throw new \RuntimeException("Cannot open stream [{$fileName}]");
+        $resource = ($r = @\fopen($fileName, $mode)) !== false
+            ? $r : throw new \RuntimeException("Cannot open stream [{$fileName}]");
         \fwrite($resource, $body);
         \fseek($resource, 0);
 
