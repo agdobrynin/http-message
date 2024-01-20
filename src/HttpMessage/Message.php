@@ -222,7 +222,7 @@ class Message implements MessageInterface
         $valuesRaw = !\is_array($values) ? [$values] : $values;
 
         if (empty($valuesRaw)) {
-            throw new \InvalidArgumentException('Header values must be non empty string');
+            throw new \InvalidArgumentException('Header values must be non-empty array');
         }
 
         $result = [];
