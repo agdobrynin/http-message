@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class Response extends Message implements ResponseInterface
 {
+    use CreateResourceFromStringTrait;
+
     private const PHRASE = [
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -63,10 +66,13 @@ class Response extends Message implements ResponseInterface
     public function __construct(
         private int $code = 200,
         private ?string $reasonPhrase = null,
-        mixed $body = '',
+        StreamInterface|string $body = '',
         array $headers = [],
         string $protocolVersion = '1.1'
     ) {
+        $body = \is_string($body)
+            ? new Stream(self::resourceFromString($body))
+            : $body;
         parent::__construct($body, $headers, $protocolVersion);
         $this->checkStatusCode($this->code);
 

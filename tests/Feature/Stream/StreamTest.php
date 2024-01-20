@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Kaspi\HttpMessage\CreateResourceFromStringTrait;
 use Kaspi\HttpMessage\Stream;
 use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
+use Tests\Kaspi\HttpMessage\StreamAdapter;
 
 \describe('Tests for '.Stream::class, function () {
     \it('Destructor unset related resource', function () {
@@ -53,14 +55,13 @@ use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
     });
 
     \it('Create Stream from string', function () {
-        $stream = new Stream('Hello world!'.PHP_EOL.'--'.PHP_EOL);
+        $stream = StreamAdapter::make('Hello world!'.PHP_EOL.'--'.PHP_EOL);
 
         \expect($stream->isWritable())->toBeTrue()
             ->and($stream->isReadable())->toBeTrue()
             ->and($stream->isSeekable())->toBeTrue()
             ->and($stream->getMetadata())->toBeArray()
             ->and($stream->eof())->toBeFalse()
-            ->and($stream->getMetadata('uri'))->toBe('php://temp')
             ->and($stream->getContents())->toBe("Hello world!\n--\n")
             ->and($stream->eof())->toBeTrue()
         ;
@@ -97,7 +98,7 @@ use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
     ;
 
     \it('Stream test methods Seek, Rewind, Eof, Read', function () {
-        $stream = new Stream('hello');
+        $stream = StreamAdapter::make('hello');
 
         \expect($stream->eof())->toBeFalse()
             ->and($stream->read(6))->toBe('hello')
@@ -116,7 +117,7 @@ use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
     });
 
     \it('Seek as negative value', function () {
-        $stream = new Stream('hello');
+        $stream = StreamAdapter::make('hello');
         $stream->seek(-1);
         $stream->close();
     })->throws(RuntimeException::class, 'Cannot search for position');
@@ -170,7 +171,7 @@ use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
     });
 
     \it('Stream method Detach', function () {
-        $stream = new Stream('abc');
+        $stream = StreamAdapter::make('abc');
         $resource = $stream->detach();
 
         \expect($resource)->toBeResource()
@@ -194,11 +195,11 @@ use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
     })
         ->throws(RuntimeException::class)
         ->with([
-            'tell' => ['stream' => new Stream(''), 'method' => 'tell'],
-            'seek' => ['stream' => new Stream(''), 'method' => 'seek', 'args' => [0]],
-            'write' => ['stream' => new Stream(''), 'method' => 'write', 'args' => ['abc']],
-            'read' => ['stream' => new Stream(''), 'method' => 'read', 'args' => [1]],
-            'getContents' => ['stream' => new Stream(''), 'method' => 'getContents'],
+            'tell' => ['stream' => StreamAdapter::make(''), 'method' => 'tell'],
+            'seek' => ['stream' => StreamAdapter::make(''), 'method' => 'seek', 'args' => [0]],
+            'write' => ['stream' => StreamAdapter::make(''), 'method' => 'write', 'args' => ['abc']],
+            'read' => ['stream' => StreamAdapter::make(''), 'method' => 'read', 'args' => [1]],
+            'getContents' => ['stream' => StreamAdapter::make(''), 'method' => 'getContents'],
         ])
     ;
 
@@ -246,5 +247,5 @@ use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
         ;
     });
 })
-    ->covers(Stream::class)
+    ->covers(Stream::class, CreateResourceFromStringTrait::class)
 ;

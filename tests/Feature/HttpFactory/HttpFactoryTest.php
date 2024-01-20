@@ -16,6 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Tests\Kaspi\HttpMessage\StreamAdapter;
 
 \describe('Test for '.HttpFactory::class, function () {
     \describe('createRequest', function () {
@@ -169,12 +170,12 @@ use Psr\Http\Message\UriInterface;
     })
         ->with([
             'null init size' => [
-                'stream' => new Stream('file'),
+                'stream' => StreamAdapter::make('file'),
                 'size' => null,
                 'expectSize' => 4,
             ],
             'init size' => [
-                'stream' => new Stream('file'),
+                'stream' => StreamAdapter::make('file'),
                 'size' => 10,
                 'expectSize' => 10,
             ],

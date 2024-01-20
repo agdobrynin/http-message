@@ -22,6 +22,8 @@ use Psr\Http\Message\UriInterface;
  */
 class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
 {
+    use CreateResourceFromStringTrait;
+
     public function createRequest(string $method, $uri): RequestInterface
     {
         return new Request(method: $method, uri: $uri);
@@ -39,7 +41,7 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createStream(string $content = ''): StreamInterface
     {
-        return new Stream(body: $content);
+        return new Stream(resource: self::resourceFromString($content));
     }
 
     public function createStreamFromFile(string $filename, string $mode = 'rb'): StreamInterface
