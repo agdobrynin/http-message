@@ -30,7 +30,6 @@ class Stream implements StreamInterface
         }
 
         $this->resource = $resource;
-
         $meta = \stream_get_meta_data($this->resource);
         $this->uri = $meta['uri'] ?? null;
         $this->seekable = ($meta['seekable'] ?? null)
