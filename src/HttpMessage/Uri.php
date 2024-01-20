@@ -77,11 +77,11 @@ class Uri implements UriInterface
             $uri .= $path;
         }
 
-        if ($query = $this->getQuery()) {
+        if ('' !== ($query = $this->getQuery())) {
             $uri .= '?'.$query;
         }
 
-        if ($fragment = $this->getFragment()) {
+        if ('' !== ($fragment = $this->getFragment())) {
             $uri .= '#'.$fragment;
         }
 
@@ -94,9 +94,9 @@ class Uri implements UriInterface
             return '';
         }
 
-        return (($userInfo = $this->getUserInfo()) ? $userInfo.'@' : '').
+        return ('' !== ($userInfo = $this->getUserInfo()) ? $userInfo.'@' : '').
             $this->host.
-            (($port = $this->getPort()) ? ':'.$port : '');
+            (null !== ($port = $this->getPort()) ? ':'.$port : '');
     }
 
     public function getFragment(): string
@@ -148,7 +148,7 @@ class Uri implements UriInterface
             return '';
         }
 
-        return $this->user.($this->pass ? ':'.$this->pass : '');
+        return $this->user.('' !== $this->pass ? ':'.$this->pass : '');
     }
 
     public function withFragment(string $fragment): UriInterface
