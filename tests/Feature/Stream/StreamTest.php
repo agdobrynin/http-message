@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Kaspi\HttpMessage\Stream;
-use Tests\Feature\Stream\TestStream;
+use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
 
 \describe('Tests for '.Stream::class, function () {
     \it('Destructor unset related resource', function () {
