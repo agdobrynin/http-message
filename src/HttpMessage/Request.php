@@ -5,24 +5,27 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
 class Request extends Message implements RequestInterface
 {
+    use CreateResourceFromStringTrait;
+
     protected ?string $requestTarget = null;
     private string $method;
     private UriInterface $uri;
 
-    /**
-     * @param \Psr\Http\Message\StreamInterface|resource|string $body
-     */
     public function __construct(
         string $method = 'GET',
         string|UriInterface $uri = '',
-        $body = '',
+        StreamInterface|string $body = '',
         array $headers = [],
         string $protocolVersion = '1.1'
     ) {
+        $body = \is_string($body)
+            ? self::resourceFromString($body)
+            : $body;
         parent::__construct($body, $headers, $protocolVersion);
         $this->method = $method;
         $this->uri = \is_string($uri) ? new Uri($uri) : $uri;

@@ -6,7 +6,7 @@ namespace Kaspi\HttpMessage;
 
 trait CreateResourceFromStringTrait
 {
-    private function resourceFromString(string $body)
+    private static function resourceFromString(string $body)
     {
         $resource = \fopen('php://temp', 'r+b') ?: throw new \RuntimeException('Cannot open stream [php://temp]');
         \fwrite($resource, $body);

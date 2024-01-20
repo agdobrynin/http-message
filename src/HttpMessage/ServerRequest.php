@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -23,7 +24,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     public function __construct(
         string $method = 'GET',
         string|UriInterface $uri = '',
-        $body = '',
+        StreamInterface|string $body = '',
         array $headers = [],
         string $protocolVersion = '1.1',
         private readonly array $serverParams = [],
