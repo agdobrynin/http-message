@@ -112,7 +112,7 @@ class Stream implements StreamInterface
 
     public function tell(): int
     {
-        if ($this->isValidStream()) {
+        if (isset($this->resource) && $this->isValidStream()) {
             return ($pos = @\ftell($this->resource)) !== false
                 ? $pos
                 : throw new \RuntimeException('Cant get pointer position of stream: '.(\error_get_last()['message'] ?? ''));
@@ -160,7 +160,7 @@ class Stream implements StreamInterface
 
     public function write(string $string): int
     {
-        if (!$this->isValidStream()) {
+        if (!isset($this->resource) || !$this->isValidStream()) {
             throw new \RuntimeException('Stream not defined');
         }
 
@@ -197,7 +197,7 @@ class Stream implements StreamInterface
 
     public function getContents(): string
     {
-        if (!$this->isValidStream()) {
+        if (!isset($this->resource) || !$this->isValidStream()) {
             throw new \RuntimeException('Stream not defined');
         }
 
@@ -208,7 +208,7 @@ class Stream implements StreamInterface
 
     public function getMetadata(?string $key = null): mixed
     {
-        if ($this->isValidStream()) {
+        if (isset($this->resource) && $this->isValidStream()) {
             $meta = \stream_get_meta_data($this->resource);
 
             return null === $key ? $meta : ($meta[$key] ?? null);
@@ -219,8 +219,7 @@ class Stream implements StreamInterface
 
     private function isValidStream(): bool
     {
-        return isset($this->resource)
-            && \is_resource($this->resource)
+        return \is_resource($this->resource)
             && 'Unknown' !== \get_resource_type($this->resource);
     }
 }
