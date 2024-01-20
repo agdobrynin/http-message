@@ -18,6 +18,7 @@ use Kaspi\HttpMessage\Uri;
         'set #4' => ['uri' => '//example/../../etc/passwd', 'path' => '/../../etc/passwd'],
         'set #5' => ['uri' => '//example//etc//passwd/', 'path' => '/etc//passwd/'],
         'set #6' => ['uri' => 'http://example.org//valid///path', 'path' => '/valid///path'],
+        'set #7' => ['uri' => 'https://0:0@0:1/0?0#0', 'path' => '/0'],
     ]);
 
     \it('Method withPath', function (Uri $uri, string $path, string $expect) {
@@ -41,6 +42,11 @@ use Kaspi\HttpMessage\Uri;
             'uri' => new Uri('http://www.com'),
             'path' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
             'expect' => '/a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
+        ],
+        'path is "0"' => [
+            'uri' => new Uri('https://0:0@0:1/0?0#0'),
+            'path' => '0',
+            'expect' => '0',
         ],
     ]);
 })

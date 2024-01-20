@@ -32,6 +32,10 @@ use Kaspi\HttpMessage\Uri;
             'uri' => 'http://%D1%8E%D0%B7%D0%B5%D1%80%201:%D0%BF%D0%B0%D1%80%D0%BE%D0%BB%D1%8C%203@localhost/',
             'expect' => '%D1%8E%D0%B7%D0%B5%D1%80%201:%D0%BF%D0%B0%D1%80%D0%BE%D0%BB%D1%8C%203',
         ],
+        'user "0" and password "0"' => [
+            'uri' => 'https://0:0@0:1/0?0#0',
+            'expect' => '0:0',
+        ],
     ]);
 
     \it('Test method WithUserInfo', function (Uri $uri, string $user, ?string $password, string $expect) {
@@ -82,6 +86,12 @@ use Kaspi\HttpMessage\Uri;
             'user' => 'a-zA-Z0-9_-.~!$&\'()*+,;=',
             'password' => 'a-zA-Z0-9_-.~!$&\'()*+,;=',
             'expect' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:a-zA-Z0-9_-.~!$&\'()*+,;=',
+        ],
+        'user "0" and password "0"' => [
+            'uri' => new Uri(''),
+            'user' => '0',
+            'password' => '0',
+            'expect' => '0:0',
         ],
     ]);
 })

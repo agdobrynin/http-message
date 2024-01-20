@@ -15,6 +15,7 @@ use Kaspi\HttpMessage\Uri;
         'scheme "http" URI host short' => [fn () => new Uri('http://DOMain/'), 'domain'],
         'scheme "https" URI IP4 with port' => [fn () => new Uri('https://192.168.1.1:90/'), '192.168.1.1'],
         'scheme "https" URI IP6 with port' => [fn () => new Uri('https://[::1]:1025/'), '[::1]'],
+        'host is "0"' => [fn () => new Uri('https://0:0@0:1/0?0#0'), '0'],
     ]);
 
     \it('Method witHost', function (Uri $uri, string $host, string $expect) {
@@ -28,7 +29,11 @@ use Kaspi\HttpMessage\Uri;
             'host' => 'www.NEWS.com',
             'expect' => 'www.news.com',
         ],
-
+        'Scheme empty change host to "0"' => [
+            'uri' => new Uri('//www.yahoo.com'),
+            'host' => '0',
+            'expect' => '0',
+        ],
         'Scheme empty change to IP4' => [
             'uri' => new Uri('//www.yahoo.com'),
             'host' => '8.8.8.8',

@@ -17,6 +17,11 @@ use Psr\Http\Message\UriInterface;
             'expect' => '',
         ],
 
+        'many "0"' => [
+            'uri' => new Uri('https://0:0@0:1/0?0#0'),
+            'expect' => 'https://0:0@0:1/0?0#0',
+        ],
+
         'has scheme and empty other' => [
             'uri' => (new Uri(''))->withScheme('https'),
             'expect' => 'https:',
