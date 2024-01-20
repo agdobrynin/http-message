@@ -14,6 +14,15 @@ use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
         \expect(\is_resource($handle))->toBeFalse();
     });
 
+    \it('Closed resource', function () {
+        $handle = \fopen('php://memory', 'rb+');
+        $stream = new Stream($handle);
+        \fclose($handle);
+        $stream->getContents();
+    })
+        ->throws(RuntimeException::class, 'Stream not defined')
+    ;
+
     \it('Stream constructor parameter is resource', function () {
         $stream = new Stream(\fopen('php://memory', 'r+b'));
 
