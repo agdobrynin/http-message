@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Kaspi\HttpMessage\Stream;
-use Tests\Feature\Stream\TestStream;
+use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
 
 \describe('Tests for '.Stream::class, function () {
     \it('Destructor unset related resource', function () {
@@ -13,6 +13,15 @@ use Tests\Feature\Stream\TestStream;
 
         \expect(\is_resource($handle))->toBeFalse();
     });
+
+    \it('Closed resource', function () {
+        $handle = \fopen('php://memory', 'rb+');
+        $stream = new Stream($handle);
+        \fclose($handle);
+        $stream->getContents();
+    })
+        ->throws(RuntimeException::class, 'Stream not defined')
+    ;
 
     \it('Stream constructor parameter is resource', function () {
         $stream = new Stream(\fopen('php://memory', 'r+b'));

@@ -67,6 +67,10 @@ class Request extends Message implements RequestInterface
     // @phan-suppress-next-line PhanParamSignatureMismatch
     public function withMethod(string $method): RequestInterface
     {
+        if ('' === $method) {
+            throw new \InvalidArgumentException('Method should non-empty string');
+        }
+
         $new = clone $this;
         $new->method = $method;
 

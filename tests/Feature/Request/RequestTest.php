@@ -86,8 +86,23 @@ use Psr\Http\Message\UriInterface;
         ;
     })->with([
         'from GET to POST' => [new Request('GET', ''), 'POST'],
-        'from GET to empty' => [new Request('GET', ''), ''],
+        'from GET to OPTION' => [new Request('GET', ''), 'OPTION'],
     ]);
+
+    \it('withMethod exception', function (RequestInterface $request, $method) {
+        try {
+            $request->withMethod($method);
+        } catch (InvalidArgumentException|TypeError $exception) {
+            \expect($exception instanceof Throwable)->toBeTrue();
+        }
+    })
+        ->with([
+            'empty string' => [new Request('GET', ''), ''],
+            'as null value' => [new Request('GET', ''), null],
+            'as object value' => [new Request('GET', ''), (object) []],
+            'as class value' => [new Request('GET', ''), new Request()],
+        ])
+    ;
 
     \it('withUri', function (
         RequestInterface $request,

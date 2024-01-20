@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Stream;
+namespace Tests\Kaspi\HttpMessage\Feature\Stream;
 
 class TestStream
 {
