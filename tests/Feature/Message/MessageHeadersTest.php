@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
+use Kaspi\HttpMessage\CreateResourceFromStringTrait;
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Stream;
+use Tests\Kaspi\HttpMessage\StreamAdapter;
 
 \describe('Methods getHeaders, getHeader, getHeaderLine, withHeader, withAddedHeader, withoutHeader', function () {
     \it('empty headers', function () {
-        \expect((new Message())->getHeaders())->toBe([]);
+        \expect((new Message(StreamAdapter::make()))->getHeaders())->toBe([]);
     });
 
     \it('no header by name', function () {
-        \expect((new Message())->getHeader('ok'))->toBe([]);
+        \expect((new Message(StreamAdapter::make()))->getHeader('ok'))->toBe([]);
     });
 
     \it('Method withHeader', function () {
-        $message = new Message();
+        $message = new Message(StreamAdapter::make());
         $newMessage = $message->withHeader('ok', 123456);
 
         \expect($newMessage)->not->toBe($message)
@@ -37,7 +39,7 @@ use Kaspi\HttpMessage\Stream;
     });
 
     \it('WithHeader update header values', function () {
-        $message = new Message();
+        $message = new Message(StreamAdapter::make());
         $newMessage = $message->withHeader('OKa', [" \tFoo   \t", 'Bar']);
 
         \expect($newMessage)->not->toBe($message)
@@ -52,7 +54,7 @@ use Kaspi\HttpMessage\Stream;
     });
 
     \it('method withoutHeader', function () {
-        $message = (new Message())->withHeader('Bar', 'Baz');
+        $message = (new Message(StreamAdapter::make()))->withHeader('Bar', 'Baz');
 
         \expect($message->withoutHeader('x')->getHeaders())->toBe(['Bar' => ['Baz']])
             ->and($message->withoutHeader('Bar')->getHeaders())->toBe([])
@@ -60,7 +62,7 @@ use Kaspi\HttpMessage\Stream;
     });
 
     \it('method withAddedHeader', function () {
-        $message = (new Message())->withHeader('Bar', 'Baz');
+        $message = (new Message(StreamAdapter::make()))->withHeader('Bar', 'Baz');
         $newMessage = $message->withAddedHeader('bar', 'Foo');
 
         \expect($newMessage->getHeaders())->toBe(['Bar' => ['Baz', 'Foo']]);
@@ -71,7 +73,7 @@ use Kaspi\HttpMessage\Stream;
     });
 
     \it('method hasHeader, getHeader with header name "0"', function () {
-        $message = (new Message())->withHeader('0', 'Baz');
+        $message = (new Message(StreamAdapter::make()))->withHeader('0', 'Baz');
 
         \expect($message->hasHeader('0'))->toBeTrue()
             ->and($message->hasHeader('false'))->toBeFalse()
@@ -104,7 +106,7 @@ use Kaspi\HttpMessage\Stream;
     });
 
     \it('Values in header empty value', function (string $name, mixed $value, array $expect) {
-        $m = (new Message())->withHeader($name, $value);
+        $m = (new Message(StreamAdapter::make()))->withHeader($name, $value);
 
         \expect($m->getHeader($name))->toBe($expect);
     })
@@ -116,11 +118,11 @@ use Kaspi\HttpMessage\Stream;
 
     \it('Header values maybe empty string', function () {
         \expect(
-            (new Message())
+            (new Message(StreamAdapter::make()))
                 ->withHeader('foo', ['Baz', "\t\t   \t", 'Bar'])
                 ->getHeader('foo')
         )->toBe(['Baz', '', 'Bar']);
     });
 })
-    ->covers(Message::class, Stream::class)
+    ->covers(Message::class, Stream::class, CreateResourceFromStringTrait::class)
 ;

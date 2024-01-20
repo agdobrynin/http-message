@@ -15,7 +15,7 @@ use org\bovigo\vfs\vfsStream;
         ->with('message_body_success')
         ->with([
             'from resource' => [
-                'body' => \fopen(vfsStream::newFile('f')->setContent('Virtual file!')->at(vfsStream::setup())->url(), 'rb'),
+                'body' => new Stream(\fopen(vfsStream::newFile('f')->setContent('Virtual file!')->at(vfsStream::setup())->url(), 'rb')),
                 'contents' => 'Virtual file!',
             ],
         ])
@@ -24,7 +24,7 @@ use org\bovigo\vfs\vfsStream;
     \it('wrong parameter body', function ($body) {
         new Response(body: $body);
     })
-        ->throws(InvalidArgumentException::class, 'Argument must be type "resource" or "string"')
+        ->throws(TypeError::class)
         ->with('message_body_wrong')
     ;
 
