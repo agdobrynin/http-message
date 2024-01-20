@@ -14,14 +14,9 @@ class Message implements MessageInterface
     private array $headers = [];
     private StreamInterface $body;
 
-    /**
-     * @param resource|StreamInterface|string $body
-     */
-    public function __construct($body = '', array $headers = [], string $protocolVersion = '1.1')
+    public function __construct(StreamInterface $body, array $headers = [], string $protocolVersion = '1.1')
     {
-        $this->body = $body instanceof StreamInterface
-            ? $body
-            : new Stream($body);
+        $this->body = $body;
         $this->addHeaders($headers);
         $this->checkProtocolVersion($protocolVersion);
         $this->version = $protocolVersion;
