@@ -154,7 +154,7 @@ class Uri implements UriInterface
     public function withFragment(string $fragment): UriInterface
     {
         $new = clone $this;
-        $new->fragment = $fragment
+        $new->fragment = '' !== $fragment
             ? self::encode(EncodeEnum::fragment, $fragment)
             : '';
 
@@ -164,7 +164,9 @@ class Uri implements UriInterface
     public function withHost(string $host): UriInterface
     {
         $new = clone $this;
-        $new->host = \strtolower($host);
+        $new->host = '' !== $host
+            ? \strtolower($host)
+            : '';
 
         return $new;
     }
@@ -172,7 +174,7 @@ class Uri implements UriInterface
     public function withPath(string $path): UriInterface
     {
         $new = clone $this;
-        $new->path = $path
+        $new->path = '' !== $path
             ? self::encode(EncodeEnum::path, $path)
             : '';
 
@@ -194,7 +196,7 @@ class Uri implements UriInterface
     public function withQuery(string $query): UriInterface
     {
         $new = clone $this;
-        $new->query = $query
+        $new->query = '' !== $query
             ? self::encode(EncodeEnum::query, $query)
             : '';
 
@@ -204,7 +206,9 @@ class Uri implements UriInterface
     public function withScheme(string $scheme): UriInterface
     {
         $new = clone $this;
-        $new->scheme = \strtolower($scheme);
+        $new->scheme = '' !== $scheme
+            ? \strtolower($scheme)
+            : '';
 
         return $new;
     }
@@ -212,10 +216,10 @@ class Uri implements UriInterface
     public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
         $new = clone $this;
-        $new->user = $user
+        $new->user = '' !== $user
             ? self::encode(EncodeEnum::userinfo, $user)
             : '';
-        $new->pass = !empty($password)
+        $new->pass = '' !== $password && null !== $password
             ? self::encode(EncodeEnum::userinfo, $password)
             : '';
 
