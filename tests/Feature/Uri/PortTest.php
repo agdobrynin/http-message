@@ -30,6 +30,7 @@ use Kaspi\HttpMessage\Uri;
         'scheme "https" and IP6 without port' => ['uri' => 'https://[::1]/', 'port' => null],
         'scheme "https" and IP6 with port 443' => ['uri' => 'https://[::1]:443/', 'port' => null],
         'scheme "http" and IP6 with port 444' => ['uri' => 'http://[::1]:444/', 'port' => 444],
+        'port is "1"' => ['uri' => 'https://0:0@0:1/0?0#0', 'port' => 1],
     ]);
 
     \it('Parse port through constrictor with exception', function (string $uri) {
@@ -54,6 +55,11 @@ use Kaspi\HttpMessage\Uri;
             ->and($new->getPort())->toBe($expectPort)
         ;
     })->with([
+        'port is "1"' => [
+            'uri' => new Uri('https://0:0@0:0/0?0#0'),
+            'port' => 1,
+            'expect' => 1,
+        ],
         'scheme "http" port 80' => [
             'uri' => new Uri('http://www.com'),
             'port' => 80,

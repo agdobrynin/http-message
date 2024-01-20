@@ -16,6 +16,10 @@ use Kaspi\HttpMessage\Uri;
             'uri' => '//site',
             'expect' => 'site',
         ],
+        'host with user "0" and pass "0"' => [
+            'uri' => 'https://0:0@0:1/0?0#0',
+            'expect' => '0:0@0:1',
+        ],
         'host only and standard port' => [
             'uri' => 'https://site:443',
             'expect' => 'site',

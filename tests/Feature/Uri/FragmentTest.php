@@ -24,6 +24,10 @@ use Kaspi\HttpMessage\Uri;
             'uri' => 'HTTPS://domain.com/index.html',
             'fragment' => '',
         ],
+        'fragment is "0"' => [
+            'uri' => 'https://0:0@0:1/0?0#0',
+            'fragment' => '0',
+        ],
     ]);
 
     \it('Method withFragment', function (Uri $uri, string $fragment, string $expect) {
@@ -57,6 +61,11 @@ use Kaspi\HttpMessage\Uri;
             'uri' => new Uri('https://www.com/document'),
             'fragment' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?%E2%82%AC',
             'expect' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?%E2%82%AC',
+        ],
+        'fragment is "0"' => [
+            'uri' => new Uri('https://0:0@0:1/0?0#fig2'),
+            'fragment' => '0',
+            'expect' => '0',
         ],
     ]);
 })

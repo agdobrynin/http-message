@@ -32,6 +32,10 @@ use Kaspi\HttpMessage\Uri;
             'uri' => 'HTTPS://domain.com/index.html',
             'query' => '',
         ],
+        'query is "0"' => [
+            'uri' => 'https://0:0@0:1/0?0#0',
+            'query' => '0',
+        ],
     ]);
 
     \it('Method withQuery', function (Uri $uri, string $query, string $expect) {
@@ -63,6 +67,11 @@ use Kaspi\HttpMessage\Uri;
             'uri' => new Uri('https://www.com/document'),
             'query' => 'azAF0~7.!-$_&\'(*)+,;=:@?/%E2%82%AC',
             'expect' => 'azAF0~7.!-$_&\'(*)+,;=:@?/%E2%82%AC',
+        ],
+        'query is "0"' => [
+            'uri' => new Uri(''),
+            'query' => '0',
+            'expect' => '0',
         ],
     ]);
 })
