@@ -71,7 +71,7 @@ class Response extends Message implements ResponseInterface
         string $protocolVersion = '1.1'
     ) {
         $body = \is_string($body)
-            ? self::resourceFromString($body)
+            ? new Stream(self::resourceFromString($body))
             : $body;
         parent::__construct($body, $headers, $protocolVersion);
         $this->checkStatusCode($this->code);
