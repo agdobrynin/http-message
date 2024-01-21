@@ -52,7 +52,7 @@ class UploadedFile implements UploadedFileInterface
             throw new \InvalidArgumentException('Invalid upload file error. Got: '.$this->error);
         }
 
-        if ($this->isOk()) {
+        if (\UPLOAD_ERR_OK === $this->error) {
             if ($streamOrFile instanceof StreamInterface) {
                 $this->stream = $streamOrFile;
             } elseif ('' !== $streamOrFile) {
@@ -105,9 +105,7 @@ class UploadedFile implements UploadedFileInterface
 
             $from = $this->getStream();
 
-            if ($from->isSeekable()) {
-                $from->rewind();
-            }
+            $from->rewind();
 
             while (!$from->eof()) {
                 if (!$dest->write($from->read(1048576))) {
@@ -147,14 +145,9 @@ class UploadedFile implements UploadedFileInterface
         return $this->originMediaType;
     }
 
-    private function isOk(): bool
-    {
-        return \UPLOAD_ERR_OK === $this->error;
-    }
-
     private function isAvailable(): void
     {
-        if (!$this->isOk()) {
+        if (\UPLOAD_ERR_OK !== $this->error) {
             throw new \RuntimeException('Uploaded file has error code: '.$this->error);
         }
 
