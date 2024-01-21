@@ -28,10 +28,6 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
 
         \expect($message)->not->toBe($newMessage);
     });
-
-    \it('withProtocol has exception', function () {
-        (new Message(StreamAdapter::make()))->withProtocolVersion('1');
-    })->throws(InvalidArgumentException::class);
 })
     ->covers(Message::class, Stream::class, CreateResourceFromStringTrait::class)
 ;

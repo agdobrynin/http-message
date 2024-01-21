@@ -45,13 +45,6 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         ->with('protocol_success')
     ;
 
-    \it('Protocol version wrong', function ($version) {
-        new Message(StreamAdapter::make(), protocolVersion: $version);
-    })
-        ->throws(InvalidArgumentException::class, 'Protocol must be implement')
-        ->with('protocol_wrong')
-    ;
-
     \it('Headers success', function ($headers, $expectHeaders) {
         \expect((new Message(StreamAdapter::make(), headers: $headers))->getHeaders())->toBe($expectHeaders);
     })

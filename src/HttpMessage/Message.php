@@ -16,7 +16,6 @@ class Message implements MessageInterface
     public function __construct(private StreamInterface $body, array $headers = [], string $protocolVersion = '1.1')
     {
         $this->addHeaders($headers);
-        $this->checkProtocolVersion($protocolVersion);
         $this->version = $protocolVersion;
     }
 
@@ -30,7 +29,6 @@ class Message implements MessageInterface
      */
     public function withProtocolVersion(string $version): static
     {
-        $this->checkProtocolVersion($version);
         $new = clone $this;
         $new->version = $version;
 
@@ -119,7 +117,7 @@ class Message implements MessageInterface
 
     protected function updateHostFromUri(UriInterface $uri): void
     {
-        if ($host = $uri->getHost()) {
+        if ('' !== ($host = $uri->getHost())) {
             if (null !== ($h = $this->getHeaderByName('host'))) {
                 unset($this->headers[$h]);
             }
@@ -152,13 +150,6 @@ class Message implements MessageInterface
             } else {
                 $this->headers[$name] = $value;
             }
-        }
-    }
-
-    private function checkProtocolVersion(string $version): void
-    {
-        if (1 !== \preg_match('/^\d+\.\d+$/', $version)) {
-            throw new \InvalidArgumentException('Protocol must be implement "<major>.<minor>" numbering scheme');
         }
     }
 
