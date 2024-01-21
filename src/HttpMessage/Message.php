@@ -205,7 +205,7 @@ class Message implements MessageInterface
 
         $valuesRaw = !\is_array($values) ? [$values] : $values;
 
-        if (empty($valuesRaw)) {
+        if ([] === $valuesRaw) {
             throw new \InvalidArgumentException('Header values must be non-empty array');
         }
 
