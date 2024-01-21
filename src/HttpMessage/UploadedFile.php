@@ -53,10 +53,10 @@ class UploadedFile implements UploadedFileInterface
         }
 
         if (\UPLOAD_ERR_OK === $this->error) {
-            if ($streamOrFile instanceof StreamInterface) {
-                $this->stream = $streamOrFile;
-            } elseif ('' !== $streamOrFile) {
+            if (\is_string($streamOrFile) && '' !== $streamOrFile) {
                 $this->file = $streamOrFile;
+            } elseif ($streamOrFile instanceof StreamInterface) {
+                $this->stream = $streamOrFile;
             } else {
                 throw new \InvalidArgumentException(
                     'Invalid parameter. "fileOrStream" must provide non-empty string or '.StreamInterface::class
