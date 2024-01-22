@@ -67,7 +67,7 @@ class Uri implements UriInterface
             $uri .= '//'.$authority;
         }
 
-        if ($path = $this->path) {
+        if ('' !== ($path = $this->path)) {
             if ('' !== $authority && !\str_starts_with($path, '/')) {
                 $path = '/'.$path;
             } elseif ('' === $authority && \str_starts_with($path, '//')) {
@@ -111,7 +111,7 @@ class Uri implements UriInterface
 
     public function getPath(): string
     {
-        if ($this->path && $this->host) {
+        if ('' !== $this->path && '' !== $this->host) {
             if (!\str_starts_with($this->path, '/')) {
                 return '/'.$this->path;
             }
@@ -203,8 +203,12 @@ class Uri implements UriInterface
         return $new;
     }
 
-    public function withScheme(string $scheme): UriInterface
+    public function withScheme($scheme): UriInterface
     {
+        if (!\is_string($scheme)) {
+            throw new \InvalidArgumentException('Scheme must be a string value');
+        }
+
         $new = clone $this;
         $new->scheme = '' !== $scheme
             ? \strtolower($scheme)

@@ -46,7 +46,7 @@ use Kaspi\HttpMessage\Uri;
         'path is "0"' => [
             'uri' => new Uri('https://0:0@0:1/0?0#0'),
             'path' => '0',
-            'expect' => '0',
+            'expect' => '/0',
         ],
     ]);
 })

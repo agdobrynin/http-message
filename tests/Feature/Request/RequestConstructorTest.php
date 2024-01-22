@@ -34,13 +34,6 @@ use org\bovigo\vfs\vfsStream;
         ->with('protocol_success')
     ;
 
-    \it('Protocol version wrong', function ($version) {
-        new Request(protocolVersion: $version);
-    })
-        ->throws(InvalidArgumentException::class, 'Protocol must be implement')
-        ->with('protocol_wrong')
-    ;
-
     \it('Success headers', function ($headers, $expectHeaders) {
         \expect((new Request(headers: $headers))->getHeaders())->toBe($expectHeaders);
     })

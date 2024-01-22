@@ -29,8 +29,7 @@ class Request extends Message implements RequestInterface
         parent::__construct($body, $headers, $protocolVersion);
         $this->method = $method;
         $this->uri = \is_string($uri) ? new Uri($uri) : $uri;
-
-        parent::updateHostFromUri($this->uri);
+        $this->updateHostFromUri($this->uri);
     }
 
     public function getRequestTarget(): string
