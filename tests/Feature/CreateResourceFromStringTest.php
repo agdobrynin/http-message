@@ -69,4 +69,5 @@ use org\bovigo\vfs\vfsStream;
         ])
     ;
 })
-    ->covers(CreateResourceFromStringTrait::class, Stream::class);
+    ->covers(CreateResourceFromStringTrait::class, Stream::class)
+;

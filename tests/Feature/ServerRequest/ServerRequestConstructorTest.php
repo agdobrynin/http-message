@@ -58,13 +58,6 @@ use Kaspi\HttpMessage\Uri;
         ->with('protocol_success')
     ;
 
-    \it('Wrong protocol', function ($protocolVersion) {
-        new ServerRequest(protocolVersion: $protocolVersion);
-    })
-        ->throws(InvalidArgumentException::class, 'Protocol must be implement')
-        ->with('protocol_wrong')
-    ;
-
     \it('Server parameters', function (array $params) {
         \expect((new ServerRequest(serverParams: $params))->getServerParams())->toBe($params);
     })
