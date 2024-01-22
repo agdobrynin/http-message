@@ -203,8 +203,12 @@ class Uri implements UriInterface
         return $new;
     }
 
-    public function withScheme(string $scheme): UriInterface
+    public function withScheme($scheme): UriInterface
     {
+        if (!\is_string($scheme)) {
+            throw new \InvalidArgumentException('Scheme must be a string value');
+        }
+
         $new = clone $this;
         $new->scheme = '' !== $scheme
             ? \strtolower($scheme)
