@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Kaspi\HttpMessage;
 
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+
+use function is_string;
+use function str_contains;
 
 class Request extends Message implements RequestInterface
 {
@@ -23,12 +27,12 @@ class Request extends Message implements RequestInterface
         array $headers = [],
         string $protocolVersion = '1.1'
     ) {
-        $body = \is_string($body)
+        $body = is_string($body)
             ? new Stream(self::resourceFromString($body))
             : $body;
         parent::__construct($body, $headers, $protocolVersion);
         $this->method = $method;
-        $this->uri = \is_string($uri) ? new Uri($uri) : $uri;
+        $this->uri = is_string($uri) ? new Uri($uri) : $uri;
         $this->updateHostFromUri($this->uri);
     }
 
@@ -51,8 +55,8 @@ class Request extends Message implements RequestInterface
     // @phan-suppress-next-line PhanParamSignatureMismatch
     public function withRequestTarget(string $requestTarget): RequestInterface
     {
-        if (\str_contains($requestTarget, ' ')) {
-            throw new \InvalidArgumentException('Request target cannot contain whitespace');
+        if (str_contains($requestTarget, ' ')) {
+            throw new InvalidArgumentException('Request target cannot contain whitespace');
         }
 
         $new = clone $this;
@@ -70,7 +74,7 @@ class Request extends Message implements RequestInterface
     public function withMethod(string $method): RequestInterface
     {
         if ('' === $method) {
-            throw new \InvalidArgumentException('Method should non-empty string');
+            throw new InvalidArgumentException('Method should non-empty string');
         }
 
         $new = clone $this;

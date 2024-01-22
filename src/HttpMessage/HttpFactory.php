@@ -16,6 +16,14 @@ use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
+use Throwable;
+
+use function error_get_last;
+use function fopen;
+use function func_num_args;
+
+use const UPLOAD_ERR_OK;
 
 /**
  * PSR-17 Factory.
@@ -31,7 +39,7 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
-        return new Response(code: $code, reasonPhrase: \func_num_args() >= 2 ? $reasonPhrase : null);
+        return new Response(code: $code, reasonPhrase: func_num_args() >= 2 ? $reasonPhrase : null);
     }
 
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
@@ -47,11 +55,11 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
     public function createStreamFromFile(string $filename, string $mode = 'rb'): StreamInterface
     {
         try {
-            return ($r = @\fopen($filename, $mode)) !== false
+            return ($r = @fopen($filename, $mode)) !== false
                 ? new Stream($r)
-                : throw new \RuntimeException(\error_get_last()['message'] ?? '');
-        } catch (\Throwable $error) {
-            throw new \RuntimeException("Cannot stream from {$filename} [{$error}]");
+                : throw new RuntimeException(error_get_last()['message'] ?? '');
+        } catch (Throwable $error) {
+            throw new RuntimeException("Cannot stream from {$filename} [{$error}]");
         }
     }
 
@@ -60,7 +68,7 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
         return new Stream($resource);
     }
 
-    public function createUploadedFile(StreamInterface $stream, int $size = null, int $error = \UPLOAD_ERR_OK, string $clientFilename = null, string $clientMediaType = null): UploadedFileInterface
+    public function createUploadedFile(StreamInterface $stream, int $size = null, int $error = UPLOAD_ERR_OK, string $clientFilename = null, string $clientMediaType = null): UploadedFileInterface
     {
         return new UploadedFile(
             streamOrFile: $stream,
