@@ -42,6 +42,21 @@ use Kaspi\HttpMessage\Uri;
             'expect' => '',
         ],
     ]);
+
+    \it('Scheme must be a string', function ($scheme) {
+        (new Uri(''))->withScheme($scheme);
+    })
+        ->throws(InvalidArgumentException::class)
+        ->with([
+            ['scheme' => true],
+            ['scheme' => false],
+            ['scheme' => 70],
+            ['scheme' => []],
+            ['scheme' => (object) []],
+            ['scheme' => new stdClass()],
+            ['scheme' => new Uri('')],
+        ])
+    ;
 })
     ->covers(Uri::class)
 ;
