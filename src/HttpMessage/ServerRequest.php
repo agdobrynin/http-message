@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Kaspi\HttpMessage;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
+
+use function array_filter;
+use function array_key_exists;
+use function is_array;
+use function is_object;
 
 class ServerRequest extends Request implements ServerRequestInterface
 {
@@ -71,10 +77,10 @@ class ServerRequest extends Request implements ServerRequestInterface
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         $new = clone $this;
-        $new->uploadedFiles = \array_filter(
+        $new->uploadedFiles = array_filter(
             $uploadedFiles,
             static fn ($item) => $item instanceof UploadedFileInterface
-                    ?: throw new \InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class)
+                    ?: throw new InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class)
         );
 
         return $new;
@@ -87,8 +93,8 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     public function withParsedBody($data): ServerRequestInterface
     {
-        if (null !== $data && !\is_array($data) && !\is_object($data)) {
-            throw new \InvalidArgumentException('Invalid body data. Data must null, array or object');
+        if (null !== $data && !is_array($data) && !is_object($data)) {
+            throw new InvalidArgumentException('Invalid body data. Data must null, array or object');
         }
 
         $new = clone $this;
@@ -104,7 +110,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     public function getAttribute(string $name, $default = null)
     {
-        return \array_key_exists($name, $this->attributes)
+        return array_key_exists($name, $this->attributes)
             ? $this->attributes[$name]
             : $default;
     }

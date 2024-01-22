@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace Kaspi\HttpMessage;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+
+use function is_string;
+use function preg_match;
+use function trim;
+use function var_export;
 
 class Response extends Message implements ResponseInterface
 {
@@ -72,7 +78,7 @@ class Response extends Message implements ResponseInterface
         array $headers = [],
         string $protocolVersion = '1.1'
     ) {
-        $body = \is_string($body)
+        $body = is_string($body)
             ? new Stream(self::resourceFromString($body))
             : $body;
         parent::__construct($body, $headers, $protocolVersion);
@@ -108,18 +114,18 @@ class Response extends Message implements ResponseInterface
     private function checkStatusCode(int $code): void
     {
         if ($code < 100 || $code > 599) {
-            throw new \InvalidArgumentException('Invalid status code. Got: '.$code);
+            throw new InvalidArgumentException('Invalid status code. Got: '.$code);
         }
     }
 
     private function reasonPhraseNormalize(string $reasonPhrase): string
     {
-        if (1 !== \preg_match(self::RFC7230_FIELD_TOKEN, $reasonPhrase)) {
-            $val = \var_export($reasonPhrase, true);
+        if (1 !== preg_match(self::RFC7230_FIELD_TOKEN, $reasonPhrase)) {
+            $val = var_export($reasonPhrase, true);
 
-            throw new \InvalidArgumentException('Reason phrase must be RFC 7230 compatible. Got: '.$val);
+            throw new InvalidArgumentException('Reason phrase must be RFC 7230 compatible. Got: '.$val);
         }
 
-        return \trim($reasonPhrase, " \t");
+        return trim($reasonPhrase, " \t");
     }
 }
