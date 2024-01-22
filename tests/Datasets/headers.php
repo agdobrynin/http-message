@@ -12,6 +12,16 @@ declare(strict_types=1);
         'headers' => ['content-type' => 'undefined-type'],
         'expectHeaders' => ['content-type' => ['undefined-type']],
     ],
+
+    'set # 3' => [
+        'headers' => [1234 => 'is-numeric'],
+        'expectHeaders' => ['1234' => ['is-numeric']],
+    ],
+
+    'set # 4' => [
+        'headers' => [0 => 'zero'],
+        'expectHeaders' => ['0' => ['zero']],
+    ],
 ]);
 
 \dataset('headers_wrong', [
