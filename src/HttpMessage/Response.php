@@ -78,11 +78,9 @@ class Response extends Message implements ResponseInterface
         parent::__construct($body, $headers, $protocolVersion);
         $this->checkStatusCode($this->code);
 
-        if (null === $reasonPhrase) {
-            $this->reasonPhrase = self::PHRASE[$this->code] ?? '';
-        } else {
-            $this->reasonPhrase = $this->reasonPhraseNormalize($reasonPhrase);
-        }
+        $this->reasonPhrase = null === $reasonPhrase
+            ? (self::PHRASE[$this->code] ?? '')
+            : $this->reasonPhrase = $this->reasonPhraseNormalize($reasonPhrase);
     }
 
     public function getStatusCode(): int
