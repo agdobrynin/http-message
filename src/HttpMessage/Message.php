@@ -10,6 +10,8 @@ use Psr\Http\Message\UriInterface;
 
 class Message implements MessageInterface
 {
+    public const RFC7230_FIELD_TOKEN = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
+
     private string $version;
     private array $headers = [];
 
@@ -213,7 +215,7 @@ class Message implements MessageInterface
 
         foreach ($valuesRaw as $value) {
             if ((!\is_numeric($value) && !\is_string($value))
-                || 1 !== \preg_match('/^[\x09\x20-\x7E\x80-\xFF]*$/', (string) $value)) {
+                || 1 !== \preg_match(self::RFC7230_FIELD_TOKEN, (string) $value)) {
                 $val = \var_export($value, true);
 
                 throw new \InvalidArgumentException('Header value must be RFC 7230 compatible. Got: '.$val);

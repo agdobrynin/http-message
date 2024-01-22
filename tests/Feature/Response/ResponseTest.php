@@ -45,4 +45,19 @@ use Kaspi\HttpMessage\Stream;
             ->and($r2->getReasonPhrase())->toBe('Sorry i am not found your document right now')
         ;
     });
+
+    \it('Normalize reason phrase in withStatus', function ($reasonPhrase, $expect) {
+        \expect($r = (new Response())->withStatus(100, $reasonPhrase))
+            ->and($r->getReasonPhrase())->toBe($expect)
+        ;
+    })
+        ->with('reason_phrase_success')
+    ;
+
+    \it('Fail reason phrase in withStatus', function ($reasonPhrase) {
+        (new Response())->withStatus(100, $reasonPhrase);
+    })
+        ->throws(InvalidArgumentException::class)
+        ->with('reason_phrase_fail')
+    ;
 })->covers(Response::class, Message::class, Stream::class);

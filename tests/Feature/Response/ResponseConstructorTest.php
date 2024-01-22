@@ -47,6 +47,19 @@ use org\bovigo\vfs\vfsStream;
         ->throws(InvalidArgumentException::class)
         ->with('headers_wrong')
     ;
+
+    \it('Normalize reason phrase', function ($reasonPhrase, $expect) {
+        \expect((new Response(reasonPhrase: $reasonPhrase))->getReasonPhrase())->toBe($expect);
+    })
+        ->with('reason_phrase_success')
+    ;
+
+    \it('Wrong reason phrase', function ($reasonPhrase) {
+        new Response(reasonPhrase: $reasonPhrase);
+    })
+        ->throws(InvalidArgumentException::class)
+        ->with('reason_phrase_fail')
+    ;
 })
     ->covers(Response::class, Stream::class, Message::class, Uri::class)
 ;
