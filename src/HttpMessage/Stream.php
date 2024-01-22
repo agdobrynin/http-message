@@ -4,7 +4,28 @@ declare(strict_types=1);
 
 namespace Kaspi\HttpMessage;
 
+use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
+
+use function clearstatcache;
+use function error_get_last;
+use function fclose;
+use function feof;
+use function fread;
+use function fseek;
+use function fstat;
+use function ftell;
+use function fwrite;
+use function get_resource_type;
+use function is_resource;
+use function str_contains;
+use function stream_get_contents;
+use function stream_get_meta_data;
+use function var_export;
+
+use const SEEK_CUR;
+use const SEEK_SET;
 
 class Stream implements StreamInterface
 {
@@ -23,24 +44,24 @@ class Stream implements StreamInterface
      */
     public function __construct($resource)
     {
-        if (!\is_resource($resource)) {
-            $got = \var_export($resource, true);
+        if (!is_resource($resource)) {
+            $got = var_export($resource, true);
 
-            throw new \InvalidArgumentException('Argument must be type "resource" or "string". Got: '.$got);
+            throw new InvalidArgumentException('Argument must be type "resource" or "string". Got: '.$got);
         }
 
         $this->resource = $resource;
-        $meta = \stream_get_meta_data($this->resource);
+        $meta = stream_get_meta_data($this->resource);
         $this->uri = $meta['uri'] ?? null;
         $this->seekable = ($meta['seekable'] ?? null)
-            && 0 === \fseek($this->resource, 0, \SEEK_CUR);
+            && 0 === fseek($this->resource, 0, SEEK_CUR);
         $mode = ($meta['mode'] ?? '');
 
-        if (\str_contains($mode, '+')) {
+        if (str_contains($mode, '+')) {
             $this->writable = $this->readable = true;
         } else {
-            $this->writable = \str_contains($mode, 'w') || \str_contains($mode, 'a') || \str_contains($mode, 'c');
-            $this->readable = \str_contains($mode, 'r');
+            $this->writable = str_contains($mode, 'w') || str_contains($mode, 'a') || str_contains($mode, 'c');
+            $this->readable = str_contains($mode, 'r');
         }
     }
 
@@ -62,7 +83,7 @@ class Stream implements StreamInterface
     {
         if (isset($this->resource)) {
             if ($this->isValidStream()) {
-                \fclose($this->resource);
+                fclose($this->resource);
             }
 
             $this->detach();
@@ -98,26 +119,26 @@ class Stream implements StreamInterface
         }
 
         if ($this->uri) {
-            \clearstatcache(true, $this->uri);
+            clearstatcache(true, $this->uri);
         }
 
-        return $this->size = (\fstat($this->resource)['size'] ?? null);
+        return $this->size = (fstat($this->resource)['size'] ?? null);
     }
 
     public function tell(): int
     {
         if (isset($this->resource) && $this->isValidStream()) {
-            return ($pos = @\ftell($this->resource)) !== false
+            return ($pos = @ftell($this->resource)) !== false
                 ? $pos
-                : throw new \RuntimeException('Cant get pointer position of stream: '.(\error_get_last()['message'] ?? ''));
+                : throw new RuntimeException('Cant get pointer position of stream: '.(error_get_last()['message'] ?? ''));
         }
 
-        throw new \RuntimeException('Stream not defined');
+        throw new RuntimeException('Stream not defined');
     }
 
     public function eof(): bool
     {
-        return !isset($this->resource) || \feof($this->resource);
+        return !isset($this->resource) || feof($this->resource);
     }
 
     public function isSeekable(): bool
@@ -125,20 +146,20 @@ class Stream implements StreamInterface
         return $this->seekable;
     }
 
-    public function seek(int $offset, int $whence = \SEEK_SET): void
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         if (!isset($this->resource)) {
-            throw new \RuntimeException('Stream not defined');
+            throw new RuntimeException('Stream not defined');
         }
 
         if (!$this->seekable) {
-            throw new \RuntimeException('Stream is not seekable');
+            throw new RuntimeException('Stream is not seekable');
         }
 
-        if (-1 === \fseek($this->resource, $offset, $whence)) {
-            $debugWhence = \var_export($whence, true);
+        if (-1 === fseek($this->resource, $offset, $whence)) {
+            $debugWhence = var_export($whence, true);
 
-            throw new \RuntimeException("Cannot search for position [{$offset}] in stream with whence [{$debugWhence}]");
+            throw new RuntimeException("Cannot search for position [{$offset}] in stream with whence [{$debugWhence}]");
         }
     }
 
@@ -155,18 +176,18 @@ class Stream implements StreamInterface
     public function write(string $string): int
     {
         if (!isset($this->resource) || !$this->isValidStream()) {
-            throw new \RuntimeException('Stream not defined');
+            throw new RuntimeException('Stream not defined');
         }
 
         if (!$this->writable) {
-            throw new \RuntimeException('Stream is not writable');
+            throw new RuntimeException('Stream is not writable');
         }
 
         $this->size = null; // Nullable for size of stream (calc it later)
 
-        return ($bytes = @\fwrite($this->resource, $string)) !== false
+        return ($bytes = @fwrite($this->resource, $string)) !== false
             ? $bytes
-            : throw new \RuntimeException('Cannot write to stream: '.(\error_get_last()['message'] ?? ''));
+            : throw new RuntimeException('Cannot write to stream: '.(error_get_last()['message'] ?? ''));
     }
 
     public function isReadable(): bool
@@ -177,33 +198,33 @@ class Stream implements StreamInterface
     public function read(int $length): string
     {
         if (!isset($this->resource)) {
-            throw new \RuntimeException('Stream not defined');
+            throw new RuntimeException('Stream not defined');
         }
 
         if (!$this->readable) {
-            throw new \RuntimeException('Stream is not readable');
+            throw new RuntimeException('Stream is not readable');
         }
 
-        return ($content = @\fread($this->resource, $length)) !== false
+        return ($content = @fread($this->resource, $length)) !== false
             ? $content
-            : throw new \RuntimeException('Cannot read from stream: '.(\error_get_last()['message'] ?? ''));
+            : throw new RuntimeException('Cannot read from stream: '.(error_get_last()['message'] ?? ''));
     }
 
     public function getContents(): string
     {
         if (!isset($this->resource) || !$this->isValidStream()) {
-            throw new \RuntimeException('Stream not defined');
+            throw new RuntimeException('Stream not defined');
         }
 
-        return ($contents = @\stream_get_contents($this->resource)) !== false
+        return ($contents = @stream_get_contents($this->resource)) !== false
             ? $contents
-            : throw new \RuntimeException('Cannot read stream contents: '.(\error_get_last()['message'] ?? ''));
+            : throw new RuntimeException('Cannot read stream contents: '.(error_get_last()['message'] ?? ''));
     }
 
     public function getMetadata(?string $key = null): mixed
     {
         if (isset($this->resource) && $this->isValidStream()) {
-            $meta = \stream_get_meta_data($this->resource);
+            $meta = stream_get_meta_data($this->resource);
 
             return null === $key ? $meta : ($meta[$key] ?? null);
         }
@@ -213,7 +234,7 @@ class Stream implements StreamInterface
 
     private function isValidStream(): bool
     {
-        return \is_resource($this->resource)
-            && 'Unknown' !== \get_resource_type($this->resource);
+        return is_resource($this->resource)
+            && 'Unknown' !== get_resource_type($this->resource);
     }
 }

@@ -4,9 +4,24 @@ declare(strict_types=1);
 
 namespace Kaspi\HttpMessage;
 
+use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+
+use function array_keys;
+use function array_merge;
+use function current;
+use function implode;
+use function is_array;
+use function is_int;
+use function is_numeric;
+use function is_string;
+use function preg_grep;
+use function preg_match;
+use function preg_quote;
+use function trim;
+use function var_export;
 
 class Message implements MessageInterface
 {
@@ -56,7 +71,7 @@ class Message implements MessageInterface
 
     public function getHeaderLine(string $name): string
     {
-        return \implode(', ', $this->getHeader($name));
+        return implode(', ', $this->getHeader($name));
     }
 
     /**
@@ -126,7 +141,7 @@ class Message implements MessageInterface
 
             // The header "Host" SHOULD first item in headers.
             // @see https://datatracker.ietf.org/doc/html/rfc7230#section-5.4
-            $this->headers = \array_merge(
+            $this->headers = array_merge(
                 ['Host' => [$host.(($port = $uri->getPort()) ? ':'.$port : '')]],
                 $this->headers
             );
@@ -141,14 +156,14 @@ class Message implements MessageInterface
              * For string such as "1", "2" (numeric) php casting array key as integer
              * @see https://www.php.net/manual/en/language.types.array.php
              */
-            if (\is_int($name)) {
+            if (is_int($name)) {
                 $name = (string) $name;
             }
 
             $value = $this->validateRFC7230AndTrim($name, $value);
 
             if (($h = $this->getHeaderByName($name)) !== null) {
-                $this->headers[$h] = \array_merge($this->headers[$h], $value);
+                $this->headers[$h] = array_merge($this->headers[$h], $value);
             } else {
                 $this->headers[$name] = $value;
             }
@@ -162,11 +177,11 @@ class Message implements MessageInterface
     private function getHeaderByName(string $name): null|int|string
     {
         if ('' === $name) {
-            throw new \InvalidArgumentException('Header name is empty string');
+            throw new InvalidArgumentException('Header name is empty string');
         }
 
-        return ($h = \preg_grep('/^'.\preg_quote($name, '').'$/i', \array_keys($this->headers)))
-            ? \current($h)
+        return ($h = preg_grep('/^'.preg_quote($name, '').'$/i', array_keys($this->headers)))
+            ? current($h)
             : null;
     }
 
@@ -201,27 +216,27 @@ class Message implements MessageInterface
     private function validateRFC7230AndTrim(string $header, mixed $values): array
     {
         if ('' === $header
-            || 1 !== \preg_match('/^[!#$%&\'*+.^_`|~0-9A-Za-z-]+$/D', $header)) {
-            throw new \InvalidArgumentException('Header name must be RFC 7230 compatible');
+            || 1 !== preg_match('/^[!#$%&\'*+.^_`|~0-9A-Za-z-]+$/D', $header)) {
+            throw new InvalidArgumentException('Header name must be RFC 7230 compatible');
         }
 
-        $valuesRaw = !\is_array($values) ? [$values] : $values;
+        $valuesRaw = !is_array($values) ? [$values] : $values;
 
         if ([] === $valuesRaw) {
-            throw new \InvalidArgumentException('Header values must be non-empty array');
+            throw new InvalidArgumentException('Header values must be non-empty array');
         }
 
         $result = [];
 
         foreach ($valuesRaw as $value) {
-            if ((!\is_numeric($value) && !\is_string($value))
-                || 1 !== \preg_match(self::RFC7230_FIELD_TOKEN, (string) $value)) {
-                $val = \var_export($value, true);
+            if ((!is_numeric($value) && !is_string($value))
+                || 1 !== preg_match(self::RFC7230_FIELD_TOKEN, (string) $value)) {
+                $val = var_export($value, true);
 
-                throw new \InvalidArgumentException('Header value must be RFC 7230 compatible. Got: '.$val);
+                throw new InvalidArgumentException('Header value must be RFC 7230 compatible. Got: '.$val);
             }
 
-            $result[] = \trim((string) $value, " \t");
+            $result[] = trim((string) $value, " \t");
         }
 
         return $result;

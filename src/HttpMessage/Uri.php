@@ -4,7 +4,16 @@ declare(strict_types=1);
 
 namespace Kaspi\HttpMessage;
 
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
+
+use function is_string;
+use function ltrim;
+use function parse_url;
+use function preg_replace_callback;
+use function rawurlencode;
+use function str_starts_with;
+use function strtolower;
 
 class Uri implements UriInterface
 {
@@ -35,15 +44,15 @@ class Uri implements UriInterface
 
     public function __construct(string $uri)
     {
-        $values = \parse_url($uri);
+        $values = parse_url($uri);
 
         if (false === $values) {
-            throw new \InvalidArgumentException("Invalid URI [{$uri}]");
+            throw new InvalidArgumentException("Invalid URI [{$uri}]");
         }
 
         foreach ($values as $key => $value) {
             $this->{$key} = match ($key) {
-                'scheme', 'host' => \strtolower($value),
+                'scheme', 'host' => strtolower($value),
                 'path' => self::encode(EncodeEnum::path, $value),
                 'fragment' => self::encode(EncodeEnum::fragment, $value),
                 'query' => self::encode(EncodeEnum::query, $value),
@@ -68,10 +77,10 @@ class Uri implements UriInterface
         }
 
         if ('' !== ($path = $this->path)) {
-            if ('' !== $authority && !\str_starts_with($path, '/')) {
+            if ('' !== $authority && !str_starts_with($path, '/')) {
                 $path = '/'.$path;
-            } elseif ('' === $authority && \str_starts_with($path, '//')) {
-                $path = '/'.\ltrim($path, '/');
+            } elseif ('' === $authority && str_starts_with($path, '//')) {
+                $path = '/'.ltrim($path, '/');
             }
 
             $uri .= $path;
@@ -112,12 +121,12 @@ class Uri implements UriInterface
     public function getPath(): string
     {
         if ('' !== $this->path && '' !== $this->host) {
-            if (!\str_starts_with($this->path, '/')) {
+            if (!str_starts_with($this->path, '/')) {
                 return '/'.$this->path;
             }
 
-            if (\str_starts_with($this->path, '//')) {
-                return '/'.\ltrim($this->path, '/');
+            if (str_starts_with($this->path, '//')) {
+                return '/'.ltrim($this->path, '/');
             }
         }
 
@@ -165,7 +174,7 @@ class Uri implements UriInterface
     {
         $new = clone $this;
         $new->host = '' !== $host
-            ? \strtolower($host)
+            ? strtolower($host)
             : '';
 
         return $new;
@@ -184,7 +193,7 @@ class Uri implements UriInterface
     public function withPort(?int $port): UriInterface
     {
         if (null !== $port && ($port < 0 || $port > 65535)) {
-            throw new \InvalidArgumentException("Invalid port [{$port}]. Must be between 0 and 65535");
+            throw new InvalidArgumentException("Invalid port [{$port}]. Must be between 0 and 65535");
         }
 
         $new = clone $this;
@@ -205,13 +214,13 @@ class Uri implements UriInterface
 
     public function withScheme($scheme): UriInterface
     {
-        if (!\is_string($scheme)) {
-            throw new \InvalidArgumentException('Scheme must be a string value');
+        if (!is_string($scheme)) {
+            throw new InvalidArgumentException('Scheme must be a string value');
         }
 
         $new = clone $this;
         $new->scheme = '' !== $scheme
-            ? \strtolower($scheme)
+            ? strtolower($scheme)
             : '';
 
         return $new;
@@ -239,6 +248,6 @@ class Uri implements UriInterface
             EncodeEnum::query => '/(?:[^'.self::CHAR_UNRESERVED.self::CHAR_SUB_DELIMS.'%:@\/\?]+|'.self::CHAR_PCT_ENCODED.')/',
         };
 
-        return \preg_replace_callback($pattern, static fn (array $matches) => \rawurlencode($matches[0]), $value);
+        return preg_replace_callback($pattern, static fn (array $matches) => rawurlencode($matches[0]), $value);
     }
 }
