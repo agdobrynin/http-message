@@ -63,9 +63,11 @@ class Response extends Message implements ResponseInterface
         511 => 'Network Authentication Required',
     ];
 
+    private string $reasonPhrase;
+
     public function __construct(
         private int $code = 200,
-        private ?string $reasonPhrase = null,
+        ?string $reasonPhrase = null,
         StreamInterface|string $body = '',
         array $headers = [],
         string $protocolVersion = '1.1'
@@ -76,9 +78,9 @@ class Response extends Message implements ResponseInterface
         parent::__construct($body, $headers, $protocolVersion);
         $this->checkStatusCode($this->code);
 
-        if (null === $this->reasonPhrase) {
-            $this->reasonPhrase = self::PHRASE[$this->code] ?? '';
-        }
+        $this->reasonPhrase = null === $reasonPhrase
+            ? (self::PHRASE[$this->code] ?? '')
+            : $this->reasonPhrase = $this->reasonPhraseNormalize($reasonPhrase);
     }
 
     public function getStatusCode(): int
@@ -92,7 +94,7 @@ class Response extends Message implements ResponseInterface
         $new = clone $this;
         $new->code = $code;
         $new->reasonPhrase = '' !== $reasonPhrase
-            ? $reasonPhrase
+            ? $this->reasonPhraseNormalize($reasonPhrase)
             : (self::PHRASE[$code] ?? '');
 
         return $new;
@@ -108,5 +110,16 @@ class Response extends Message implements ResponseInterface
         if ($code < 100 || $code > 599) {
             throw new \InvalidArgumentException('Invalid status code. Got: '.$code);
         }
+    }
+
+    private function reasonPhraseNormalize(string $reasonPhrase): string
+    {
+        if (1 !== \preg_match(self::RFC7230_FIELD_TOKEN, $reasonPhrase)) {
+            $val = \var_export($reasonPhrase, true);
+
+            throw new \InvalidArgumentException('Reason phrase must be RFC 7230 compatible. Got: '.$val);
+        }
+
+        return \trim($reasonPhrase, " \t");
     }
 }
