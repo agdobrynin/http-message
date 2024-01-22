@@ -13,12 +13,15 @@ use function fwrite;
 
 trait CreateResourceFromStringTrait
 {
+    private static string $defaultResourceFilename = 'php://temp';
+    private static string $defaultResourceModeOpen = 'r+b';
+
     /**
      * @return resource
      */
-    private static function resourceFromString(string $body, string $fileName = 'php://temp', string $mode = 'r+b')
+    private static function resourceFromString(string $body, ?string $fileName = null, ?string $mode = null)
     {
-        $resource = ($r = @fopen($fileName, $mode)) !== false
+        $resource = ($r = @fopen($fileName ?: self::$defaultResourceFilename, $mode ?: self::$defaultResourceModeOpen)) !== false
             ? $r
             : throw new RuntimeException('Cannot open from '.$fileName.' ['.(error_get_last()['message'] ?? '').']');
         fwrite($resource, $body);
