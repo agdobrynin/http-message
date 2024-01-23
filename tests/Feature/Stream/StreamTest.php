@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Kaspi\HttpMessage\CreateResourceFromStringTrait;
+use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Stream;
 use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
 use Tests\Kaspi\HttpMessage\StreamAdapter;
@@ -247,5 +247,5 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         ;
     });
 })
-    ->covers(Stream::class, CreateResourceFromStringTrait::class)
+    ->covers(Stream::class, CreateStreamFromStringTrait::class)
 ;

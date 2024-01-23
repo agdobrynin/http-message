@@ -8,15 +8,12 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-use function is_string;
 use function preg_match;
 use function trim;
 use function var_export;
 
 class Response extends Message implements ResponseInterface
 {
-    use CreateResourceFromStringTrait;
-
     private const PHRASE = [
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -74,19 +71,16 @@ class Response extends Message implements ResponseInterface
     public function __construct(
         private int $code = 200,
         ?string $reasonPhrase = null,
-        StreamInterface|string $body = '',
+        ?StreamInterface $body = null,
         array $headers = [],
         string $protocolVersion = '1.1'
     ) {
-        $body = is_string($body)
-            ? new Stream(self::resourceFromString($body))
-            : $body;
         parent::__construct($body, $headers, $protocolVersion);
         $this->checkStatusCode($this->code);
 
         $this->reasonPhrase = null === $reasonPhrase
             ? (self::PHRASE[$this->code] ?? '')
-            : $this->reasonPhrase = $this->reasonPhraseNormalize($reasonPhrase);
+            : $this->reasonPhraseNormalize($reasonPhrase);
     }
 
     public function getStatusCode(): int

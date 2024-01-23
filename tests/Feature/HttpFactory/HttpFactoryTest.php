@@ -8,6 +8,8 @@ use Kaspi\HttpMessage\Request;
 use Kaspi\HttpMessage\Response;
 use Kaspi\HttpMessage\ServerRequest;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\FileStream;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Kaspi\HttpMessage\UploadedFile;
 use Kaspi\HttpMessage\Uri;
 use org\bovigo\vfs\vfsStream;
@@ -160,7 +162,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
             ;
         });
     })
-        ->covers(Stream::class)
+        ->covers(Stream::class, PhpTempStream::class, FileStream::class)
     ;
 
     \it('createUploadedFile without size file', function ($stream, $size, $expectSize) {
