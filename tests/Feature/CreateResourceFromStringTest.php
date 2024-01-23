@@ -11,7 +11,7 @@ use org\bovigo\vfs\vfsStream;
 use Psr\Http\Message\StreamInterface;
 
 \describe('Test for '.CreateStreamFromStringTrait::class, function () {
-    \it('Success create', function (string $content, ?callable $streamResolver, $uri) {
+    \it('Success create', function (string $content, callable $streamResolver, $uri) {
         $resolver = new class($streamResolver) {
             use CreateStreamFromStringTrait;
 
@@ -19,7 +19,7 @@ use Psr\Http\Message\StreamInterface;
 
             public function make(string $content): StreamInterface
             {
-                return self::streamFromString($content, $this->streamResolver);
+                return $this->streamFromString($content);
             }
         };
 
@@ -31,7 +31,7 @@ use Psr\Http\Message\StreamInterface;
         ->with([
             'in php temporary file' => [
                 'content' => 'Hello world',
-                'streamResolver' => null,
+                'streamResolver' => fn () => new PhpTempStream(),
                 'uri' => 'php://temp/maxmemory:',
             ],
             'in memory' => [
@@ -57,7 +57,7 @@ use Psr\Http\Message\StreamInterface;
 
             public function make(): void
             {
-                self::streamFromString('', $this->streamResolver);
+                $this->streamFromString('');
             }
         };
 

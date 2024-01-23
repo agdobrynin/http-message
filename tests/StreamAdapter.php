@@ -16,6 +16,9 @@ class StreamAdapter
 
     public static function make(string $body = ''): StreamInterface
     {
-        return self::streamFromString($body, fn () => new Stream(fopen('php://memory', 'rb+')));
+        return (new StreamAdapter())
+            ->setStreamResolver(fn () => new Stream(fopen('php://memory', 'rb+')))
+            ->streamFromString($body)
+        ;
     }
 }
