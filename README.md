@@ -35,7 +35,7 @@ composer require kaspi/http-message
 
 ## Local development
 
-Требуется PHP 8.1, php Composer
+Required PHP 8.1, php Composer
 
 ### Testing
 Run test without code coverage
