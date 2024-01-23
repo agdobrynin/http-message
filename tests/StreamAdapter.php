@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Kaspi\HttpMessage;
 
-use Kaspi\HttpMessage\CreateResourceFromStringTrait;
+use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Stream;
 use Psr\Http\Message\StreamInterface;
 
+use function fopen;
+
 class StreamAdapter
 {
-    use CreateResourceFromStringTrait;
+    use CreateStreamFromStringTrait;
 
     public static function make(string $body = ''): StreamInterface
     {
-        return new Stream(self::resourceFromString($body, 'php://memory'));
+        return self::streamFromString($body, fn () => new Stream(fopen('php://memory', 'rb+')));
     }
 }

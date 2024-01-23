@@ -6,6 +6,7 @@ use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Request;
 use Kaspi\HttpMessage\ServerRequest;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\FileStream;
 use Kaspi\HttpMessage\UploadedFile;
 use Kaspi\HttpMessage\Uri;
 use org\bovigo\vfs\vfsStream;
@@ -96,5 +97,13 @@ use Psr\Http\Message\StreamInterface;
         ;
     });
 })
-    ->covers(ServerRequest::class, Message::class, Request::class, Stream::class, Uri::class, UploadedFile::class)
+    ->covers(
+        ServerRequest::class,
+        Message::class,
+        Request::class,
+        Stream::class,
+        Uri::class,
+        UploadedFile::class,
+        FileStream::class,
+    )
 ;

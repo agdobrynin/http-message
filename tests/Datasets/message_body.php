@@ -6,8 +6,8 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
 
 \dataset('message_body_success', [
     'from string' => [
-        'body' => 'hello',
-        'contents' => 'hello',
+        'body' => null,
+        'contents' => '',
     ],
     'from StreamInterface' => [
         'body' => StreamAdapter::make('welcome to class'),

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Kaspi\HttpMessage\CreateResourceFromStringTrait;
+use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Stream;
 use org\bovigo\vfs\vfsStream;
@@ -58,4 +58,4 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         ->throws(InvalidArgumentException::class)
         ->with('headers_wrong')
     ;
-})->covers(Message::class, Stream::class, CreateResourceFromStringTrait::class);
+})->covers(Message::class, Stream::class, CreateStreamFromStringTrait::class);

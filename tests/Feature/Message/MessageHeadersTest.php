@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Kaspi\HttpMessage\CreateResourceFromStringTrait;
+use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Stream;
 use Tests\Kaspi\HttpMessage\StreamAdapter;
@@ -124,5 +124,5 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         )->toBe(['Baz', '', 'Bar']);
     });
 })
-    ->covers(Message::class, Stream::class, CreateResourceFromStringTrait::class)
+    ->covers(Message::class, Stream::class, CreateStreamFromStringTrait::class)
 ;
