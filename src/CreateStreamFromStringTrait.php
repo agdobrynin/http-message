@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kaspi\HttpMessage;
 
-use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
@@ -27,8 +26,10 @@ trait CreateStreamFromStringTrait
     public function streamFromString(string $body = ''): StreamInterface
     {
         if (!isset($this->streamResolver)) {
-            $stream = new PhpTempStream();
-        } elseif (!($stream = call_user_func($this->streamResolver)) instanceof StreamInterface) {
+            throw new RuntimeException('Stream resolver not define');
+        }
+
+        if (!($stream = call_user_func($this->streamResolver)) instanceof StreamInterface) {
             throw new RuntimeException('Stream resolver must be implement '.StreamInterface::class);
         }
 

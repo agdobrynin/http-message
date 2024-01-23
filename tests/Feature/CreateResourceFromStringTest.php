@@ -79,19 +79,6 @@ use Psr\Http\Message\StreamInterface;
             ],
         ])
     ;
-
-    \it('Stream resolver not defined', function () {
-        $class = new class() {
-            use CreateStreamFromStringTrait;
-
-            public function make()
-            {
-                return $this->streamFromString('');
-            }
-        };
-
-        \expect($class->make())->toBeInstanceOf(StreamInterface::class);
-    });
 })
     ->covers(CreateStreamFromStringTrait::class, Stream::class, PhpTempStream::class, PhpMemoryStream::class, FileStream::class)
 ;
