@@ -7,6 +7,8 @@ namespace Kaspi\HttpMessage;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
+use function call_user_func;
+
 trait CreateStreamFromStringTrait
 {
     /**
@@ -27,7 +29,7 @@ trait CreateStreamFromStringTrait
             throw new RuntimeException('Stream resolver not define');
         }
 
-        if (!($stream = ($this->streamResolver)()) instanceof StreamInterface) {
+        if (!($stream = call_user_func($this->streamResolver)) instanceof StreamInterface) {
             throw new RuntimeException('Stream resolver must be implement '.StreamInterface::class);
         }
 
