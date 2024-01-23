@@ -87,7 +87,7 @@ docker-compose run --rm php vendor/bin/pest --compact
 ```
 ⛑ the results will be in the folder `.coverage-html`
 
-Статический анализ кода Phan (_static analyzer for PHP_)
+Phan (_static analyzer for PHP_)
 
 ```shell
 docker-compose run --rm php vendor/bin/phan
