@@ -47,7 +47,11 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createStream(string $content = ''): StreamInterface
     {
-        return $this->setStreamResolver(fn () => new PhpTempStream())->streamFromString($content);
+        if (!isset($this->streamResolver)) {
+            $this->streamResolver = fn () => new PhpTempStream();
+        }
+
+        return $this->streamFromString($content);
     }
 
     public function createStreamFromFile(string $filename, string $mode = 'rb'): StreamInterface
