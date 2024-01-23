@@ -30,7 +30,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     public function __construct(
         string $method = 'GET',
         string|UriInterface $uri = '',
-        StreamInterface|string $body = '',
+        ?StreamInterface $body = null,
         array $headers = [],
         string $protocolVersion = '1.1',
         private readonly array $serverParams = [],
