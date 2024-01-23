@@ -26,7 +26,7 @@ trait CreateStreamFromStringTrait
     public function streamFromString(string $body = ''): StreamInterface
     {
         if (!isset($this->streamResolver)) {
-            throw new RuntimeException('Not define stream write');
+            throw new RuntimeException('Not define stream resolver');
         }
 
         if (!($stream = call_user_func($this->streamResolver)) instanceof StreamInterface) {
