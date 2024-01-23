@@ -71,6 +71,12 @@ use Psr\Http\Message\StreamInterface;
             'set read from undefined file' => [
                 'streamResolver' => fn () => new FileStream('/tmp/'.\uniqid('x', true), 'rb'),
             ],
+            'set stream resolver as simple class' => [
+                'streamResolver' => fn () => new stdClass(),
+            ],
+            'set stream resolver string' => [
+                'streamResolver' => fn () => 'ok',
+            ],
         ])
     ;
 })

@@ -9,7 +9,6 @@ use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
 use function call_user_func;
-use function get_class;
 
 trait CreateStreamFromStringTrait
 {
@@ -19,7 +18,7 @@ trait CreateStreamFromStringTrait
             $stream = new PhpTempStream();
         } else {
             if (!($stream = call_user_func($streamResolver)) instanceof StreamInterface) {
-                throw new RuntimeException('Stream resolver must be implement '.StreamInterface::class.'. Got: '.get_class($stream));
+                throw new RuntimeException('Stream resolver must be implement '.StreamInterface::class);
             }
         }
 
