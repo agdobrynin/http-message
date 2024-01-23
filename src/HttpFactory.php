@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kaspi\HttpMessage;
 
+use Kaspi\HttpMessage\Stream\FileStream;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -16,11 +17,7 @@ use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
-use RuntimeException;
-use Throwable;
 
-use function error_get_last;
-use function fopen;
 use function func_num_args;
 
 use const UPLOAD_ERR_OK;
@@ -30,7 +27,7 @@ use const UPLOAD_ERR_OK;
  */
 class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
 {
-    use CreateResourceFromStringTrait;
+    use CreateStreamFromStringTrait;
 
     public function createRequest(string $method, $uri): RequestInterface
     {
@@ -49,18 +46,12 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createStream(string $content = ''): StreamInterface
     {
-        return new Stream(resource: self::resourceFromString($content));
+        return self::streamFromString($content);
     }
 
     public function createStreamFromFile(string $filename, string $mode = 'rb'): StreamInterface
     {
-        try {
-            return ($r = @fopen($filename, $mode)) !== false
-                ? new Stream($r)
-                : throw new RuntimeException(error_get_last()['message'] ?? '');
-        } catch (Throwable $error) {
-            throw new RuntimeException("Cannot stream from {$filename} [{$error}]");
-        }
+        return new FileStream($filename, $mode);
     }
 
     public function createStreamFromResource($resource): StreamInterface

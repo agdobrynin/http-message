@@ -25,12 +25,14 @@ use function var_export;
 
 class Message implements MessageInterface
 {
+    use CreateStreamFromStringTrait;
+
     public const RFC7230_FIELD_TOKEN = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
 
     private string $version;
     private array $headers = [];
 
-    public function __construct(private StreamInterface $body, array $headers = [], string $protocolVersion = '1.1')
+    public function __construct(private ?StreamInterface $body = null, array $headers = [], string $protocolVersion = '1.1')
     {
         $this->addHeaders($headers);
         $this->version = $protocolVersion;
@@ -118,7 +120,7 @@ class Message implements MessageInterface
 
     public function getBody(): StreamInterface
     {
-        return $this->body;
+        return $this->body ?: self::streamFromString();
     }
 
     /**
