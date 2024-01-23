@@ -32,16 +32,28 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createRequest(string $method, $uri): RequestInterface
     {
+        if (!isset($this->streamResolver)) {
+            $this->streamResolver = fn () => new PhpTempStream();
+        }
+
         return new Request(method: $method, uri: $uri);
     }
 
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
+        if (!isset($this->streamResolver)) {
+            $this->streamResolver = fn () => new PhpTempStream();
+        }
+
         return new Response(code: $code, reasonPhrase: func_num_args() >= 2 ? $reasonPhrase : null);
     }
 
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
+        if (!isset($this->streamResolver)) {
+            $this->streamResolver = fn () => new PhpTempStream();
+        }
+
         return new ServerRequest(method: $method, uri: $uri, serverParams: $serverParams);
     }
 
