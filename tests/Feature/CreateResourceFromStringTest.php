@@ -2,72 +2,96 @@
 
 declare(strict_types=1);
 
-use Kaspi\HttpMessage\CreateResourceFromStringTrait;
+use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\FileStream;
+use Kaspi\HttpMessage\Stream\PhpMemoryStream;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use org\bovigo\vfs\vfsStream;
+use Psr\Http\Message\StreamInterface;
 
-\describe('Test for '.CreateResourceFromStringTrait::class, function () {
-    \beforeEach(function () {
-        $this->mockClass = new class() {
-            use CreateResourceFromStringTrait;
+\describe('Test for '.CreateStreamFromStringTrait::class, function () {
+    \it('Success create', function (string $content, callable $streamResolver, $uri) {
+        $resolver = new class($streamResolver) {
+            use CreateStreamFromStringTrait;
 
-            public function make(string $content, string $file, string $mode)
+            public function __construct(private $streamResolver) {}
+
+            public function make(string $content): StreamInterface
             {
-                return self::resourceFromString($content, $file, $mode);
+                return $this->streamFromString($content);
             }
         };
-    });
 
-    \it('Success create', function (string $content, string $file, string $mode) {
-        $stream = new Stream($this->mockClass->make($content, $file, $mode));
-
+        $stream = $resolver->make($content);
         \expect($stream->getContents())->toBe($content)
-            ->and($stream->getMetadata('uri'))->toBe($file)
+            ->and($stream->getMetadata('uri'))->toStartWith($uri)
         ;
     })
         ->with([
             'in php temporary file' => [
                 'content' => 'Hello world',
-                'file' => 'php://temp',
-                'mode' => 'rb+',
+                'streamResolver' => fn () => new PhpTempStream(),
+                'uri' => 'php://temp/maxmemory:',
             ],
             'in memory' => [
                 'content' => 'Hello world',
-                'file' => 'php://memory',
-                'mode' => 'rb+',
+                'streamResolver' => fn () => new PhpMemoryStream(),
+                'uri' => 'php://memory',
             ],
             'file in virtual file system' => [
                 'content' => 'Hello world',
-                'file' => vfsStream::newFile('f')->at(vfsStream::setup())->url(),
-                'mode' => 'rb+',
+                'streamResolver' => fn () => new FileStream(vfsStream::newFile('f')->at(vfsStream::setup())->url(), 'r+b'),
+                'uri' => 'vfs://root/f',
             ],
         ])
     ;
 
-    \it('fail', function ($file, $mode) {
+    \it('fail', function (callable $streamResolver) {
         \set_error_handler(static fn () => false);
 
-        new class($file, $mode) {
-            use CreateResourceFromStringTrait;
+        $class = new class($streamResolver) {
+            use CreateStreamFromStringTrait;
 
-            public function __construct($file, $mode)
+            public function __construct(private $streamResolver) {}
+
+            public function make(): void
             {
-                \var_dump(self::resourceFromString('ok', $file, $mode));
+                $this->streamFromString('');
             }
         };
+
+        $class->make();
     })
         ->throws(RuntimeException::class)
         ->with([
             'set write to HTTP' => [
-                'file' => 'http://0.0.0.0',
-                'mode' => 'w+',
+                'streamResolver' => fn () => new FileStream('http://0.0.0.0', 'w+'),
             ],
             'set read from undefined file' => [
-                'file' => '/tmp/'.\uniqid('x', true),
-                'mode' => 'rb',
+                'streamResolver' => fn () => new FileStream('/tmp/'.\uniqid('x', true), 'rb'),
+            ],
+            'set stream resolver as simple class' => [
+                'streamResolver' => fn () => new stdClass(),
+            ],
+            'set stream resolver string' => [
+                'streamResolver' => fn () => 'ok',
             ],
         ])
     ;
+
+    \it('Stream resolver not defined', function () {
+        $class = new class() {
+            use CreateStreamFromStringTrait;
+
+            public function make()
+            {
+                return $this->streamFromString('');
+            }
+        };
+
+        \expect($class->make())->toBeInstanceOf(StreamInterface::class);
+    });
 })
-    ->covers(CreateResourceFromStringTrait::class, Stream::class)
+    ->covers(CreateStreamFromStringTrait::class, Stream::class, PhpTempStream::class, PhpMemoryStream::class, FileStream::class)
 ;

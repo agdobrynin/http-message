@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use Kaspi\HttpMessage\CreateResourceFromStringTrait;
+use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\FileStream;
 use Kaspi\HttpMessage\UploadedFile;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
@@ -68,7 +69,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
             \set_error_handler(static fn () => false);
             $uploadedFile->getStream();
         })
-            ->throws(RuntimeException::class, 'Cannot open file /tmp/x.jpg')
+            ->throws(RuntimeException::class, 'No such file or directory')
         ;
 
         \it('from file without permission', function () {
@@ -101,7 +102,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
             ->throws(RuntimeException::class, 'Uploaded file has error code: '.\UPLOAD_ERR_FORM_SIZE)
         ;
     })
-        ->covers(CreateResourceFromStringTrait::class)
+        ->covers(CreateStreamFromStringTrait::class, FileStream::class)
     ;
 
     \describe('simple methods', function () {
@@ -209,7 +210,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
                         'targetPath' => fn () => vfsStream::newFile('my.txt', 0444)->at($this->root)->url(),
                     ],
                 ])
-                ->throws(RuntimeException::class, 'Cannot open target file')
+                ->throws(RuntimeException::class, 'Cannot create stream from')
             ;
         });
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use InvalidArgumentException;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -25,15 +26,21 @@ use function var_export;
 
 class Message implements MessageInterface
 {
+    use CreateStreamFromStringTrait;
+
     public const RFC7230_FIELD_TOKEN = '/^[\x09\x20-\x7E\x80-\xFF]*$/';
 
     private string $version;
     private array $headers = [];
 
-    public function __construct(private StreamInterface $body, array $headers = [], string $protocolVersion = '1.1')
+    public function __construct(private ?StreamInterface $body = null, array $headers = [], string $protocolVersion = '1.1')
     {
         $this->addHeaders($headers);
         $this->version = $protocolVersion;
+        // TODO Default stream writer for $body (maybe use constructor?)
+        if (!isset($this->streamResolver)) {
+            $this->setStreamResolver(fn () => new PhpTempStream());
+        }
     }
 
     public function getProtocolVersion(): string
@@ -118,7 +125,7 @@ class Message implements MessageInterface
 
     public function getBody(): StreamInterface
     {
-        return $this->body;
+        return $this->body ?: $this->streamFromString();
     }
 
     /**

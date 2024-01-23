@@ -14,8 +14,6 @@ use function str_contains;
 
 class Request extends Message implements RequestInterface
 {
-    use CreateResourceFromStringTrait;
-
     protected ?string $requestTarget = null;
     private string $method;
     private UriInterface $uri;
@@ -23,13 +21,10 @@ class Request extends Message implements RequestInterface
     public function __construct(
         string $method = 'GET',
         string|UriInterface $uri = '',
-        StreamInterface|string $body = '',
+        ?StreamInterface $body = null,
         array $headers = [],
         string $protocolVersion = '1.1'
     ) {
-        $body = is_string($body)
-            ? new Stream(self::resourceFromString($body))
-            : $body;
         parent::__construct($body, $headers, $protocolVersion);
         $this->method = $method;
         $this->uri = is_string($uri) ? new Uri($uri) : $uri;

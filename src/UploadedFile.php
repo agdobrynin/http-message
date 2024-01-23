@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use InvalidArgumentException;
+use Kaspi\HttpMessage\Stream\FileStream;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 
 use function error_get_last;
-use function fopen;
 use function is_string;
 use function move_uploaded_file;
 use function rename;
@@ -91,9 +91,7 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        return ($r = @fopen($this->file, 'rb')) !== false
-            ? new Stream($r)
-            : throw new RuntimeException("Cannot open file {$this->file} [".error_get_last()['message'] ?? ']');
+        return new FileStream($this->file, 'rb');
     }
 
     public function moveTo(string $targetPath): void
@@ -117,9 +115,7 @@ class UploadedFile implements UploadedFileInterface
                 );
             }
         } else {
-            $dest = ($r = @fopen($targetPath, 'wb')) !== false
-                ? new Stream($r)
-                : throw new RuntimeException("Cannot open target file {$targetPath} [".error_get_last()['message'] ?? ']');
+            $dest = new FileStream($targetPath, 'wb');
 
             $from = $this->getStream();
 

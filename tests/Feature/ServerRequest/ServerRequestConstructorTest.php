@@ -6,6 +6,7 @@ use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Request;
 use Kaspi\HttpMessage\ServerRequest;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Kaspi\HttpMessage\Uri;
 
 \describe('Constructor of '.ServerRequest::class, function () {
@@ -67,5 +68,5 @@ use Kaspi\HttpMessage\Uri;
         ])
     ;
 })
-    ->covers(ServerRequest::class, Message::class, Request::class, Stream::class, Uri::class)
+    ->covers(ServerRequest::class, Message::class, Request::class, Stream::class, Uri::class, PhpTempStream::class)
 ;
