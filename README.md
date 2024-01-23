@@ -1,71 +1,91 @@
 # 🕸 HTTP message PSR-7 implementation.
 
-Kaspi/http-message это легковесная реализация 
+Kaspi/http-message is a lightweight implementation 
 [PSR-7](https://www.php-fig.org/psr/psr-7), 
-[PSR-17](https://www.php-fig.org/psr/psr-17) для >= PHP 8.1
+[PSR-17](https://www.php-fig.org/psr/psr-17) for >= PHP 8.1
 
-## Установка
+Implementation of PSR-17:
+
+- `\Kaspi\HttpMessage\HttpFactory::class`
+
+Implementation of PSR-7:
+
+- `\Kaspi\HttpMessage\Message::class`
+- `\Kaspi\HttpMessage\Request::class`
+- `\Kaspi\HttpMessage\Response::class`
+- `\Kaspi\HttpMessage\ServerRequest::class`
+- `\Kaspi\HttpMessage\Stream::class`
+- `\Kaspi\HttpMessage\UploadedFile::class`
+- `\Kaspi\HttpMessage\Uri::class`
+
+Additional implementations for `\Psr\Http\Message\StreamInterface`
+
+- `\Kaspi\HttpMessage\Stream\FileStream::class`
+- `\Kaspi\HttpMessage\Stream\PhpMemoryStream::class`
+- `\Kaspi\HttpMessage\Stream\PhpTempStream::class`
+
+## Installation
 
 ```shell
 composer require kaspi/http-message
 ```
 
-- [Локально](#локально) (без Docker)
-- [С подготовленным Docker](#использование-docker-образа-с-php-81-82-83) образом 
+- [Local development](#local-development) (without Docker)
+- [With Docker images](#using-docker-image-with-php-81-82-83) (WSL, Linux) 
 
-## Локально
+## Local development
 
 Требуется PHP 8.1, php Composer
 
-### Тесты
-Прогнать тесты без отчёта покрытия кода в html
+### Testing
+Run test without code coverage
 ```shell
 composer test
 ```
-Запуск тестов с проверкой покрытия кода тестами отчётом в html формате
+Running tests with checking code coverage by tests with a report in html format
 ```shell
 ./vendor/bin/pest --compact
 ```
-Необходим установленный [PCOV](https://github.com/krakjoe/pcov) драйвер
+Requires installed [PCOV](https://github.com/krakjoe/pcov) driver
 
-_⛑ pезультаты будут в папке `.coverage-html`_
+_⛑ the results will be in the folder `.coverage-html`_
 
-### Статический анализ кода
+### Static code analysis
 
-Для статического анализа используем пакет [Phan](https://github.com/phan/phan).
+For static analysis we use the package [Phan](https://github.com/phan/phan).
 
-Запуск без PHP расширения [PHP AST](https://github.com/nikic/php-ast)
+Running without PHP extension [PHP AST](https://github.com/nikic/php-ast)
 
 ```shell
 ./vendor/bin/phan --allow-polyfill-parser
 ```
 
 ### Code style
-Для приведения кода к стандартам используем php-cs-fixer который объявлен
-в dev зависимости composer-а
+To bring the code to standards, we use php-cs-fixer which is declared
+in composer's dev dependencies
 
 ```shell
 composer fixer
 ```
 
-## Использование Docker образа с PHP 8.1, 8.2, 8.3
+## Using Docker image with PHP 8.1, 8.2, 8.3
 
-Указать образ с версией PHP можно в файле `.env` в ключе `PHP_IMAGE`.
-По умолчанию контейнер собирается с образом `php:8.1-cli-alpine`.
+You can specify the image with the PHP version in the `.env` file in the `PHP_IMAGE` key.
+By default, the container is built with the `php:8.1-cli-alpine` image.
 
-Собрать контейнер
+Build docker container
 ```shell
 docker-compose build
 ```
-Установить зависимости php composer-а:
+Install php composer dependencies:
 ```shell
 docker-compose run --rm php composer install
 ```
-Прогнать тесты с отчетом о покрытии кода и отчётом в html формате
+Run tests with a code coverage report and a report in html format
 ```shell
 docker-compose run --rm php vendor/bin/pest --compact
 ```
-⛑ pезультаты будут в папке `.coverage-html`
+⛑ the results will be in the folder `.coverage-html`
 
 Статический анализ кода Phan (_static analyzer for PHP_)
 
@@ -73,24 +93,24 @@ docker-compose run --rm php vendor/bin/pest --compact
 docker-compose run --rm php vendor/bin/phan
 ```
 
-Можно работать в shell оболочке в docker контейнере:
+You can work in a shell in a docker container:
 ```shell
 docker-compose run --rm php sh
 ```
-##### Использование Makefile команд.
-Проверить и исправить code style:
+##### Using Makefile commands.
+Check and correct code style:
 ```shell
 make fix
 ```
-Запустить статический анализатор кода:
+Run the static code analyzer:
 ```shell
 make stat
 ```
-Запустить тесты:
+Run tests:
 ```shell
 make test
 ```
-Запустить все стадии проверок:
+Run all stages of checks:
 ```shell
 make all
 ```

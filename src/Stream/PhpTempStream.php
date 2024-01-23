@@ -12,6 +12,9 @@ use function fopen;
 
 class PhpTempStream extends Stream
 {
+    /**
+     * @param int $maxMemory will use a temporary file once the amount of data stored hits a predefined limit (the default is 2 MB)
+     */
     public function __construct(string $mode = 'rb+', int $maxMemory = 2097152)
     {
         $src = 'php://temp/maxmemory:'.$maxMemory;
