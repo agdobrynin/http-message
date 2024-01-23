@@ -53,6 +53,8 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createStream(string $content = ''): StreamInterface
     {
+        $this->setDefaultStreamResolver();
+
         return $this->streamFromString($content);
     }
 
