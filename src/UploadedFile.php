@@ -115,8 +115,10 @@ class UploadedFile implements UploadedFileInterface
                 );
             }
         } else {
+            $from = $this->getStream();
+            $from->rewind();
             // @phan-suppress-next-line PhanUndeclaredMethod
-            $this->getStream()->copyToStream(new FileStream($targetPath, 'wb+'));
+            $from->copyToStream(new FileStream($targetPath, 'wb+'));
             $this->moved = true;
         }
     }
