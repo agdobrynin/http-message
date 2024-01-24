@@ -9,6 +9,7 @@ use Kaspi\HttpMessage\Response;
 use Kaspi\HttpMessage\ServerRequest;
 use Kaspi\HttpMessage\Stream;
 use Kaspi\HttpMessage\Stream\FileStream;
+use Kaspi\HttpMessage\Stream\PhpMemoryStream;
 use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Kaspi\HttpMessage\UploadedFile;
 use Kaspi\HttpMessage\Uri;
@@ -162,7 +163,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
             ;
         });
     })
-        ->covers(Stream::class, PhpTempStream::class, FileStream::class)
+        ->covers(Stream::class, PhpTempStream::class, FileStream::class, PhpMemoryStream::class)
     ;
 
     \it('createUploadedFile without size file', function ($stream, $size, $expectSize) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use Kaspi\HttpMessage\Stream\FileStream;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -46,6 +47,12 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
 
     public function createStream(string $content = ''): StreamInterface
     {
+        if (!isset($this->streamResolver)) {
+            $this->streamResolver = static function () {
+                return new PhpTempStream();
+            };
+        }
+
         return $this->streamFromString($content);
     }
 
