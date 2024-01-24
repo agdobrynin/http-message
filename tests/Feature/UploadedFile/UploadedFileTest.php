@@ -210,7 +210,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
                         'targetPath' => fn () => vfsStream::newFile('my.txt', 0444)->at($this->root)->url(),
                     ],
                 ])
-                ->throws(RuntimeException::class, 'Cannot open from')
+                ->throws(RuntimeException::class, 'Cannot create stream from')
             ;
         });
 

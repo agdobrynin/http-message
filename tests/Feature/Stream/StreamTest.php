@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
 use Tests\Kaspi\HttpMessage\StreamAdapter;
 
@@ -247,32 +248,27 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         ;
     });
 
-    \it('method copyTo success', function () {
+    \it('method copyToStream success', function () {
         $stream = new Stream(\fopen('php://memory', 'rb+'));
         $stream->write('Hello world 🤪');
         $stream->rewind();
 
-        $to = \fopen('php://temp', 'wb+');
-        $stream->copyTo($to);
-        fseek($to, 0);
+        $streamTo = new PhpTempStream();
+        $stream->copyToStream($streamTo);
 
-        \expect(stream_get_contents($to))->toBe('Hello world 🤪');
+        \expect((string) $streamTo)->toBe('Hello world 🤪');
     });
 
-    \it('method copyTo parameter is not resource', function ($to) {
+    \it('method copyToStream with exception', function () {
         $stream = new Stream(\fopen('php://memory', 'rb+'));
+        $stream->write('Hello world 🤪');
+        $stream->rewind();
 
-        $stream->copyTo($to);
-        fseek($to, 0);
+        $streamTo = new PhpTempStream('rb');
+        $stream->copyToStream($streamTo);
     })
-        ->throws(RuntimeException::class, 'Parameter $to must be "resource" type')
-        ->with([
-        [1],
-        ['str'],
-        [(object) []],
-        [[]],
-        [new stdClass()],
-    ]);
+        ->throws(RuntimeException::class, 'Cannot copy from')
+    ;
 })
-    ->covers(Stream::class, CreateStreamFromStringTrait::class)
+    ->covers(Stream::class, CreateStreamFromStringTrait::class, PhpTempStream::class)
 ;
