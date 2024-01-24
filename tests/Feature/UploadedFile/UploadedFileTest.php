@@ -210,7 +210,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
                         'targetPath' => fn () => vfsStream::newFile('my.txt', 0444)->at($this->root)->url(),
                     ],
                 ])
-                ->throws(RuntimeException::class, 'Cannot create stream from')
+                ->throws(RuntimeException::class, 'Cannot open from')
             ;
         });
 
@@ -245,7 +245,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
                 ->moveTo($dir->url().'/file.txt')
             ;
         })
-            ->throws(RuntimeException::class, 'Partially written')
+            ->throws(RuntimeException::class, 'Cannot copy from')
         ;
     });
 })
