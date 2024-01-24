@@ -235,11 +235,11 @@ class Stream implements StreamInterface
 
     public function copyTo($to): void
     {
-        if (!is_resource($to)) {
-            throw new RuntimeException('Parameter $to must be "resource"');
-        }
+        $result = is_resource($to)
+            ? @stream_copy_to_stream($this->resource, $to)
+            : throw new RuntimeException('Parameter $to must be "resource" type');
 
-        if (false === @stream_copy_to_stream($this->resource, $to)) {
+        if (false === $result) {
             throw new RuntimeException(
                 'Cannot copy from '.$this->getMetadata('uri').' to '.(stream_get_meta_data($to)['uri'] ?? 'unknown uri').
                 ' ['.(error_get_last()['message'] ?? '').']'

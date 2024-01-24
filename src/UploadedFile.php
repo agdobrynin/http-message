@@ -121,7 +121,9 @@ class UploadedFile implements UploadedFileInterface
             }
 
             if (!$this->stream instanceof Stream) {
+                // @codeCoverageIgnoreStart
                 throw new RuntimeException('Property stream must be '.Stream::class);
+                // @codeCoverageIgnoreEnd
             }
 
             // @phan-suppress-next-line PhanUndeclaredMethod

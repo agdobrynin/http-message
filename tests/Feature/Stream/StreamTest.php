@@ -246,6 +246,33 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
             ])
         ;
     });
+
+    \it('method copyTo success', function () {
+        $stream = new Stream(\fopen('php://memory', 'rb+'));
+        $stream->write('Hello world 🤪');
+        $stream->rewind();
+
+        $to = \fopen('php://temp', 'wb+');
+        $stream->copyTo($to);
+        fseek($to, 0);
+
+        \expect(stream_get_contents($to))->toBe('Hello world 🤪');
+    });
+
+    \it('method copyTo parameter is not resource', function ($to) {
+        $stream = new Stream(\fopen('php://memory', 'rb+'));
+
+        $stream->copyTo($to);
+        fseek($to, 0);
+    })
+        ->throws(RuntimeException::class, 'Parameter $to must be "resource" type')
+        ->with([
+        [1],
+        ['str'],
+        [(object) []],
+        [[]],
+        [new stdClass()],
+    ]);
 })
     ->covers(Stream::class, CreateStreamFromStringTrait::class)
 ;
