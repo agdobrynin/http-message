@@ -20,6 +20,7 @@ use function fwrite;
 use function get_resource_type;
 use function is_resource;
 use function str_contains;
+use function stream_copy_to_stream;
 use function stream_get_contents;
 use function stream_get_meta_data;
 use function var_export;
@@ -230,6 +231,17 @@ class Stream implements StreamInterface
         }
 
         return null === $key ? [] : null;
+    }
+
+    public function copyTo(Stream $to): void
+    {
+        if (false === @stream_copy_to_stream($this->resource, $to->resource)) {
+            throw new RuntimeException(
+                'Cannot copy from '.$this->getMetadata('uri').
+                ' to '.$to->getMetadata('uri').
+                ' ['.(error_get_last()['message'] ?? '').']'
+            );
+        }
     }
 
     private function isValidStream(): bool
