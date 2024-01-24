@@ -7,10 +7,8 @@ use Kaspi\HttpMessage\Request;
 use Kaspi\HttpMessage\ServerRequest;
 use Kaspi\HttpMessage\Stream;
 use Kaspi\HttpMessage\Stream\FileStream;
-use Kaspi\HttpMessage\UploadedFile;
 use Kaspi\HttpMessage\Uri;
 use org\bovigo\vfs\vfsStream;
-use Psr\Http\Message\StreamInterface;
 
 \describe('Methods of '.ServerRequest::class, function () {
     \it('getCookieParams, withCookieParams', function () {
@@ -30,29 +28,6 @@ use Psr\Http\Message\StreamInterface;
             ->and($sr2->getQueryParams())->toBe(['q' => 'post', ['x' => [1, 2]]])
         ;
     });
-
-    \it('getUploadedFiles, withUploadedFiles', function () {
-        $file = vfsStream::newFile('note.txt')->withContent('Hello World!')->at(vfsStream::setup());
-        $uploadedFile = new UploadedFile($file->url(), \UPLOAD_ERR_OK);
-
-        \expect(($sr = new ServerRequest())->getUploadedFiles())->toBe([])
-            ->and(
-                $sr2 = $sr->withUploadedFiles([$uploadedFile])
-            )->not->toBe($sr)
-            ->and(\current($sr2->getUploadedFiles()))->toBe($uploadedFile)
-            ->and(\current($sr2->getUploadedFiles())->getStream())->toBeInstanceOf(StreamInterface::class)
-            ->and((string) \current($sr2->getUploadedFiles())->getStream())->toBe('Hello World!')
-        ;
-    });
-
-    \it('fail withUploadedFiles', function () {
-        $file = vfsStream::newFile('note.txt')->withContent('Hello World!')->at(vfsStream::setup());
-        $uploadedFile = new UploadedFile($file->url(), \UPLOAD_ERR_OK);
-
-        (new ServerRequest())->withUploadedFiles([$uploadedFile, '/tmp/my_file.jpg']);
-    })
-        ->throws(InvalidArgumentException::class, 'Items must be instance')
-    ;
 
     \it('success call getParsedBody, withParsedBody', function ($parsedBody) {
         \expect(($sr = new ServerRequest())->getParsedBody())->toBeNull()
@@ -103,7 +78,6 @@ use Psr\Http\Message\StreamInterface;
         Request::class,
         Stream::class,
         Uri::class,
-        UploadedFile::class,
         FileStream::class,
     )
 ;

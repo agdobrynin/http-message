@@ -10,8 +10,8 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
-use function array_filter;
 use function array_key_exists;
+use function array_walk_recursive;
 use function is_array;
 use function is_object;
 
@@ -76,12 +76,14 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
+        // @see https://www.php-fig.org/psr/psr-7/#16-uploaded-files
+        array_walk_recursive($uploadedFiles, static function ($item): void {
+            if (!$item instanceof UploadedFileInterface) {
+                throw new InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class);
+            }
+        });
         $new = clone $this;
-        $new->uploadedFiles = array_filter(
-            $uploadedFiles,
-            static fn ($item) => $item instanceof UploadedFileInterface
-                    ?: throw new InvalidArgumentException('Items must be instance of '.UploadedFileInterface::class)
-        );
+        $new->uploadedFiles = $uploadedFiles;
 
         return $new;
     }
