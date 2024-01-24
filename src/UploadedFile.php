@@ -11,6 +11,7 @@ use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 
 use function error_get_last;
+use function fopen;
 use function is_string;
 use function move_uploaded_file;
 use function rename;
@@ -115,26 +116,16 @@ class UploadedFile implements UploadedFileInterface
                 );
             }
         } else {
-            $dest = new FileStream($targetPath, 'wb');
-
-            $from = $this->getStream();
-
-            $from->rewind();
-
-            while (!$from->eof()) {
-                if (!$dest->write($from->read(1048576))) {
-                    // @codeCoverageIgnoreStart
-                    break;
-                    // @codeCoverageIgnoreEnd
-                }
+            if (($resource = @fopen($targetPath, 'wb+')) === false) {
+                throw new RuntimeException("Cannot open from {$targetPath} [".(error_get_last()['message'] ?? '').']');
             }
 
-            if (($fromSize = $from->getSize()) !== ($destSize = $dest->getSize())) {
-                throw new RuntimeException(
-                    "Partially written {$destSize} bytes to stream {$dest->getMetadata('uri')} from stream {$from->getMetadata('uri')} of {$fromSize} bytes in size"
-                );
+            if (!$this->stream instanceof Stream) {
+                throw new RuntimeException('Property stream must be '.Stream::class);
             }
 
+            // @phan-suppress-next-line PhanUndeclaredMethod
+            $this->stream->copyTo($resource);
             $this->moved = true;
         }
     }
