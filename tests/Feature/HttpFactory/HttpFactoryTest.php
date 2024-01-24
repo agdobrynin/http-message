@@ -86,7 +86,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
     ;
 
     \it('createStream', function () {
-        \expect($s = (new HttpFactory())->setStreamResolver(static fn () => new PhpMemoryStream())->createStream('hello world'))->toBeInstanceOf(StreamInterface::class)
+        \expect($s = (new HttpFactory())->createStream('hello world'))->toBeInstanceOf(StreamInterface::class)
             ->and($s->getContents())->toBe('hello world')
         ;
     });

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Kaspi\HttpMessage;
 
 use InvalidArgumentException;
-use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -37,10 +36,6 @@ class Message implements MessageInterface
     {
         $this->addHeaders($headers);
         $this->version = $protocolVersion;
-        // TODO Default stream writer for $body (maybe use constructor?)
-        if (!isset($this->streamResolver)) {
-            $this->setStreamResolver(fn () => new PhpTempStream());
-        }
     }
 
     public function getProtocolVersion(): string
