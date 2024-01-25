@@ -103,11 +103,7 @@ class UploadedFile implements UploadedFileInterface
         }
 
         if ($this->file) {
-            $this->moved = 'cli' === PHP_SAPI
-                ? @rename($this->file, $targetPath)
-            // @codeCoverageIgnoreStart
-                : @move_uploaded_file($this->file, $targetPath);
-            // @codeCoverageIgnoreEnd
+            $this->moved = 'cli' === PHP_SAPI ? @rename($this->file, $targetPath) : @move_uploaded_file($this->file, $targetPath);
 
             if (!$this->moved) {
                 throw new RuntimeException(
