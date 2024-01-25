@@ -103,11 +103,7 @@ class UploadedFile implements UploadedFileInterface
         }
 
         if ($this->file) {
-            $this->moved = 'cli' === PHP_SAPI
-                ? @rename($this->file, $targetPath)
-            // @codeCoverageIgnoreStart
-                : @move_uploaded_file($this->file, $targetPath);
-            // @codeCoverageIgnoreEnd
+            $this->moved = 'cli' === PHP_SAPI ? @rename($this->file, $targetPath) : @move_uploaded_file($this->file, $targetPath);
 
             if (!$this->moved) {
                 throw new RuntimeException(
@@ -115,26 +111,8 @@ class UploadedFile implements UploadedFileInterface
                 );
             }
         } else {
-            $dest = new FileStream($targetPath, 'wb');
-
-            $from = $this->getStream();
-
-            $from->rewind();
-
-            while (!$from->eof()) {
-                if (!$dest->write($from->read(1048576))) {
-                    // @codeCoverageIgnoreStart
-                    break;
-                    // @codeCoverageIgnoreEnd
-                }
-            }
-
-            if (($fromSize = $from->getSize()) !== ($destSize = $dest->getSize())) {
-                throw new RuntimeException(
-                    "Partially written {$destSize} bytes to stream {$dest->getMetadata('uri')} from stream {$from->getMetadata('uri')} of {$fromSize} bytes in size"
-                );
-            }
-
+            // @phan-suppress-next-line PhanUndeclaredMethod
+            $this->getStream()->copyToStream(new FileStream($targetPath, 'wb+'));
             $this->moved = true;
         }
     }

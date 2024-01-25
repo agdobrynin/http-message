@@ -245,7 +245,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
                 ->moveTo($dir->url().'/file.txt')
             ;
         })
-            ->throws(RuntimeException::class, 'Partially written')
+            ->throws(RuntimeException::class, 'Cannot copy from')
         ;
     });
 })
