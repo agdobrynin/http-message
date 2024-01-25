@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Tests\Kaspi\HttpMessage\Feature\Stream\TestStream;
 use Tests\Kaspi\HttpMessage\StreamAdapter;
 
@@ -246,6 +247,28 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
             ])
         ;
     });
+
+    \it('method copyToStream success', function () {
+        $stream = new Stream(\fopen('php://memory', 'rb+'));
+        $stream->write('Hello world 🤪');
+        $stream->rewind();
+
+        $streamTo = new PhpTempStream();
+        $stream->copyToStream($streamTo);
+
+        \expect((string) $streamTo)->toBe('Hello world 🤪');
+    });
+
+    \it('method copyToStream with exception', function () {
+        $stream = new Stream(\fopen('php://memory', 'rb+'));
+        $stream->write('Hello world 🤪');
+        $stream->rewind();
+
+        $streamTo = new PhpTempStream('rb');
+        $stream->copyToStream($streamTo);
+    })
+        ->throws(RuntimeException::class, 'Cannot copy from')
+    ;
 })
-    ->covers(Stream::class, CreateStreamFromStringTrait::class)
+    ->covers(Stream::class, CreateStreamFromStringTrait::class, PhpTempStream::class)
 ;
