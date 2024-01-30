@@ -28,7 +28,10 @@ class Request extends Message implements RequestInterface
         parent::__construct($body, $headers, $protocolVersion);
         $this->method = $method;
         $this->uri = is_string($uri) ? new Uri($uri) : $uri;
-        $this->updateHostFromUri($this->uri);
+
+        if (!$this->hasHeader('host')) {
+            $this->updateHostFromUri($this->uri);
+        }
     }
 
     public function getRequestTarget(): string
@@ -89,7 +92,7 @@ class Request extends Message implements RequestInterface
         $new = clone $this;
         $new->uri = $uri;
 
-        if (!$preserveHost || !$this->hasHeader('Host')) {
+        if (!$preserveHost || !$this->hasHeader('host')) {
             $new->updateHostFromUri($uri);
         }
 
