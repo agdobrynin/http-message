@@ -56,7 +56,7 @@ declare(strict_types=1);
 ]);
 
 \dataset('headers_with_uri', [
-    'set #1 has URI and Host header move to first position' => [
+    'set #1 has URI and Host has in headers' => [
         'uri' => 'https://php.org/index.php?q=abc',
         'headers' => [
             'expire' => 'today',
@@ -64,9 +64,9 @@ declare(strict_types=1);
             'Host' => 'www.demos.su',
         ],
         'expectHeaders' => [
-            'Host' => ['php.org'],
             'expire' => ['today'],
             'cache-control' => ['public', 'max-age=14400'],
+            'Host' => ['www.demos.su'],
         ],
     ],
     'set #2 with empty URI Host header not modified' => [
@@ -80,6 +80,18 @@ declare(strict_types=1);
             'expire' => ['today'],
             'cache-control' => ['public', 'max-age=14400'],
             'Host' => ['www.demos.su'],
+        ],
+    ],
+    'set #3 has URI but not has header HOST' => [
+        'uri' => 'https://php.org/index.php?q=abc',
+        'headers' => [
+            'expire' => 'today',
+            'cache-control' => ['public', 'max-age=14400'],
+        ],
+        'expectHeaders' => [
+            'Host' => ['php.org'],
+            'expire' => ['today'],
+            'cache-control' => ['public', 'max-age=14400'],
         ],
     ],
 ]);
