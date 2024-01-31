@@ -6,6 +6,7 @@ namespace Kaspi\HttpMessage;
 
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
+use Stringable;
 
 use function is_string;
 use function ltrim;
@@ -15,7 +16,7 @@ use function rawurlencode;
 use function str_starts_with;
 use function strtolower;
 
-class Uri implements UriInterface
+class Uri implements UriInterface, Stringable
 {
     /**
      * Regexp - for special parts of URI.
