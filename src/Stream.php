@@ -7,6 +7,7 @@ namespace Kaspi\HttpMessage;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
+use Stringable;
 
 use function clearstatcache;
 use function error_get_last;
@@ -28,7 +29,7 @@ use function var_export;
 use const SEEK_CUR;
 use const SEEK_SET;
 
-class Stream implements StreamInterface
+class Stream implements StreamInterface, Stringable
 {
     /**
      * @var resource
