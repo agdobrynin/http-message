@@ -81,7 +81,7 @@ use Psr\Http\Message\StreamInterface;
     ;
 
     \it('Stream resolver not defined', function () {
-        $class = new class() {
+        $class = new class {
             use CreateStreamFromStringTrait;
 
             public function make()
