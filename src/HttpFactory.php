@@ -66,7 +66,7 @@ class HttpFactory implements RequestFactoryInterface, ResponseFactoryInterface, 
         return new Stream($resource);
     }
 
-    public function createUploadedFile(StreamInterface $stream, int $size = null, int $error = UPLOAD_ERR_OK, string $clientFilename = null, string $clientMediaType = null): UploadedFileInterface
+    public function createUploadedFile(StreamInterface $stream, ?int $size = null, int $error = UPLOAD_ERR_OK, ?string $clientFilename = null, ?string $clientMediaType = null): UploadedFileInterface
     {
         return new UploadedFile(
             streamOrFile: $stream,
