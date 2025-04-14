@@ -104,9 +104,9 @@ class Uri implements UriInterface, Stringable
             return '';
         }
 
-        return ('' !== ($userInfo = $this->getUserInfo()) ? $userInfo.'@' : '').
-            $this->host.
-            (null !== ($port = $this->getPort()) ? ':'.$port : '');
+        return ('' !== ($userInfo = $this->getUserInfo()) ? $userInfo.'@' : '')
+            .$this->host
+            .(null !== ($port = $this->getPort()) ? ':'.$port : '');
     }
 
     public function getFragment(): string

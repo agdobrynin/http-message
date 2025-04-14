@@ -63,8 +63,8 @@ use Kaspi\HttpMessage\Uri;
         \expect((new ServerRequest(serverParams: $params))->getServerParams())->toBe($params);
     })
         ->with([
-            'empty array' => ['params' => []],
-            'has items' => ['params' => ['first' => 'aaa']],
+            'empty array' => [[]],
+            'has items' => [['first' => 'aaa']],
         ])
     ;
 })

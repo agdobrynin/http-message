@@ -204,10 +204,10 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
             })
                 ->with([
                     'target is directory' => [
-                        'targetPath' => fn () => vfsStream::newDirectory('store')->at($this->root)->url(),
+                        fn () => vfsStream::newDirectory('store')->at($this->root)->url(),
                     ],
                     'target file is permission deny' => [
-                        'targetPath' => fn () => vfsStream::newFile('my.txt', 0444)->at($this->root)->url(),
+                        fn () => vfsStream::newFile('my.txt', 0444)->at($this->root)->url(),
                     ],
                 ])
                 ->throws(RuntimeException::class, 'Cannot create stream from')

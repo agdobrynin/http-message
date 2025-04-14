@@ -24,8 +24,8 @@ use Psr\Http\Message\UriInterface;
             \expect($uri)->toContain($r->getUri()->getHost());
         }
     })->with([
-        'all string' => ['method' => 'GET', 'https://www.com/ok'],
-        'Uri as object' => ['method' => 'POST', new Uri('https://www.baz.com/ok/?x=1')],
+        'all string' => ['GET', 'https://www.com/ok'],
+        'Uri as object' => ['POST', new Uri('https://www.baz.com/ok/?x=1')],
     ]);
 
     \it('request target', function ($uri, string $requestTarget) {
@@ -35,13 +35,13 @@ use Psr\Http\Message\UriInterface;
     })->with([
         'empty' => ['', '/'],
         'uri without path' => [
-            'uri' => 'http://www.com', 'requestTarget' => '/',
+            'http://www.com', '/',
         ],
         'uri with path' => [
-            'uri' => 'http://www.com/test-of list.doc#section5.2', 'requestTarget' => '/test-of%20list.doc',
+            'http://www.com/test-of list.doc#section5.2', '/test-of%20list.doc',
         ],
         'uri without path and with query string' => [
-            'uri' => 'http://www.com?x=10#list$', 'requestTarget' => '/?x=10',
+            'http://www.com?x=10#list$', '/?x=10',
         ],
     ]);
 
@@ -53,14 +53,14 @@ use Psr\Http\Message\UriInterface;
         ;
     })->with([
         'request target is empty string' => [
-            'request' => new Request('GET', ''),
-            'requestTarget' => '',
-            'expectRequestTarget' => '/',
+            new Request('GET', ''),
+            '',
+            '/',
         ],
         'request target changed' => [
-            'request' => new Request('GET', 'http://foo.baz/list'),
-            'requestTarget' => '*',
-            'expectRequestTarget' => '*',
+            new Request('GET', 'http://foo.baz/list'),
+            '*',
+            '*',
         ],
     ]);
 
@@ -120,34 +120,34 @@ use Psr\Http\Message\UriInterface;
         ]);
     })->with([
         'init host is empty' => [
-            'request' => new Request('GET', '?param=2'),
-            'uri' => new Uri('//site.php.org/index.php?query=abc'),
-            'preserveHost' => false,
-            'expectHost' => 'site.php.org',
+            new Request('GET', '?param=2'),
+            new Uri('//site.php.org/index.php?query=abc'),
+            false,
+            'site.php.org',
         ],
         'init host non-empty with preserveHost=true' => [
-            'request' => new Request('GET', '//php.net/?p=1#f1.6'),
-            'uri' => new Uri('//site.php.org/index.php?query=abc'),
-            'preserveHost' => true,
-            'expectHost' => 'php.net',
+            new Request('GET', '//php.net/?p=1#f1.6'),
+            new Uri('//site.php.org/index.php?query=abc'),
+            true,
+            'php.net',
         ],
         'with host non standard port' => [
-            'request' => new Request('GET', 'http://list.com:8486'),
-            'uri' => new Uri('//site.php.org:8080/index.php?query=abc'),
-            'preserveHost' => false,
-            'expectHost' => 'site.php.org:8080',
+            new Request('GET', 'http://list.com:8486'),
+            new Uri('//site.php.org:8080/index.php?query=abc'),
+            false,
+            'site.php.org:8080',
         ],
         'with host standard port as value in URI' => [
-            'request' => new Request('GET', ''),
-            'uri' => new Uri('https://site.php.org:443/index.php?query=abc'),
-            'preserveHost' => false,
-            'expectHost' => 'site.php.org',
+            new Request('GET', ''),
+            new Uri('https://site.php.org:443/index.php?query=abc'),
+            false,
+            'site.php.org',
         ],
         'init with host non-standard port and URI with non-standard port' => [
-            'request' => new Request('GET', 'http://www.msn.net:8080'),
-            'uri' => new Uri('https://site.php.org:444/index.php?query=abc'),
-            'preserveHost' => false,
-            'expectHost' => 'site.php.org:444',
+            new Request('GET', 'http://www.msn.net:8080'),
+            new Uri('https://site.php.org:444/index.php?query=abc'),
+            false,
+            'site.php.org:444',
         ],
     ]);
 

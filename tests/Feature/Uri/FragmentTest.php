@@ -9,24 +9,24 @@ use Kaspi\HttpMessage\Uri;
         \expect((new Uri($uri))->getFragment())->toBe($fragment);
     })->with([
         'empty URI' => [
-            'uri' => '',
-            'fragment' => '',
+            '',
+            '',
         ],
         'has host and fragment only' => [
-            'uri' => 'localhost/#frg-20',
-            'fragment' => 'frg-20',
+            'localhost/#frg-20',
+            'frg-20',
         ],
         'no host but has fragment style string' => [
-            'uri' => 'index.html#frg-20',
-            'fragment' => 'frg-20',
+            'index.html#frg-20',
+            'frg-20',
         ],
         'has uri without fragment' => [
-            'uri' => 'HTTPS://domain.com/index.html',
-            'fragment' => '',
+            'HTTPS://domain.com/index.html',
+            '',
         ],
         'fragment is "0"' => [
-            'uri' => 'https://0:0@0:1/0?0#0',
-            'fragment' => '0',
+            'https://0:0@0:1/0?0#0',
+            '0',
         ],
     ]);
 
@@ -40,32 +40,32 @@ use Kaspi\HttpMessage\Uri;
         \expect($new->getFragment())->toBe($expect);
     })->with([
         'fragment empty' => [
-            'uri' => new Uri(''),
-            'fragment' => '',
-            'expect' => '',
+            new Uri(''),
+            '',
+            '',
         ],
 
         'exist uri and set empty fragment' => [
-            'uri' => new Uri('https://www.com/document#frag*'),
-            'fragment' => '',
-            'expect' => '',
+            new Uri('https://www.com/document#frag*'),
+            '',
+            '',
         ],
 
         'uri and set fragment unavailable symbols' => [
-            'uri' => new Uri('https://www.com/document'),
-            'fragment' => '€ [евро]',
-            'expect' => '%E2%82%AC%20%5B%D0%B5%D0%B2%D1%80%D0%BE%5D',
+            new Uri('https://www.com/document'),
+            '€ [евро]',
+            '%E2%82%AC%20%5B%D0%B5%D0%B2%D1%80%D0%BE%5D',
         ],
 
         'uri and set fragment reserved symbols and one encode with PCT ENCODED' => [
-            'uri' => new Uri('https://www.com/document'),
-            'fragment' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?%E2%82%AC',
-            'expect' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?%E2%82%AC',
+            new Uri('https://www.com/document'),
+            'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?%E2%82%AC',
+            'a-zA-Z0-9_-.~!$&\'()*+,;=:@/?%E2%82%AC',
         ],
         'fragment is "0"' => [
-            'uri' => new Uri('https://0:0@0:1/0?0#fig2'),
-            'fragment' => '0',
-            'expect' => '0',
+            new Uri('https://0:0@0:1/0?0#fig2'),
+            '0',
+            '0',
         ],
     ]);
 })

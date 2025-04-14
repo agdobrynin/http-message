@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use org\bovigo\vfs\vfsStream;
 use Psr\Http\Message\StreamInterface;
 use Tests\Kaspi\HttpMessage\StreamAdapter;
@@ -26,8 +27,8 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         ->with('message_body_success')
         ->with([
             'from resource' => [
-                'body' => new Stream(\fopen(vfsStream::newFile('f')->setContent('Virtual file!')->at(vfsStream::setup())->url(), 'rb')),
-                'contents' => 'Virtual file!',
+                new Stream(\fopen(vfsStream::newFile('f')->setContent('Virtual file!')->at(vfsStream::setup())->url(), 'rb')),
+                'Virtual file!',
             ],
         ])
     ;
@@ -58,4 +59,4 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         ->throws(InvalidArgumentException::class)
         ->with('headers_wrong')
     ;
-})->covers(Message::class, Stream::class, CreateStreamFromStringTrait::class);
+})->covers(Message::class, Stream::class, CreateStreamFromStringTrait::class, PhpTempStream::class);

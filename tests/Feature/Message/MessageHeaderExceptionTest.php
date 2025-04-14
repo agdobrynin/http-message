@@ -15,11 +15,11 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         'RFC 7230 compatible'
     )
         ->with([
-            'header non ascii' => ['name' => 'привет', 'value' => null],
-            'header as emoji' => ['name' => '💛', 'value' => ['ok']],
-            'value non valid x00' => ['name' => 'h', 'value' => [\chr(0)]],
-            'value with ESC symbol' => ['name' => 'h', 'value' => \chr(27)],
-            'value with bell symbol' => ['name' => 'h', 'value' => \chr(07)],
+            'header non ascii' => ['привет', null],
+            'header as emoji' => ['💛', ['ok']],
+            'value non valid x00' => ['h', [\chr(0)]],
+            'value with ESC symbol' => ['h', \chr(27)],
+            'value with bell symbol' => ['h', \chr(07)],
         ])
     ;
 
