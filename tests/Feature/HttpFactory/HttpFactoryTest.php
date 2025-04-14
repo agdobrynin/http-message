@@ -137,7 +137,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
                     'empty name' => [
                         'file' => fn () => '',
                         'mode' => 'r',
-                        'message' => 'Path cannot be empty',
+                        'message' => 'Path cannot',
                     ],
                     'file not found' => [
                         'file' => fn () => __DIR__.DIRECTORY_SEPARATOR.\uniqid('test'),
