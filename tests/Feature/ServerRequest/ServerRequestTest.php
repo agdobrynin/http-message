@@ -38,10 +38,10 @@ use org\bovigo\vfs\vfsStream;
         ;
     })
         ->with([
-            'null' => ['parsedBody' => null],
-            'array' => ['parsedBody' => ['hello' => 'world']],
-            'object' => ['parsedBody' => (object) ['hello' => 'world']],
-            'object as class' => ['parsedBody' => new stdClass()],
+            'null' => [null],
+            'array' => [['hello' => 'world']],
+            'object' => [(object) ['hello' => 'world']],
+            'object as class' => [new stdClass()],
         ])
     ;
 
@@ -50,11 +50,11 @@ use org\bovigo\vfs\vfsStream;
     })
         ->throws(InvalidArgumentException::class)
         ->with([
-            'int' => ['parsedBody' => 10],
-            'string' => ['parsedBody' => 'Hi!'],
-            'float' => ['parsedBody' => 3.14],
-            'boolean' => ['parsedBody' => false],
-            'resource' => ['parsedBody' => \fopen(vfsStream::newFile('f')->at(vfsStream::setup())->url(), 'rb')],
+            'int' => [10],
+            'string' => ['Hi!'],
+            'float' => [3.14],
+            'boolean' => [false],
+            'resource' => [\fopen(vfsStream::newFile('f')->at(vfsStream::setup())->url(), 'rb')],
         ])
     ;
 

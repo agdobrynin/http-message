@@ -8,13 +8,13 @@ use Kaspi\HttpMessage\Uri;
     \it('Parse scheme through constructor', function (string $uri, string $scheme) {
         \expect((new Uri($uri))->getScheme())->toBe($scheme);
     })->with([
-        'empty URI' => ['uri' => '', 'scheme' => ''],
-        'string URI' => ['uri' => 'ww.site.com', 'scheme' => ''],
-        'scheme "https"' => ['uri' => 'HTTPS://MY.NET/', 'scheme' => 'https'],
-        'scheme "http"' => ['uri' => 'HttP://user@DOMAIN/', 'scheme' => 'http'],
-        'scheme "news"' => ['uri' => 'NEws://RELCOME.NET/', 'scheme' => 'news'],
-        'scheme "https" URI IP4 with port' => ['uri' => 'HTTPS://192.168.1.1:90/', 'scheme' => 'https'],
-        'scheme "https" URI IP6 with port' => ['uri' => 'HTTPS://[::1]:1025/', 'scheme' => 'https'],
+        'empty URI' => ['', ''],
+        'string URI' => ['ww.site.com', ''],
+        'scheme "https"' => ['HTTPS://MY.NET/', 'https'],
+        'scheme "http"' => ['HttP://user@DOMAIN/', 'http'],
+        'scheme "news"' => ['NEws://RELCOME.NET/', 'news'],
+        'scheme "https" URI IP4 with port' => ['HTTPS://192.168.1.1:90/', 'https'],
+        'scheme "https" URI IP6 with port' => ['HTTPS://[::1]:1025/', 'https'],
     ]);
 
     \it('Method withScheme', function (Uri $uri, string $scheme, string $expect) {
@@ -25,21 +25,21 @@ use Kaspi\HttpMessage\Uri;
         ;
     })->with([
         'Scheme empty change scheme https' => [
-            'uri' => new Uri('//www.yahoo.com'),
-            'scheme' => 'Https',
-            'expect' => 'https',
+            new Uri('//www.yahoo.com'),
+            'Https',
+            'https',
         ],
 
         'Scheme empty change scheme http' => [
-            'uri' => new Uri('//www.yahoo.com'),
-            'scheme' => 'HttP',
-            'expect' => 'http',
+            new Uri('//www.yahoo.com'),
+            'HttP',
+            'http',
         ],
 
         'Scheme http change to empty' => [
-            'uri' => new Uri('http://www.yahoo.com'),
-            'scheme' => '',
-            'expect' => '',
+            new Uri('http://www.yahoo.com'),
+            '',
+            '',
         ],
     ]);
 
@@ -48,13 +48,13 @@ use Kaspi\HttpMessage\Uri;
     })
         ->throws(InvalidArgumentException::class)
         ->with([
-            ['scheme' => true],
-            ['scheme' => false],
-            ['scheme' => 70],
-            ['scheme' => []],
-            ['scheme' => (object) []],
-            ['scheme' => new stdClass()],
-            ['scheme' => new Uri('')],
+            [true],
+            [false],
+            [70],
+            [[]],
+            [(object) []],
+            [new stdClass()],
+            [new Uri('')],
         ])
     ;
 })

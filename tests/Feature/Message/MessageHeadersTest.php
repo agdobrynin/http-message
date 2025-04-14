@@ -111,8 +111,8 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         \expect($m->getHeader($name))->toBe($expect);
     })
         ->with([
-            'empty value' => ['name' => 'h', 'value' => '', 'expect' => ['']],
-            'empty array' => ['name' => 'h', 'value' => ['', '', ''], 'expect' => ['', '', '']],
+            'empty value' => ['h', '', ['']],
+            'empty array' => ['h', ['', '', ''], ['', '', '']],
         ])
     ;
 

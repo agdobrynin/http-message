@@ -44,29 +44,29 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
             ;
         })->with([
             'all default' => [
-                'args' => [],
-                'expectCode' => 200,
-                'expectPhrase' => 'OK',
+                [],
+                200,
+                'OK',
             ],
             'standard http status 404' => [
-                'args' => [404],
-                'expectCode' => 404,
-                'expectPhrase' => 'Not Found',
+                [404],
+                404,
+                'Not Found',
             ],
             'standard http status 599' => [
-                'args' => [599],
-                'expectCode' => 599,
-                'expectPhrase' => '',
+                [599],
+                599,
+                '',
             ],
             'standard http status 511' => [
-                'args' => [511],
-                'expectCode' => 511,
-                'expectPhrase' => 'Network Authentication Required',
+                [511],
+                511,
+                'Network Authentication Required',
             ],
             'standard http status and custom response phrase' => [
-                'args' => [201, 'Account created success. You can login now.'],
-                'expectCode' => 201,
-                'expectPhrase' => 'Account created success. You can login now.',
+                [201, 'Account created success. You can login now.'],
+                201,
+                'Account created success. You can login now.',
             ],
         ]);
     })
@@ -135,29 +135,29 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
                 ->throws(RuntimeException::class)
                 ->with([
                     'empty name' => [
-                        'file' => fn () => '',
-                        'mode' => 'r',
-                        'message' => 'Path cannot',
+                        fn () => '',
+                        'r',
+                        'Path cannot',
                     ],
                     'file not found' => [
-                        'file' => fn () => __DIR__.DIRECTORY_SEPARATOR.\uniqid('test'),
-                        'mode' => 'rb',
-                        'message' => 'No such file or directory',
+                        fn () => __DIR__.DIRECTORY_SEPARATOR.\uniqid('test'),
+                        'rb',
+                        'No such file or directory',
                     ],
                     'fail mode' => [
-                        'file' => fn () => vfsStream::newFile('my.txt')->at($this->root)->url(),
-                        'mode' => 'uyuyuyuyu',
-                        'message' => 'Failed to open stream',
+                        fn () => vfsStream::newFile('my.txt')->at($this->root)->url(),
+                        'uyuyuyuyu',
+                        'Failed to open stream',
                     ],
                     'mode cannot read stream' => [
-                        'file' => fn () => vfsStream::newFile('my.txt', 0222)->at($this->root)->url(),
-                        'mode' => 'rb',
-                        'message' => 'Failed to open stream',
+                        fn () => vfsStream::newFile('my.txt', 0222)->at($this->root)->url(),
+                        'rb',
+                        'Failed to open stream',
                     ],
                     'mode write' => [
-                        'file' => fn () => vfsStream::newFile('my.txt', 0444)->at($this->root)->url(),
-                        'mode' => 'wb',
-                        'message' => 'Failed to open stream',
+                        fn () => vfsStream::newFile('my.txt', 0444)->at($this->root)->url(),
+                        'wb',
+                        'Failed to open stream',
                     ],
                 ])
             ;
@@ -173,14 +173,14 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
     })
         ->with([
             'null init size' => [
-                'stream' => StreamAdapter::make('file'),
-                'size' => null,
-                'expectSize' => 4,
+                StreamAdapter::make('file'),
+                null,
+                4,
             ],
             'init size' => [
-                'stream' => StreamAdapter::make('file'),
-                'size' => 10,
-                'expectSize' => 10,
+                StreamAdapter::make('file'),
+                10,
+                10,
             ],
         ])
         ->covers(UploadedFile::class)
