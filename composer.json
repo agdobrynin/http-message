@@ -4,8 +4,8 @@
     "keywords": ["http-message", "psr-7", "psr-17"],
     "type": "library",
     "support": {
-        "issues": "https://github.com/agdobrynin/di-container/issues",
-        "source": "https://github.com/agdobrynin/di-container/tree/main"
+        "issues": "https://github.com/agdobrynin/http-message/issues",
+        "source": "https://github.com/agdobrynin/http-message/tree/main"
     },
     "require": {
         "php": "^8.1 || ^8.2 || ^8.3 || ^8.4",
