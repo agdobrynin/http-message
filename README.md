@@ -68,7 +68,7 @@ in composer's dev dependencies
 composer fixer
 ```
 
-## Using Docker image with PHP 8.1, 8.2, 8.3
+## Using Docker image with PHP 8.1, 8.2, 8.3, 8.4
 
 You can specify the image with the PHP version in the `.env` file in the `PHP_IMAGE` key.
 By default, the container is built with the `php:8.1-cli-alpine` image.
@@ -113,4 +113,8 @@ make test
 Run all stages of checks:
 ```shell
 make all
+```
+Run tests for all support PHP versions:
+```shell
+make test-supports-php
 ```
