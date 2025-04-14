@@ -13,84 +13,84 @@ use Psr\Http\Message\UriInterface;
         \expect((string) $uri)->toBe($expect);
     })->with([
         'empty' => [
-            'uri' => new Uri(''),
-            'expect' => '',
+            new Uri(''),
+            '',
         ],
 
         'many "0"' => [
-            'uri' => new Uri('https://0:0@0:1/0?0#0'),
-            'expect' => 'https://0:0@0:1/0?0#0',
+            new Uri('https://0:0@0:1/0?0#0'),
+            'https://0:0@0:1/0?0#0',
         ],
 
         'has scheme and empty other' => [
-            'uri' => (new Uri(''))->withScheme('https'),
-            'expect' => 'https:',
+            (new Uri(''))->withScheme('https'),
+            'https:',
         ],
 
         'has site only and standard port' => [
-            'uri' => new Uri('https://mysite.com:443/'),
-            'expect' => 'https://mysite.com/',
+            new Uri('https://mysite.com:443/'),
+            'https://mysite.com/',
         ],
 
         'has scheme and authority' => [
-            'uri' => (new Uri(''))
+            (new Uri(''))
                 ->withScheme('https')
                 ->withHost('www.Site.COM')
                 ->withUserInfo('ivan ivanov', 'password+key'),
-            'expect' => 'https://ivan%20ivanov:password+key@www.site.com',
+            'https://ivan%20ivanov:password+key@www.site.com',
         ],
 
         'path not absolute' => [
-            'uri' => (new Uri(''))
+            (new Uri(''))
                 ->withHost('www.Site.COM')
                 ->withPath('index.html'),
-            'expect' => '//www.site.com/index.html',
+            '//www.site.com/index.html',
         ],
 
         'path absolute' => [
-            'uri' => (new Uri(''))
+            (new Uri(''))
                 ->withScheme('https')
                 ->withHost('www.Site.COM')
                 ->withPath('/index.html'),
-            'expect' => 'https://www.site.com/index.html',
+            'https://www.site.com/index.html',
         ],
 
         'path absolute. host and protocol not presented' => [
-            'uri' => (new Uri(''))
+            (new Uri(''))
                 ->withPath('/////index.html'),
-            'expect' => '/index.html',
+            '/index.html',
         ],
 
         'query only ' => [
-            'uri' => (new Uri(''))
+            (new Uri(''))
                 ->withQuery('abc=bbb&x=9f'),
-            'expect' => '?abc=bbb&x=9f',
+            '?abc=bbb&x=9f',
         ],
 
         'fragment only' => [
-            'uri' => (new Uri(''))->withFragment('abc'),
-            'expect' => '#abc',
+            (new Uri(''))->withFragment('abc'),
+            '#abc',
         ],
 
         'query and fragment with unreserved symbols' => [
-            'uri' => (new Uri(''))
+            (new Uri(''))
                 ->withScheme('HTTPS')
                 ->withPort(444)
                 ->withHost('SUPER-SITE.com')
                 ->withPath('main.html')
                 ->withFragment($unreservedForQueryAndFragment)
                 ->withQuery($unreservedForQueryAndFragment),
-            'expect' => 'https://super-site.com:444/main.html?'.$unreservedForQueryAndFragment.'#'.$unreservedForQueryAndFragment,
+            'https://super-site.com:444/main.html?'.$unreservedForQueryAndFragment.'#'.$unreservedForQueryAndFragment,
         ],
 
         'only path with unreserved symbols' => [
-            'uri' => new Uri($unreservedForPath),
-            'expect' => $unreservedForPath,
+            new Uri($unreservedForPath),
+            $unreservedForPath,
         ],
 
         'with many star slash in path' => [
-            'uri' => new Uri('https://php.net:443//function///path'),
-            'expect' => 'https://php.net//function///path',
+            new Uri('https://php.net:443//function///path'),
+            'https://php.net//function///path',
         ],
     ]);
 

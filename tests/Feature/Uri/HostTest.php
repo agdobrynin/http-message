@@ -25,49 +25,49 @@ use Kaspi\HttpMessage\Uri;
         ;
     })->with([
         'Scheme empty change host' => [
-            'uri' => new Uri('//www.yahoo.com'),
-            'host' => 'www.NEWS.com',
-            'expect' => 'www.news.com',
+            new Uri('//www.yahoo.com'),
+            'www.NEWS.com',
+            'www.news.com',
         ],
         'Scheme empty change host to "0"' => [
-            'uri' => new Uri('//www.yahoo.com'),
-            'host' => '0',
-            'expect' => '0',
+            new Uri('//www.yahoo.com'),
+            '0',
+            '0',
         ],
         'Scheme empty change to IP4' => [
-            'uri' => new Uri('//www.yahoo.com'),
-            'host' => '8.8.8.8',
-            'expect' => '8.8.8.8',
+            new Uri('//www.yahoo.com'),
+            '8.8.8.8',
+            '8.8.8.8',
         ],
 
         'Scheme empty change to IP6' => [
-            'uri' => new Uri('//www.yahoo.com'),
-            'host' => '[2001:0DB8:11A3:09D7:1F34:8A2E:07A0:765D]',
-            'expect' => '[2001:0db8:11a3:09d7:1f34:8a2e:07a0:765d]',
+            new Uri('//www.yahoo.com'),
+            '[2001:0DB8:11A3:09D7:1F34:8A2E:07A0:765D]',
+            '[2001:0db8:11a3:09d7:1f34:8a2e:07a0:765d]',
         ],
 
         'Scheme "https" change to local domain' => [
-            'uri' => new Uri('https://www.yahoo.com'),
-            'host' => 'LOCALHOST',
-            'expect' => 'localhost',
+            new Uri('https://www.yahoo.com'),
+            'LOCALHOST',
+            'localhost',
         ],
 
         'Scheme "http" empty host' => [
-            'uri' => new Uri('https://www.yahoo.com'),
-            'host' => '',
-            'expect' => '',
+            new Uri('https://www.yahoo.com'),
+            '',
+            '',
         ],
 
         'Scheme "https" host internationally' => [
-            'uri' => new Uri('https://xn--80aiifkqki.xn--p1ai/'),
-            'host' => 'XN--H1AHN.XN--P1AI',
-            'expect' => 'xn--h1ahn.xn--p1ai',
+            new Uri('https://xn--80aiifkqki.xn--p1ai/'),
+            'XN--H1AHN.XN--P1AI',
+            'xn--h1ahn.xn--p1ai',
         ],
 
         'host cyrillic utf-8 - non ASCII symbols not convert to lowercase' => [
-            'uri' => new Uri(''),
-            'host' => 'Мир.РФ',
-            'expect' => 'Мир.РФ',
+            new Uri(''),
+            'Мир.РФ',
+            'Мир.РФ',
         ],
     ]);
 })

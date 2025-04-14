@@ -8,14 +8,14 @@ use Kaspi\HttpMessage\Uri;
     'http_factory_request',
     [
         'set #1' => [
-            'method' => 'POST',
-            'uri' => '',
-            'expectUri' => '',
+            'POST',
+            '',
+            '',
         ],
         'set #2' => [
-            'method' => 'GET',
-            'uri' => new Uri('https://php.org:443/index.php'),
-            'expectUri' => 'https://php.org/index.php',
+            'GET',
+            new Uri('https://php.org:443/index.php'),
+            'https://php.org/index.php',
         ],
     ]
 );
@@ -24,16 +24,16 @@ use Kaspi\HttpMessage\Uri;
     'http_factory_server_request',
     [
         'set #1' => [
-            'method' => 'POST',
-            'uri' => '',
-            'srvParams' => [],
-            'expectUri' => '',
+            'POST',
+            '',
+            [],
+            '',
         ],
         'set #2' => [
-            'method' => 'GET',
-            'uri' => new Uri('https://php.org:443/index.php'),
-            'srvParams' => ['test1', 'test2' => ['list', 'info']],
-            'expectUri' => 'https://php.org/index.php',
+            'GET',
+            new Uri('https://php.org:443/index.php'),
+            ['test1', 'test2' => ['list', 'info']],
+            'https://php.org/index.php',
         ],
     ]
 );

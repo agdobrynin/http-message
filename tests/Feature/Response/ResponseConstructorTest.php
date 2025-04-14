@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Kaspi\HttpMessage\Message;
 use Kaspi\HttpMessage\Response;
 use Kaspi\HttpMessage\Stream;
+use Kaspi\HttpMessage\Stream\PhpTempStream;
 use Kaspi\HttpMessage\Uri;
 use org\bovigo\vfs\vfsStream;
 
@@ -15,8 +16,8 @@ use org\bovigo\vfs\vfsStream;
         ->with('message_body_success')
         ->with([
             'from resource' => [
-                'body' => new Stream(\fopen(vfsStream::newFile('f')->setContent('Virtual file!')->at(vfsStream::setup())->url(), 'rb')),
-                'contents' => 'Virtual file!',
+                new Stream(\fopen(vfsStream::newFile('f')->setContent('Virtual file!')->at(vfsStream::setup())->url(), 'rb')),
+                'Virtual file!',
             ],
         ])
     ;
@@ -61,5 +62,5 @@ use org\bovigo\vfs\vfsStream;
         ->with('reason_phrase_fail')
     ;
 })
-    ->covers(Response::class, Stream::class, Message::class, Uri::class)
+    ->covers(Response::class, Stream::class, Message::class, Uri::class, PhpTempStream::class)
 ;

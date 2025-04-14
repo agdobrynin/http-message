@@ -238,8 +238,8 @@ class Stream implements StreamInterface, Stringable
     {
         if (false === @stream_copy_to_stream($this->resource, $to->resource)) {
             throw new RuntimeException(
-                'Cannot copy from '.$this->getMetadata('uri').' to '.$to->getMetadata('uri').
-                ' ['.(error_get_last()['message'] ?? '').']'
+                'Cannot copy from '.$this->getMetadata('uri').' to '.$to->getMetadata('uri')
+                .' ['.(error_get_last()['message'] ?? '').']'
             );
         }
     }

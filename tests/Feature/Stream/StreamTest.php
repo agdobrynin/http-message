@@ -90,11 +90,11 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
     })
         ->throws(InvalidArgumentException::class)
         ->with([
-            'from object' => ['arg' => (object) []],
-            'from array' => ['arg' => []],
-            'from std class' => ['arg' => new stdClass()],
-            'from boolean' => ['arg' => true],
-            'from null' => ['arg' => null],
+            'from object' => [(object) []],
+            'from array' => [[]],
+            'from std class' => [new stdClass()],
+            'from boolean' => [true],
+            'from null' => [null],
         ])
     ;
 
@@ -196,11 +196,11 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
     })
         ->throws(RuntimeException::class)
         ->with([
-            'tell' => ['stream' => StreamAdapter::make(''), 'method' => 'tell'],
-            'seek' => ['stream' => StreamAdapter::make(''), 'method' => 'seek', 'args' => [0]],
-            'write' => ['stream' => StreamAdapter::make(''), 'method' => 'write', 'args' => ['abc']],
-            'read' => ['stream' => StreamAdapter::make(''), 'method' => 'read', 'args' => [1]],
-            'getContents' => ['stream' => StreamAdapter::make(''), 'method' => 'getContents'],
+            'tell' => [StreamAdapter::make(''), 'tell'],
+            'seek' => [StreamAdapter::make(''), 'seek', [0]],
+            'write' => [StreamAdapter::make(''), 'write', ['abc']],
+            'read' => [StreamAdapter::make(''), 'read', [1]],
+            'getContents' => [StreamAdapter::make(''), 'getContents'],
         ])
     ;
 
@@ -241,9 +241,9 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
         })
             ->throws(RuntimeException::class)
             ->with([
-                'non seekable' => ['method' => 'seek', 'args' => [1]],
-                'non writable' => ['method' => 'write', 'args' => ['a']],
-                'non readable' => ['method' => 'read', 'args' => [1]],
+                'non seekable' => ['seek', [1]],
+                'non writable' => ['write', ['a']],
+                'non readable' => ['read', [1]],
             ])
         ;
     });

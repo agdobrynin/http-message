@@ -30,19 +30,19 @@ use Psr\Http\Message\StreamInterface;
     })
         ->with([
             'in php temporary file' => [
-                'content' => 'Hello world',
-                'streamResolver' => fn () => new PhpTempStream(),
-                'uri' => 'php://temp/maxmemory:',
+                'Hello world',
+                fn () => new PhpTempStream(),
+                'php://temp/maxmemory:',
             ],
             'in memory' => [
-                'content' => 'Hello world',
-                'streamResolver' => fn () => new PhpMemoryStream(),
-                'uri' => 'php://memory',
+                'Hello world',
+                fn () => new PhpMemoryStream(),
+                'php://memory',
             ],
             'file in virtual file system' => [
-                'content' => 'Hello world',
-                'streamResolver' => fn () => new FileStream(vfsStream::newFile('f')->at(vfsStream::setup())->url(), 'r+b'),
-                'uri' => 'vfs://root/f',
+                'Hello world',
+                fn () => new FileStream(vfsStream::newFile('f')->at(vfsStream::setup())->url(), 'r+b'),
+                'vfs://root/f',
             ],
         ])
     ;
@@ -66,16 +66,16 @@ use Psr\Http\Message\StreamInterface;
         ->throws(RuntimeException::class)
         ->with([
             'set write to HTTP' => [
-                'streamResolver' => fn () => new FileStream('http://0.0.0.0', 'w+'),
+                fn () => new FileStream('http://0.0.0.0', 'w+'),
             ],
             'set read from undefined file' => [
-                'streamResolver' => fn () => new FileStream('/tmp/'.\uniqid('x', true), 'rb'),
+                fn () => new FileStream('/tmp/'.\uniqid('x', true), 'rb'),
             ],
             'set stream resolver as simple class' => [
-                'streamResolver' => fn () => new stdClass(),
+                fn () => new stdClass(),
             ],
             'set stream resolver string' => [
-                'streamResolver' => fn () => 'ok',
+                fn () => 'ok',
             ],
         ])
     ;

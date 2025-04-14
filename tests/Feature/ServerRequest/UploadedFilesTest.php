@@ -20,13 +20,13 @@ use Kaspi\HttpMessage\Uri;
         ;
     })->with([
         'one level' => [
-            'files' => [
+            [
                 new UploadedFile(new Stream(\tmpfile()), \UPLOAD_ERR_OK),
                 new UploadedFile(new Stream(\tmpfile()), \UPLOAD_ERR_OK),
             ],
         ],
         'multi levels' => [
-            'files' => [
+            [
                 'avatars' => [
                     new UploadedFile(new Stream(\tmpfile()), \UPLOAD_ERR_OK),
                     new UploadedFile(new Stream(\tmpfile()), \UPLOAD_ERR_OK),
@@ -44,13 +44,13 @@ use Kaspi\HttpMessage\Uri;
     })
         ->with([
             'one level' => [
-                'files' => [
+                [
                     new UploadedFile(new Stream(\tmpfile()), \UPLOAD_ERR_OK),
                     '/tmp/my_file.jpg',
                 ],
             ],
             'many levels' => [
-                'files' => [
+                [
                     'avatars' => [
                         new UploadedFile(new Stream(\tmpfile()), \UPLOAD_ERR_OK),
                         'note' => [

@@ -10,15 +10,15 @@ use Kaspi\HttpMessage\Uri;
             ->toBe($path)
         ;
     })->with([
-        'empty' => ['uri' => '', 'path' => ''],
+        'empty' => ['', ''],
 
-        'set #1' => ['uri' => 'https://user:pass@example.com:8080/path/123?q=abc#test', 'path' => '/path/123'],
-        'set #2' => ['uri' => '//example.org?q#h', 'path' => ''],
-        'set #3' => ['uri' => '//example/a:x', 'path' => '/a:x'],
-        'set #4' => ['uri' => '//example/../../etc/passwd', 'path' => '/../../etc/passwd'],
-        'set #5' => ['uri' => '//example//etc//passwd/', 'path' => '/etc//passwd/'],
-        'set #6' => ['uri' => 'http://example.org//valid///path', 'path' => '/valid///path'],
-        'set #7' => ['uri' => 'https://0:0@0:1/0?0#0', 'path' => '/0'],
+        'set #1' => ['https://user:pass@example.com:8080/path/123?q=abc#test', '/path/123'],
+        'set #2' => ['//example.org?q#h', ''],
+        'set #3' => ['//example/a:x', '/a:x'],
+        'set #4' => ['//example/../../etc/passwd', '/../../etc/passwd'],
+        'set #5' => ['//example//etc//passwd/', '/etc//passwd/'],
+        'set #6' => ['http://example.org//valid///path', '/valid///path'],
+        'set #7' => ['https://0:0@0:1/0?0#0', '/0'],
     ]);
 
     \it('Method withPath', function (Uri $uri, string $path, string $expect) {
@@ -29,24 +29,24 @@ use Kaspi\HttpMessage\Uri;
         ;
     })->with([
         'empty path' => [
-            'uri' => new Uri(''), 'path' => '', 'expect' => '',
+            new Uri(''), '', '',
         ],
 
         'with unavailable symbols - "urlencode" use' => [
-            'uri' => new Uri('http://www.com/index.html'),
-            'path' => 'dir/просто.html',
-            'expect' => '/dir/%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE.html',
+            new Uri('http://www.com/index.html'),
+            'dir/просто.html',
+            '/dir/%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE.html',
         ],
 
         'with reserved symbols only' => [
-            'uri' => new Uri('http://www.com'),
-            'path' => 'a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
-            'expect' => '/a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
+            new Uri('http://www.com'),
+            'a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
+            '/a-zA-Z0-9_-.~!$&\'()*+,;=:@/%d0%bf',
         ],
         'path is "0"' => [
-            'uri' => new Uri('https://0:0@0:1/0?0#0'),
-            'path' => '0',
-            'expect' => '/0',
+            new Uri('https://0:0@0:1/0?0#0'),
+            '0',
+            '/0',
         ],
     ]);
 })
