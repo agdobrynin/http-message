@@ -44,7 +44,7 @@ composer test
 ```
 Running tests with checking code coverage by tests with a report in html format
 ```shell
-./vendor/bin/pest --compact
+./vendor/bin/phpunit
 ```
 Requires installed [PCOV](https://github.com/krakjoe/pcov) driver
 
@@ -83,7 +83,7 @@ docker-compose run --rm php composer install
 ```
 Run tests with a code coverage report and a report in html format
 ```shell
-docker-compose run --rm php vendor/bin/pest --compact
+docker-compose run --rm php vendor/bin/phpunit --no-coverage
 ```
 ⛑ the results will be in the folder `.coverage-html`
 
