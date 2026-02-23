@@ -33,20 +33,20 @@
     "minimum-stability": "stable",
     "scripts": {
         "fixer" : "./vendor/bin/php-cs-fixer fix",
-        "test" : "./vendor/bin/pest --compact --no-coverage",
+        "test" : "./vendor/bin/phpunit --testdox --no-coverage",
         "phan" : "./vendor/bin/phan",
         "phan-poly" : "./vendor/bin/phan --allow-polyfill-parser"
     },
     "scripts-descriptions": {
         "fixer": "Run PHP Coding Standards Fixer",
-        "test" : "Run Pest",
-        "phan" : "Run static analizer with AST extention",
-        "phan-poly" : "Run static analizer with with polyfill parser (without AST extention)"
+        "test" : "Run Phpunit test without coverage",
+        "phan" : "Run static analyzer with AST extension",
+        "phan-poly" : "Run static analyzer with with polyfill parser (without AST extension)"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.46",
         "phan/phan": "^5.4",
-        "pestphp/pest": "^2.31",
+        "phpunit/phpunit": "10.5.63",
         "mikey179/vfsstream": "^1.6"
     },
     "config": {
