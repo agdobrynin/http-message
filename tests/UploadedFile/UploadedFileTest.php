@@ -10,6 +10,7 @@ use Kaspi\HttpMessage\CreateStreamFromStringTrait;
 use Kaspi\HttpMessage\Stream;
 use Kaspi\HttpMessage\Stream\FileStream;
 use Kaspi\HttpMessage\UploadedFile;
+use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -20,6 +21,7 @@ use Tests\Kaspi\HttpMessage\StreamAdapter;
 use function file_get_contents;
 use function fileperms;
 use function filesize;
+use function fopen;
 use function sprintf;
 use function substr;
 
@@ -228,5 +230,68 @@ class UploadedFileTest extends TestCase
 
         // ⛔ moved file try move again will be fire exception
         $uploadedFiles->moveTo(vfsStream::url('root/store/file_new.txt'));
+    }
+
+    public function testMoveToFromStreamOverrideTargetFilePermissionDenied(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot create stream');
+
+        $root = vfsStream::setup(structure: [
+            'tmp.file' => 'hello world',
+        ]);
+        vfsStream::newFile('target.txt', 0444)->withContent('baz')->at($root);
+
+        $uploadedStream = new Stream(fopen(vfsStream::url('root/tmp.file'), 'rb'));
+        $uploadedFiles = new UploadedFile($uploadedStream, UPLOAD_ERR_OK);
+        $uploadedFiles->moveTo(vfsStream::url('root/target.txt'));
+    }
+
+    public function testMoveToFromStreamTargetFolderPermissionDenied(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot create stream');
+
+        $root = vfsStream::setup(structure: [
+            'tmp.file' => 'hello world',
+        ]);
+        vfsStream::newDirectory('store', 0444)->at($root);
+
+        $uploadedStream = new Stream(fopen(vfsStream::url('root/tmp.file'), 'rb'));
+        $uploadedFiles = new UploadedFile($uploadedStream, UPLOAD_ERR_OK);
+        $uploadedFiles->moveTo(vfsStream::url('root/store/target.txt'));
+    }
+
+    public function testMoveToFromStreamToStream(): void
+    {
+        $root = vfsStream::setup();
+        vfsStream::newDirectory('store')->at($root);
+        $file = vfsStream::newFile('tmp.file')
+            ->withContent(LargeFileContent::withMegabytes(2))->at($root)
+        ;
+        $uploadedFiles = new UploadedFile(new Stream(fopen($file->url(), 'rb')), UPLOAD_ERR_OK);
+        $uploadedFiles->moveTo(vfsStream::url('root/store/file.txt'));
+
+        // 2 Mb = 2097152 bytes
+        self::assertEquals(2097152, filesize(vfsStream::url('root/store/file.txt')));
+    }
+
+    public function testMoveToWithDiskQuota(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot copy from');
+
+        $root = vfsStream::setup(structure: [
+            'store' => [],
+        ]);
+        vfsStream::setQuota(4000);
+
+        $file = vfsStream::newFile('uploaded_file')
+            ->withContent(LargeFileContent::withKilobytes(2))->at($root)
+        ;
+
+        (new UploadedFile(new Stream(fopen($file->url(), 'rb')), UPLOAD_ERR_OK))
+            ->moveTo(vfsStream::url('root/store/file.txt'))
+        ;
     }
 }
