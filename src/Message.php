@@ -176,7 +176,7 @@ class Message implements MessageInterface
      * Return value of header name may be as integer or string.
      * For example header name '0' always store in array key as integer value.
      */
-    private function getHeaderByName(string $name): null|int|string
+    private function getHeaderByName(string $name): int|string|null
     {
         if ('' === $name) {
             throw new InvalidArgumentException('Header name is empty string');

@@ -24,7 +24,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @var UploadedFileInterface[]
      */
     private array $uploadedFiles = [];
-    private null|array|object $parsedBody = null;
+    private array|object|null $parsedBody = null;
     private array $attributes = [];
 
     public function __construct(
@@ -88,7 +88,7 @@ class ServerRequest extends Request implements ServerRequestInterface
         return $new;
     }
 
-    public function getParsedBody(): null|array|object
+    public function getParsedBody(): array|object|null
     {
         return $this->parsedBody;
     }
