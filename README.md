@@ -35,7 +35,7 @@ composer require kaspi/http-message
 
 ## Local development
 
-Required PHP 8.1, php Composer
+Required PHP 8.1 or higher, php Composer
 
 ### Testing
 Run test without code coverage
@@ -68,7 +68,7 @@ in composer's dev dependencies
 composer fixer
 ```
 
-## Using Docker image with PHP 8.1, 8.2, 8.3, 8.4
+## Using Docker image with PHP 8.1, 8.2, 8.3, 8.4, 8.5
 
 You can specify the image with the PHP version in the `.env` file in the `PHP_IMAGE` key.
 By default, the container is built with the `php:8.1-cli-alpine` image.
