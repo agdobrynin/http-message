@@ -46,12 +46,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.46",
         "phan/phan": "^5.4",
-        "phpunit/phpunit": "10.5.63",
+        "phpunit/phpunit": "^10.5.63",
         "mikey179/vfsstream": "^1.6"
-    },
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
     }
 }
