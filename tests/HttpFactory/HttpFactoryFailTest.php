@@ -67,19 +67,20 @@ class HttpFactoryFailTest extends TestCase
         ];
 
         $root = vfsStream::setup();
-        vfsStream::newFile('only_write.txt', 0222)->at($root);
+        $file = vfsStream::newFile('only_write.txt', 0222)->at($root);
 
         yield 'mode cannot read stream' => [
-            vfsStream::url('root/only_write.txt'),
-            'r+b',
+            $file->url(),
+            'rb',
             'Failed to open stream',
         ];
 
-        vfsStream::newFile('only_read.txt', 0444)->at($root);
+        $root = vfsStream::setup();
+        $dir = vfsStream::newDirectory('dir', 0444)->at($root);
 
         yield 'mode write' => [
-            vfsStream::url('root/only_read.txt'),
-            'w+b',
+            $dir->url().'/file.txt',
+            'wb',
             'Failed to open stream',
         ];
     }
